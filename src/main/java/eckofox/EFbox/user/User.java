@@ -1,4 +1,4 @@
-package eckofox.EFbox.ApiUser;
+package eckofox.EFbox.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "api_users")
 @RequiredArgsConstructor
 @Data
-public class ApiUser {
+public class User {
     @Id
     private final UUID userID;
     @Column

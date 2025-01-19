@@ -1,14 +1,14 @@
-package eckofox.EFbox.ApiUser;
+package eckofox.EFbox.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApiUserService {
+public class UserService {
     private final ApiUserRepository userRepository;
 
     @Autowired
-    public ApiUserService(ApiUserRepository userRepository) {
+    public UserService(ApiUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 }

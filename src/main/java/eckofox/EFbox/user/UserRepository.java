@@ -1,9 +1,11 @@
 package eckofox.EFbox.user;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class UserRepository {
+import java.util.UUID;
 
+@Repository
+public interface UserRepository extends JpaRepository<User, UUID> {
 
 }

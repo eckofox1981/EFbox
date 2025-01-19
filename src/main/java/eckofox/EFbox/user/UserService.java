@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    private final ApiUserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserService(ApiUserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 }

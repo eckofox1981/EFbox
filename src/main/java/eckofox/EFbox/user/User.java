@@ -4,7 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.UUID;
 
 @Entity(name = "api_users")
 @RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 @Data
 public class User {
     @Id
@@ -24,6 +27,6 @@ public class User {
     private final String lastName;
     @Column
     private final String password;
-    @OneToMany
-    private final List<?> folders;
+//    @OneToMany
+//    private final List<?> folders;
 }

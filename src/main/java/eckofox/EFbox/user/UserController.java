@@ -1,6 +1,8 @@
 package eckofox.EFbox.user;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,19 +20,18 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok("MAPPING API CREATE USER");
+            return ResponseEntity.ok(userservice.createUser(userDTO));
         } catch (IllegalFormatException e) {
             return ResponseEntity.badRequest().body("Unable to create user.Please check your inputs and try again. "
                     + e.getMessage());
         }
-
     }
 
     //PUT login user
     @PutMapping("/login")
     public ResponseEntity<?> login (@RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok("MAPPING API LOGIN USER");
+            return ResponseEntity.ok(userservice.login(userDTO));
         } catch (IllegalAccessError e) {
             return ResponseEntity.badRequest().body("Unable to login. Please check your inputs and try again. "
                     + e.getMessage());
@@ -53,17 +54,20 @@ public class UserController {
 
 //UserDTO?
 @AllArgsConstructor
+@Data
 class UserDTO {
         private final String username;
         private final String firstname;
-        private final String lastName;
+        private final String lastname;
         private final String password;
 }
 
 @AllArgsConstructor
+@Data
 class NoPasswordUserDTO {
+    private final UUID userID;
     private final String username;
     private final String firstname;
-    private final String lastName;
+    private final String lastname;
 }
 

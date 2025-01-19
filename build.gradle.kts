@@ -25,16 +25,16 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-security")
+	//implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.auth0:java-jwt:4.4.0")
+	//implementation("com.auth0:java-jwt:4.4.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation ("org.mindrot:jbcrypt:0.3m")
+	//implementation ("org.mindrot:jbcrypt:0.3m")
 }
 
 tasks.withType<Test> {

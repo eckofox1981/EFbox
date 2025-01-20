@@ -27,6 +27,6 @@ public class User {
     private final String lastName;
     @Column
     private final String password;
-//    @OneToMany
-//    private final List<?> folders;
+    @OneToMany(mappedBy = "folderID")
+    private List<?> folders;
 }

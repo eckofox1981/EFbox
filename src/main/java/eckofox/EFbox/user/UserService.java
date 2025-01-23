@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.LoginException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +25,10 @@ public class UserService implements UserDetailsService {
 
     //CREATE
     public NoPasswordUserDTO createUser(UserDTO userDTO) {
+        if (!passwordValidationIsOk(userDTO.getPassword())) {
+            throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
+                    "characters and at least one digit.");
+        }
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
                 userDTO.getLastname(), passwordEncoder.encode(userDTO.getPassword()));
         userRepository.save(createdUser);
@@ -32,14 +37,33 @@ public class UserService implements UserDetailsService {
     }
 
     //LOGIN
-    public String login(UserDTO userDTO){
+    public String login(String username, String password) throws LoginException {
+        User user = userRepository.findByUsername(username).orElseThrow();
 
-        return "TESTING: login";
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new LoginException("Incorrect username or password");
+        }
+
+        return jwtService.generateToken(user.getUserID());
     }
 
     //GET?
 
     //DELETE
+    public String deleteUser (UUID userID) {
+        User user = userRepository.findById(userID).orElseThrow();
+        String username = user.getUsername();
+        userRepository.delete(user);
+        return "Account: " + username + " deleted.";
+    }
+
+    private boolean passwordValidationIsOk(String password) {
+        if (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$")) {
+            return true;
+        }
+        return false;
+    }
+
     public Optional<User> verifyAuthentication(String token) {
         try {
             UUID userID = jwtService.verifyToken(token);

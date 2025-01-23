@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.LoginException;
 import java.util.IllegalFormatException;
 import java.util.UUID;
 
@@ -31,10 +32,9 @@ public class UserController {
     @PutMapping("/login")
     public ResponseEntity<?> login (@RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok(userservice.login(userDTO));
-        } catch (IllegalAccessError e) {
-            return ResponseEntity.badRequest().body("Unable to login. Please check your inputs and try again. "
-                    + e.getMessage());
+            return ResponseEntity.ok(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
+        } catch (LoginException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
@@ -45,6 +45,7 @@ public class UserController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser (@RequestParam UUID userID) {
         try {
+
             return ResponseEntity.ok().body("User account deleted.");
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());

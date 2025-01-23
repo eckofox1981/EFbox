@@ -8,7 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 @Data
-public class User {
+public class User implements UserDetails {
     @Id
     private final UUID userID;
     @Column
@@ -29,4 +32,9 @@ public class User {
     private final String password;
     @OneToMany(mappedBy = "folderID")
     private List<?> folders;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
 }

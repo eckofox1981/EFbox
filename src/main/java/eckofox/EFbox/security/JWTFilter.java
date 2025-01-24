@@ -1,4 +1,4 @@
-package eckofox.EFbox.JWTService;
+package eckofox.EFbox.security;
 
 import eckofox.EFbox.user.UserService;
 import jakarta.servlet.FilterChain;

@@ -1,24 +1,27 @@
 package eckofox.EFbox.user;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import eckofox.EFbox.fileobjects.effolder.EFFolder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.LoginException;
 import java.util.IllegalFormatException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController {
     private final UserService userservice;
 
     //POST create user
-    @PostMapping("/create")
+    @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
         try {
             return ResponseEntity.ok(userservice.createUser(userDTO));
@@ -57,20 +60,37 @@ public class UserController {
 
 //UserDTO?
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 class UserDTO {
-        private final String username;
-        private final String firstname;
-        private final String lastname;
-        private final String password;
+        private String username;
+        private String firstname;
+        private String lastname;
+        private String password;
+
+        public UserDTO (String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
 }
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 class NoPasswordUserDTO {
-    private final UUID userID;
-    private final String username;
-    private final String firstname;
-    private final String lastname;
+    private UUID userID;
+    private String username;
+    private String firstname;
+    private String lastname;
+    private List<EFFolder> folders;
+
+    public NoPasswordUserDTO fromUser (User user){
+        return new NoPasswordUserDTO(
+                user.getUserID(),
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getFolders());
+    }
 }
 

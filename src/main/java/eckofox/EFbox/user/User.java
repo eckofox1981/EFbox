@@ -1,22 +1,19 @@
 package eckofox.EFbox.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
+import eckofox.EFbox.fileobjects.effolder.EFFolder;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "api_users")
-@RequiredArgsConstructor
+@Entity(name = "efbox_users")
 @NoArgsConstructor(force = true)
 @Data
 public class User implements UserDetails {
@@ -30,8 +27,17 @@ public class User implements UserDetails {
     private final String lastName;
     @Column
     private final String password;
-    @OneToMany(mappedBy = "folderID")
-    private List<?> folders;
+    @OneToMany(mappedBy = "user")
+    private List<EFFolder> folders;
+
+    public User(UUID userID, String username, String firstName, String lastName, String password) {
+        this.userID = userID;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.folders = new ArrayList<>();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

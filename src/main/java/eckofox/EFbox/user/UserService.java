@@ -1,13 +1,14 @@
 package eckofox.EFbox.user;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import eckofox.EFbox.JWTService.JWTService;
-import lombok.Data;
+import eckofox.EFbox.security.JWTService;
+import eckofox.EFbox.security.PasswordConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
-
+    private final PasswordConfig passwordConfig;
 
     //CREATE
     public NoPasswordUserDTO createUser(UserDTO userDTO) {
@@ -30,24 +30,32 @@ public class UserService implements UserDetailsService {
                     "characters and at least one digit.");
         }
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
-                userDTO.getLastname(), passwordEncoder.encode(userDTO.getPassword()));
+                userDTO.getLastname(), passwordConfig.passwordEncoder().encode(userDTO.getPassword()));
         userRepository.save(createdUser);
         return new NoPasswordUserDTO(createdUser.getUserID(), createdUser.getUsername(),
-                createdUser.getFirstName(), createdUser.getLastName());
+                createdUser.getFirstName(), createdUser.getLastName(), createdUser.getFolders());
     }
 
     //LOGIN
     public String login(String username, String password) throws LoginException {
         User user = userRepository.findByUsername(username).orElseThrow();
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
             throw new LoginException("Incorrect username or password");
         }
 
         return jwtService.generateToken(user.getUserID());
     }
 
-    //GET?
+    //GET? see user info? usefull?
+    public NoPasswordUserDTO seeUserInfo(String token) {
+        User user = verifyAuthentication(token).get();
+        return new NoPasswordUserDTO(user.getUserID(),
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getFolders());
+    }
 
     //DELETE
     public String deleteUser (UUID userID) {
@@ -77,4 +85,5 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
+
 }

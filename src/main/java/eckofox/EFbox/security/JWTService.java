@@ -1,10 +1,11 @@
-package eckofox.EFbox.JWTService;
+package eckofox.EFbox.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -21,6 +22,7 @@ public class JWTService {
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
 
+    @Autowired
     public JWTService () {
         this.secretString = setSecretString();
         this.algorithm = Algorithm.HMAC256(secretString);
@@ -44,7 +46,7 @@ public class JWTService {
 
 
     private String setSecretString() {
-        File file = new File("./src/main/resources/secretfile.txt");
+        File file = new File("./src/main/resources/secret.txt");
 
         try (FileReader fileReader = new FileReader(file.getAbsolutePath());
              BufferedReader reader = new BufferedReader(fileReader)) {

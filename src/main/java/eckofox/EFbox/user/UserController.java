@@ -43,6 +43,14 @@ public class UserController {
     }
 
     //TODO: GET user info but do I need it...?
+    @GetMapping("/info")
+    public ResponseEntity<?> showUserInfo(String token) {
+        try {
+            return ResponseEntity.ok(userservice.seeUserInfo(token));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     //DELETE user account and relevant data
     @DeleteMapping("/delete")

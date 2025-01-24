@@ -46,10 +46,9 @@ public class UserController {
 
     //DELETE user account and relevant data
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser (@RequestParam UUID userID) {
+    public ResponseEntity<?> deleteUser (@RequestHeader("Authorization") String token) {
         try {
-
-            return ResponseEntity.ok().body("User account deleted.");
+            return ResponseEntity.ok().body(userservice.deleteUser(token));
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());
         }

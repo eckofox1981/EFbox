@@ -58,8 +58,9 @@ public class UserService implements UserDetailsService {
     }
 
     //DELETE
-    public String deleteUser (UUID userID) {
-        User user = userRepository.findById(userID).orElseThrow();
+    public String deleteUser (String token) {
+        User user = verifyAuthentication(token).orElseThrow(() -> new UsernameNotFoundException("user not found."));
+        System.out.println("DEBUG deleteUSer:" + user.getUserID().toString());
         String username = user.getUsername();
         userRepository.delete(user);
         return "Account: " + username + " deleted.";
@@ -75,7 +76,10 @@ public class UserService implements UserDetailsService {
     public Optional<User> verifyAuthentication(String token) {
         try {
             UUID userID = jwtService.verifyToken(token);
-            return userRepository.findById(userID);
+            System.out.println("DEBUG userID in verifyAuthentification:" + userID);
+            Optional<User> user = userRepository.findById(userID);
+            System.out.println("DEBUG userID in verifyAuthentification 2: " + user.get().getUsername());
+            return user;
         } catch (Exception e) {
             return Optional.empty();
         }

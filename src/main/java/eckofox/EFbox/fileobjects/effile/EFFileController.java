@@ -12,7 +12,7 @@ public class EFFileController {
     private EFFileService fileService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> addFile(@RequestBody MultipartFile file, @RequestParam String parentID) {
+    public ResponseEntity<?> addFile(@RequestBody MultipartFile file, @AuthenticationPrincipal User user, @RequestParam String parentID) {
         try {
             return ResponseEntity.ok("");
         } catch (Exception e) {

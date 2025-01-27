@@ -77,10 +77,10 @@ public class UserController {
 
         public static NoPasswordUserDTO fromUser (User user){
             List<String> folderNames = new ArrayList<>();
-            if (user.getRootFolder().getFolders() == null || user.getRootFolder().getFolders().isEmpty()) {
+            if (user.getRootFolder() == null || user.getRootFolder().isEmpty()) {
                 folderNames.add("EMPTY");
             } else {
-                folderNames = user.getRootFolder().getFolders()
+                folderNames = user.getRootFolder()
                         .stream()
                         .map(EFFolder::getName)
                         .toList();

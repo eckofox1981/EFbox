@@ -19,7 +19,7 @@ public class EFFolderService {
         if (parentFolderID.equals("0")) {
             EFFolder folder = new EFFolder(UUID.randomUUID(), folderName, user);
             folderRespository.save(folder);
-            return folder.getName() + " created in on firstlevel";
+            return folder.getName() + " created at root level";
         }
 
         EFFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow();

@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/info").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/user/delete").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/folder/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/file/**").authenticated()
                         .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

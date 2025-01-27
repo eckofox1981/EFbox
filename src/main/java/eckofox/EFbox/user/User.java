@@ -1,14 +1,13 @@
 package eckofox.EFbox.user;
 
 import eckofox.EFbox.fileobjects.effolder.EFFolder;
+import eckofox.EFbox.fileobjects.effolder.EFFolderRepository;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class User implements UserDetails {
     @Id
     private final UUID userID;
-    @Column
+    @Column(unique = true)
     private final String username;
     @Column
     private final String firstName;
@@ -27,8 +26,8 @@ public class User implements UserDetails {
     private final String lastName;
     @Column
     private final String password;
-    @OneToMany(mappedBy = "user")
-    private List<EFFolder> folders;
+    @OneToOne(mappedBy = "user")
+    private final EFFolder rootFolder;
 
     public User(UUID userID, String username, String firstName, String lastName, String password) {
         this.userID = userID;
@@ -36,7 +35,7 @@ public class User implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
-        this.folders = new ArrayList<>();
+        this.rootFolder = new EFFolder(UUID.randomUUID(), "root", this);
     }
 
     @Override

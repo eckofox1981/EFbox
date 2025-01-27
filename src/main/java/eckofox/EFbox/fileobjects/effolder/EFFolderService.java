@@ -11,22 +11,21 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class EFFolderService {
-    private EFFolderRespository folderRespository;
+    private EFFolderRepository folderRespository;
     private UserService userService;
     private UserRepository userRepository;
 
-    public String createFolder(String name, String token, String parentFolderID) {
-        String userID = userService.verifyAuthentication(token).get().getUserID().toString();
-        User user = userRepository.findById(UUID.fromString(userID)).orElseThrow();
-        EFFolder folder = new EFFolder(UUID.randomUUID(), name, user);
-        if (parentFolderID.isBlank()) {
-            user.getFolders().add(folder);
-            userRepository.save(user);
-            return "Folder \"" + folder.getName() + "\" saved in \"Main folder\"";
+    public String createFolder(String folderName, User user, String parentFolderID) {
+        if (parentFolderID.equals("0")) {
+            EFFolder folder = new EFFolder(UUID.randomUUID(), folderName, user);
+            folderRespository.save(folder);
+            return folder.getName() + " created in on firstlevel";
         }
+
         EFFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow();
-        parentFolder.getFolder().add(folder);
-        folderRespository.save(parentFolder);
+        EFFolder folder = new EFFolder(UUID.randomUUID(), folderName, parentFolder, user);
+        //System.out.println("DEBUG createfolder, parentfolderID:" + folder.getParentFolder().getFolderID());
+        folderRespository.save(folder);
 
         return "Folder \"" + folder.getName() + "\" saved in parent folder \"" + parentFolder.getName() + "\"";
     }

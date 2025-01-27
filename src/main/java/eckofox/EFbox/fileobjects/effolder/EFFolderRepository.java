@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface EFFolderRespository extends JpaRepository<EFFolder, UUID> {
+public interface EFFolderRepository extends JpaRepository<EFFolder, UUID> {
 }

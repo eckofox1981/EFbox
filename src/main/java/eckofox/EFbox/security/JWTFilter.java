@@ -26,7 +26,6 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String jwtToken = authenticationHeader.substring("Bearer ".length());
-        System.out.println("DEBUG jwtToken in JWTFILTER:" + jwtToken);
         if (jwtToken.isBlank()) {
             filterChain.doFilter(request, response);
             return;

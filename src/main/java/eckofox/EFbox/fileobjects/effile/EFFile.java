@@ -18,6 +18,5 @@ public class EFFile {
     @Lob
     private final byte[] content;
     @ManyToOne
-    @JoinColumn(name = "parent_folderID")
     private EFFolder parentFolder;
 }

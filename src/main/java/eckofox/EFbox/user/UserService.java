@@ -3,13 +3,9 @@ package eckofox.EFbox.user;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
@@ -24,7 +20,7 @@ public class UserService implements UserDetailsService {
     private final PasswordConfig passwordConfig;
 
     //CREATE
-    public NoPasswordUserDTO createUser(UserDTO userDTO) {
+    public UserController.NoPasswordUserDTO createUser(UserDTO userDTO) {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
             throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
                     "characters and at least one digit.");
@@ -32,8 +28,7 @@ public class UserService implements UserDetailsService {
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
                 userDTO.getLastname(), passwordConfig.passwordEncoder().encode(userDTO.getPassword()));
         userRepository.save(createdUser);
-        return new NoPasswordUserDTO(createdUser.getUserID(), createdUser.getUsername(),
-                createdUser.getFirstName(), createdUser.getLastName(), createdUser.getFolders());
+        return UserController.NoPasswordUserDTO.fromUser(createdUser);
     }
 
     //LOGIN
@@ -48,19 +43,13 @@ public class UserService implements UserDetailsService {
     }
 
     //GET? see user info? usefull?
-    public NoPasswordUserDTO seeUserInfo(String token) {
-        User user = verifyAuthentication(token).get();
-        return new NoPasswordUserDTO(user.getUserID(),
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getFolders());
+    public UserController.NoPasswordUserDTO seeUserInfo(User user) {
+        User userForInfo = userRepository.findById(user.getUserID()).orElseThrow();
+        return UserController.NoPasswordUserDTO.fromUser(userForInfo);
     }
 
     //DELETE
-    public String deleteUser (String token) {
-        User user = verifyAuthentication(token).orElseThrow(() -> new UsernameNotFoundException("User not found."));
-        System.out.println("DEBUG deleteUSer:" + user.getUserID().toString());
+    public String deleteUser (User user) {
         String username = user.getUsername();
         userRepository.delete(user);
         return "Account: " + username + " deleted.";
@@ -76,11 +65,10 @@ public class UserService implements UserDetailsService {
     public Optional<User> verifyAuthentication(String token) {
         try {
             UUID userID = jwtService.verifyToken(token);
-            System.out.println("DEBUG userID in verifyAuthentification 1:" + userID);
             Optional<User> user = userRepository.findById(userID);
-            System.out.println("DEBUG username in verifyAuthentification 2: " + user.get().getUsername());
             return user;
         } catch (Exception e) {
+            e.printStackTrace();
             return Optional.empty();
         }
     }

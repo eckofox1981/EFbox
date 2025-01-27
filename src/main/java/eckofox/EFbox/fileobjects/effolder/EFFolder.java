@@ -3,9 +3,7 @@ package eckofox.EFbox.fileobjects.effolder;
 import eckofox.EFbox.fileobjects.effile.EFFile;
 import eckofox.EFbox.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,19 +14,31 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EFFolder {
     @Id
-    private final UUID folderID;
+    private UUID folderID;
     @Column
-    private final String name;
+    private String name;
     @ManyToOne
     @JoinColumn(name = "parent_folderID")
     private EFFolder parentFolder;
-    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EFFolder> folder;
-    @OneToMany(mappedBy = "fileID", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<EFFolder> folders;
+    @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<EFFile> files;
     @ManyToOne
-    @JoinColumn(name = "userID")
-    private final User user;
+    private User user;
+
+    public EFFolder(UUID folderID, String name, User user) {
+        this.folderID = folderID;
+        this.name = name;
+        this.user = user;
+    }
+
+    public EFFolder(UUID folderID, String name, EFFolder parentFolder, User user) {
+        this.folderID = folderID;
+        this.name = name;
+        this.parentFolder = parentFolder;
+        this.user = user;
+    }
 }
 
 

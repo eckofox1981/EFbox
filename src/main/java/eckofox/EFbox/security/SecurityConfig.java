@@ -31,14 +31,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf((AbstractHttpConfigurer::disable))
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests
+                        (auth -> auth
                         .requestMatchers(HttpMethod.POST, "/user/create").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/info").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/user/delete").authenticated()
                         .requestMatchers(HttpMethod.POST, "/folder/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/file/**").authenticated()
-                        .anyRequest().permitAll())
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(new JWTFilter(userService), UsernamePasswordAuthenticationFilter.class);

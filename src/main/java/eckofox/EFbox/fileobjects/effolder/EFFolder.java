@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "folders")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class EFFolder {
@@ -38,6 +39,10 @@ public class EFFolder {
         this.name = name;
         this.parentFolder = parentFolder;
         this.user = user;
+    }
+
+    public String getName(EFFolder efFolder) {
+        return efFolder.getName();
     }
 }
 

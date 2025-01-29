@@ -2,25 +2,32 @@ package eckofox.EFbox.fileobjects.effile;
 
 import eckofox.EFbox.fileobjects.effolder.EFFolder;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
 @Entity(name = "files")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class EFFile {
     @Id
-    private final UUID fileID;
+    private UUID fileID;
     @Column
-    private final String filename;
+    private String filename;
     @Lob
-    private final byte[] content;
+    @Column(name = "content")
+    @JdbcTypeCode(SqlTypes.VARBINARY)
+    private byte[] content;
     @Column
-    private final String type;
+    private String type;
     @ManyToOne
-    private final EFFolder parentFolder;
+    private EFFolder parentFolder;
+
+    public String getFileName() {
+        return filename;
+    }
 }

@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Component
@@ -35,6 +37,7 @@ public class JWTService {
         return JWT.create()
                 .withIssuer("auth0")
                 .withSubject(userID.toString())
+                .withExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS))
                 .sign(algorithm);
     }
 

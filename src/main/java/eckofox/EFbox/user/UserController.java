@@ -43,7 +43,6 @@ public class UserController {
 
     }
 
-    //TODO: GET user info but do I need it...?
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {

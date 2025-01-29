@@ -2,14 +2,9 @@ package eckofox.EFbox.fileobjects.effolder;
 
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @AllArgsConstructor

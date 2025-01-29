@@ -42,7 +42,6 @@ public class UserService implements UserDetailsService {
         return jwtService.generateToken(user.getUserID());
     }
 
-    //GET? see user info? usefull?
     public UserController.NoPasswordUserDTO seeUserInfo(User user) {
         User userForInfo = userRepository.findById(user.getUserID()).orElseThrow();
         return UserController.NoPasswordUserDTO.fromUser(userForInfo);
@@ -56,19 +55,14 @@ public class UserService implements UserDetailsService {
     }
 
     private boolean passwordValidationIsOk(String password) {
-        if (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$")) {
-            return true;
-        }
-        return false;
+        return (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$"));
     }
 
     public Optional<User> verifyAuthentication(String token) {
         try {
             UUID userID = jwtService.verifyToken(token);
-            Optional<User> user = userRepository.findById(userID);
-            return user;
+            return userRepository.findById(userID);
         } catch (Exception e) {
-            e.printStackTrace();
             return Optional.empty();
         }
     }

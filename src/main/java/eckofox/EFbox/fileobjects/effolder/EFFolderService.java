@@ -56,13 +56,13 @@ public class EFFolderService {
                 .map(EFFolderDTO::fromEFFolder)
                 .forEach(folder -> responseDTO.getFolders().add(folder));
         files.stream()
-                .filter(file -> file.getParentFolder().getUser().getUserID().equals(user.getUserID())) //since files aren't directly connected to their user
+                .filter(file -> userIsNotFolderOwner(file.getParentFolder(), user)) //since files aren't directly connected to their user
                 .map(EFFileDTO::fromEFFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
         return responseDTO;
     }
 
-    public String deleteFolder (String folderID, User user) throws IllegalAccessException {
+    public String deleteFolder(String folderID, User user) throws IllegalAccessException {
         EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(()-> new NoSuchElementException("Folder not found"));
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not allowed to delete this folder");

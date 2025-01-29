@@ -34,6 +34,24 @@ public class EFFolderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/search/{query}")
+    public ResponseEntity<?> searchWithQuery(@PathVariable String query, @AuthenticationPrincipal User user) {
+        try {
+            return ResponseEntity.ok(folderService.searchInAllFolders(query, user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user) {
+        try {
+            return ResponseEntity.ok(folderService.deleteFolder(folderID, user));
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
 
 

@@ -2,7 +2,6 @@ package eckofox.EFbox.fileobjects.effile;
 
 import eckofox.EFbox.fileobjects.effolder.EFFolder;
 import eckofox.EFbox.fileobjects.effolder.EFFolderRepository;
-import eckofox.EFbox.fileobjects.effolder.EFFolderService;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -41,5 +40,16 @@ public class EFFileService {
             throw new IllegalAccessException("You are not allowed to download this file.");
         }
         return EFFileDTO.fromEFFile(efFile);
+    }
+
+    public String deleteFile (String fileID, User user) throws Exception {
+        EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(()-> new NoSuchElementException("File not found"));
+        if (!file.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
+            throw new IllegalAccessException("You are not authorized to access this file.");
+        }
+        String fileName = file.getFileName();
+        file.getParentFolder().getFiles().remove(file);
+        fileRepository.delete(file);
+        return "File \"" + fileName + "\" deleted.";
     }
 }

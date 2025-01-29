@@ -37,7 +37,7 @@ public class JWTService {
         return JWT.create()
                 .withIssuer("auth0")
                 .withSubject(userID.toString())
-                .withExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS))
+                .withExpiresAt(Instant.now().plus(60, ChronoUnit.MINUTES))
                 .sign(algorithm);
     }
 

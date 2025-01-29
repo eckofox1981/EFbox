@@ -1,18 +1,21 @@
 package eckofox.EFbox.fileobjects.effolder;
 
+import eckofox.EFbox.fileobjects.effile.EFFile;
+import eckofox.EFbox.fileobjects.effile.EFFileDTO;
+import eckofox.EFbox.fileobjects.effile.EFFileRepository;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class EFFolderService {
     private EFFolderRepository folderRespository;
+    private EFFileRepository fileRepository;
     private UserService userService;
     private UserRepository userRepository;
 
@@ -44,13 +47,32 @@ public class EFFolderService {
         return EFFolderDTO.fromEFFolder(folder);
     }
 
-    public void searchInAllFolders(String query, User user) {
+    public SearchResponseDTO searchInAllFolders(String query, User user) {
+        Collection<EFFolder> folders = folderRespository.findByNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
+        Collection<EFFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query).orElse(new ArrayList<>());
 
+        SearchResponseDTO responseDTO = new SearchResponseDTO();
+        folders.stream()
+                .map(EFFolderDTO::fromEFFolder)
+                .forEach(folder -> responseDTO.getFolders().add(folder));
+        files.stream()
+                .filter(file -> file.getParentFolder().getUser().getUserID().equals(user.getUserID())) //since files aren't directly connected to their user
+                .map(EFFileDTO::fromEFFile)
+                .forEach(file -> responseDTO.getFiles().add(file));
+        return responseDTO;
     }
 
-    private void searchInFolder(EFFolder folder, String query) {
-
+    public String deleteFolder (String folderID, User user) throws IllegalAccessException {
+        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(()-> new NoSuchElementException("Folder not found"));
+        if (!folder.getUser().getUserID().equals(user.getUserID())) {
+            throw new IllegalAccessException("You are not allowed to delete this folder");
+        }
+        String folderName = folder.getName();
+        folder.getParentFolder().getFolders().remove(folder);
+        folderRespository.delete(folder);
+        return "Folder \"" + folderName + "\" deleted.";
     }
+
 
     private boolean userIsNotFolderOwner(EFFolder folder, User user) {
         if (folder.getUser().getUserID().equals(user.getUserID())) {

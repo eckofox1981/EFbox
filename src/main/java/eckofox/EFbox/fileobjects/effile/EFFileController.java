@@ -2,6 +2,7 @@ package eckofox.EFbox.fileobjects.effile;
 
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,15 @@ public class EFFileController {
             return ResponseEntity.ok(fileService.deleteFile(fileID, user));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/change-name")
+    public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID, @RequestParam String newName) {
+        try {
+            return ResponseEntity.ok(fileService.changeFileName(fileID, newName, user));
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
     }
 }

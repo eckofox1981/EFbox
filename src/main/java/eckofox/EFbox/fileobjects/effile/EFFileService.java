@@ -2,6 +2,7 @@ package eckofox.EFbox.fileobjects.effile;
 
 import eckofox.EFbox.fileobjects.effolder.EFFolder;
 import eckofox.EFbox.fileobjects.effolder.EFFolderRepository;
+import eckofox.EFbox.fileobjects.effolder.EFFolderService;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class EFFileService {
     private final EFFileRepository fileRepository;
     private final EFFolderRepository folderRepository;
+    private final EFFolderService folderService;
 
     public String uploadFile (MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError{
         EFFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID)).orElseThrow();
@@ -51,5 +53,15 @@ public class EFFileService {
         file.getParentFolder().getFiles().remove(file);
         fileRepository.delete(file);
         return "File \"" + fileName + "\" deleted.";
+    }
+
+    public EFFileDTO changeFileName(String fileID, String newName, User user) throws Exception {
+        EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(()-> new NoSuchElementException("File not found."));
+        if (folderService.userIsNotFolderOwner(file.getParentFolder(), user)) {
+            throw new IllegalAccessException("You are not allowed to acces this file");
+        }
+        file.setFilename(newName);
+        fileRepository.save(file);
+        return EFFileDTO.fromEFFile(file);
     }
 }

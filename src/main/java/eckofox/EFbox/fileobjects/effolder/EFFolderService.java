@@ -74,7 +74,7 @@ public class EFFolderService {
     }
 
 
-    private boolean userIsNotFolderOwner(EFFolder folder, User user) {
+    public boolean userIsNotFolderOwner(EFFolder folder, User user) {
         return !folder.getUser().getUserID().equals(user.getUserID());
     }
 }

@@ -73,6 +73,15 @@ public class EFFolderService {
         return "Folder \"" + folderName + "\" deleted.";
     }
 
+    public EFFolderDTO changeFolderName(String folderID, String newName, User user) throws Exception {
+        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(()-> new NoSuchElementException("File not found."));
+        if (userIsNotFolderOwner(folder, user)) {
+            throw new IllegalAccessException("You are not allowed to access this file");
+        }
+        folder.setName(newName);
+        folderRespository.save(folder);
+        return EFFolderDTO.fromEFFolder(folder);
+    }
 
     public boolean userIsNotFolderOwner(EFFolder folder, User user) {
         return !folder.getUser().getUserID().equals(user.getUserID());

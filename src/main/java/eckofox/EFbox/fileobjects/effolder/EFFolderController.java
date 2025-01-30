@@ -47,6 +47,15 @@ public class EFFolderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/change-name")
+    public ResponseEntity<?> changeFolderName(@AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName) {
+        try {
+            return ResponseEntity.ok(folderService.changeFolderName(folderID, newName, user));
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        }
+    }
 }
 
 

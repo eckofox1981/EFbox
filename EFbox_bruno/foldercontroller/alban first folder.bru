@@ -1,0 +1,20 @@
+meta {
+  name: alban first folder
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://localhost:8080/folder/create?folderName=myFirstFolder&parentFolderID=0
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderName: myFirstFolder
+  parentFolderID: 0
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjdlODc4MDUxLTc4OGUtNGRlYi05MjQ2LTRkOTlmOGFiMjFjYyIsImV4cCI6MTczODMyMzIwN30.qbMZDznwy--6YPsOl4q5XQu2l0eGXUEbSvGQdeaWWzk
+}

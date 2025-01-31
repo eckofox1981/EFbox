@@ -1,0 +1,19 @@
+meta {
+  name: alban folder content
+  type: http
+  seq: 12
+}
+
+get {
+  url: http://localhost:8080/folder/browse?folderID=b318b12f-96c6-4920-9f0a-af0707cdeedb
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: b318b12f-96c6-4920-9f0a-af0707cdeedb
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjdlODc4MDUxLTc4OGUtNGRlYi05MjQ2LTRkOTlmOGFiMjFjYyIsImV4cCI6MTczODMyMzIwN30.qbMZDznwy--6YPsOl4q5XQu2l0eGXUEbSvGQdeaWWzk
+}

@@ -1,0 +1,15 @@
+meta {
+  name: zappa Search for file or folder
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:8080/folder/search/folder
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjFlNTIwZjQ3LTgwM2EtNGUxMy05MWIxLTkxODk3MGRmYjVmNCIsImV4cCI6MTczODI0MjgzNH0.VMZ77dybCMbjAl_RdJxYhgXZ0gXYY81qCMA-wczWUr0
+}

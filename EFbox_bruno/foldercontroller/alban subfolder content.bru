@@ -1,0 +1,19 @@
+meta {
+  name: alban subfolder content
+  type: http
+  seq: 13
+}
+
+get {
+  url: http://localhost:8080/folder/browse?folderID=16567693-ecf8-4cb7-869c-da0cd02ebad4
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: 16567693-ecf8-4cb7-869c-da0cd02ebad4
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjdlODc4MDUxLTc4OGUtNGRlYi05MjQ2LTRkOTlmOGFiMjFjYyIsImV4cCI6MTczODMyMzIwN30.qbMZDznwy--6YPsOl4q5XQu2l0eGXUEbSvGQdeaWWzk
+}

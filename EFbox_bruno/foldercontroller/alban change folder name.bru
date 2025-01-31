@@ -1,0 +1,20 @@
+meta {
+  name: alban change folder name
+  type: http
+  seq: 16
+}
+
+put {
+  url: http://localhost:8080/folder/change-name?folderID=4c62f7c9-5347-4cec-9945-2575e73568ec&newName=my fantastic lyrics
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: 4c62f7c9-5347-4cec-9945-2575e73568ec
+  newName: my fantastic lyrics
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjdlODc4MDUxLTc4OGUtNGRlYi05MjQ2LTRkOTlmOGFiMjFjYyIsImV4cCI6MTczODMyMzIwN30.qbMZDznwy--6YPsOl4q5XQu2l0eGXUEbSvGQdeaWWzk
+}

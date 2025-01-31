@@ -1,0 +1,20 @@
+meta {
+  name: Login dr alban
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8080/user/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "Doctor",
+    "firstname": "",
+    "lastname": "",
+    "password": "IlikeToMoveIT1990"
+  }
+}

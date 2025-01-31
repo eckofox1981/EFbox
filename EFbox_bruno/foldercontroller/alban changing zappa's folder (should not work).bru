@@ -1,0 +1,20 @@
+meta {
+  name: alban changing zappa's folder (should not work)
+  type: http
+  seq: 17
+}
+
+put {
+  url: http://localhost:8080/folder/change-name?folderID=09214bf7-087f-4724-9eb9-a376d3e56a72&newName=I am stealing it
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: 09214bf7-087f-4724-9eb9-a376d3e56a72
+  newName: I am stealing it
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjdlODc4MDUxLTc4OGUtNGRlYi05MjQ2LTRkOTlmOGFiMjFjYyIsImV4cCI6MTczODMyMzIwN30.qbMZDznwy--6YPsOl4q5XQu2l0eGXUEbSvGQdeaWWzk
+}

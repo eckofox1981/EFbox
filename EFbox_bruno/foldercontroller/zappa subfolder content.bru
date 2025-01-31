@@ -1,0 +1,19 @@
+meta {
+  name: zappa subfolder content
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:8080/folder/browse?folderID=09214bf7-087f-4724-9eb9-a376d3e56a72
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: 09214bf7-087f-4724-9eb9-a376d3e56a72
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjFlNTIwZjQ3LTgwM2EtNGUxMy05MWIxLTkxODk3MGRmYjVmNCIsImV4cCI6MTczODI0MjgzNH0.VMZ77dybCMbjAl_RdJxYhgXZ0gXYY81qCMA-wczWUr0
+}

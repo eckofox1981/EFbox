@@ -1,0 +1,19 @@
+meta {
+  name: zappa text file
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8080/file/download?fileID=6ea85a92-4e30-4ac7-afcf-07d70de69b0b
+  body: none
+  auth: bearer
+}
+
+params:query {
+  fileID: 6ea85a92-4e30-4ac7-afcf-07d70de69b0b
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjFlNTIwZjQ3LTgwM2EtNGUxMy05MWIxLTkxODk3MGRmYjVmNCIsImV4cCI6MTczODE2MjgyNH0.MrRy-_Z0taBXp7pi_I8NtAWTs7IYiBSXd5zAxmGlxpg
+}

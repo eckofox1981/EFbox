@@ -21,6 +21,15 @@ public class EFFileService {
     private final EFFolderRepository folderRepository;
     private final EFFolderService folderService;
 
+    /**
+     * uploads file to a folder
+     * @param file to be uploaded
+     * @param user to check access rights
+     * @param parentFolderID where file will be saved and to check access rights
+     * @return message
+     * @throws IOException
+     * @throws IllegalAccessError
+     */
     public String uploadFile(MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError {
         EFFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID)).orElseThrow();
         System.out.println("DEBUG uploadfile service: folder user: " + parentFolder.getUser().getUsername());
@@ -36,6 +45,13 @@ public class EFFileService {
         }
     }
 
+    /**
+     * gets file to be downloaded
+     * @param fileID to find file
+     * @param user to check access rights
+     * @return file dto
+     * @throws IllegalAccessException
+     */
     public EFFileDTO getFile(String fileID, User user) throws IllegalAccessException {
         EFFile efFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!user.getUserID().equals(efFile.getParentFolder().getUser().getUserID())) {
@@ -44,6 +60,13 @@ public class EFFileService {
         return EFFileDTO.fromEFFile(efFile);
     }
 
+    /**
+     * deltes file
+     * @param fileID to find file
+     * @param user to check access rights
+     * @return file dto
+     * @throws Exception
+     */
     public String deleteFile(String fileID, User user) throws Exception {
         EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!file.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
@@ -55,6 +78,14 @@ public class EFFileService {
         return "File \"" + fileName + "\" deleted.";
     }
 
+    /**
+     * changes the name of the EFFile
+     * @param fileID to find file
+     * @param newName self-explanatory
+     * @param user to check access rights
+     * @return update file dto
+     * @throws Exception
+     */
     public EFFileDTO changeFileName(String fileID, String newName, User user) throws Exception {
         EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found."));
         if (folderService.userIsNotFolderOwner(file.getParentFolder(), user)) {

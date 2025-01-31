@@ -14,6 +14,11 @@ public class EFFileDTO {
     private String type;
     private String parentFolder;
 
+    /**
+     * converts model to dto
+     * @param efFile to be converted
+     * @return dto
+     */
     public static EFFileDTO fromEFFile(EFFile efFile) {
         return new EFFileDTO(
                 efFile.getFileID(),

@@ -10,6 +10,10 @@ import java.util.UUID;
 
 @Repository
 public interface EFFileRepository extends JpaRepository<EFFile, UUID> {
+
+    /**
+     * custom query since I couldn't find inbuild query (easier)
+     */
     //NOTE: ILIKE is postgres specific in spring
     @Query(value = "SELECT * FROM files WHERE filename ILIKE %?1%", nativeQuery = true)
     Optional<Collection<EFFile>> findByFilenameContainingIgnoreCaseWithUserID(String pattern);

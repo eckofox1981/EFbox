@@ -14,7 +14,7 @@ public class EFFolderDTO {
     private String name;
     private List<String> folderNames;
     private List<String> fileNames;
-    
+
     public static EFFolderDTO fromEFFolder(EFFolder folder) {
         return new EFFolderDTO(
                 folder.getFolderID(),

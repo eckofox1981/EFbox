@@ -34,7 +34,7 @@ public class UserController {
 
     //PUT login user
     @PutMapping("/login")
-    public ResponseEntity<?> login (@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         try {
             return ResponseEntity.ok(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
         } catch (LoginException e) {
@@ -54,14 +54,13 @@ public class UserController {
 
     //DELETE user account and relevant data
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser (@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
             return ResponseEntity.ok().body(userservice.deleteUser(user));
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());
         }
     }
-
 
 
     @AllArgsConstructor
@@ -74,7 +73,7 @@ public class UserController {
         private String lastname;
         private List<String> efFolderNames;
 
-        public static NoPasswordUserDTO fromUser (User user){
+        public static NoPasswordUserDTO fromUser(User user) {
             List<String> folderNames = new ArrayList<>();
             if (user.getRootFolder() == null || user.getRootFolder().isEmpty()) {
                 folderNames.add("EMPTY");
@@ -94,6 +93,7 @@ public class UserController {
     }
 
 }
+
 //UserDTO?
 @AllArgsConstructor
 @NoArgsConstructor
@@ -104,7 +104,7 @@ class UserDTO {
     private String lastname;
     private String password;
 
-    public UserDTO (String username, String password) {
+    public UserDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }

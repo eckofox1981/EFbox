@@ -18,7 +18,7 @@ public class EFFileController {
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
-            @RequestParam String parentID) {
+                                        @RequestParam String parentID) {
         try {
             return ResponseEntity.ok(fileService.uploadFile(file, user, parentID));
         } catch (Exception e) {
@@ -27,7 +27,7 @@ public class EFFileController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<?> downloadFile(@RequestParam String fileID, @AuthenticationPrincipal User user){
+    public ResponseEntity<?> downloadFile(@RequestParam String fileID, @AuthenticationPrincipal User user) {
         try {
             EFFileDTO file = fileService.getFile(fileID, user);
             byte[] fileContent = file.getContent();

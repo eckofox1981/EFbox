@@ -14,7 +14,7 @@ public class EFFileDTO {
     private String type;
     private String parentFolder;
 
-    public static EFFileDTO fromEFFile(EFFile efFile){
+    public static EFFileDTO fromEFFile(EFFile efFile) {
         return new EFFileDTO(
                 efFile.getFileID(),
                 efFile.getFileName(),

@@ -25,7 +25,7 @@ public class JWTService {
     private final JWTVerifier verifier;
 
     @Autowired
-    public JWTService () {
+    public JWTService() {
         this.secretString = setSecretString();
         this.algorithm = Algorithm.HMAC256(secretString);
         this.verifier = JWT.require(algorithm)

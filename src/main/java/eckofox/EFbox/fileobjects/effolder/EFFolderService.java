@@ -28,7 +28,7 @@ public class EFFolderService {
 
         EFFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
 
-        if (userIsNotFolderOwner(parentFolder, user)){
+        if (userIsNotFolderOwner(parentFolder, user)) {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
 
@@ -40,7 +40,7 @@ public class EFFolderService {
 
     public EFFolderDTO seeFolderContent(String folderID, User user) throws IllegalAccessException {
         EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
-        if (userIsNotFolderOwner(folder, user)){
+        if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
 
@@ -63,7 +63,7 @@ public class EFFolderService {
     }
 
     public String deleteFolder(String folderID, User user) throws IllegalAccessException {
-        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(()-> new NoSuchElementException("Folder not found"));
+        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not allowed to delete this folder");
         }
@@ -74,7 +74,7 @@ public class EFFolderService {
     }
 
     public EFFolderDTO changeFolderName(String folderID, String newName, User user) throws Exception {
-        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(()-> new NoSuchElementException("File not found."));
+        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("File not found."));
         if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not allowed to access this file");
         }

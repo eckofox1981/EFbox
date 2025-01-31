@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 @NoArgsConstructor
 @Data
 public class SearchResponseDTO {

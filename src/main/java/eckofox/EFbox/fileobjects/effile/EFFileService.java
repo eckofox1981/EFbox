@@ -21,11 +21,11 @@ public class EFFileService {
     private final EFFolderRepository folderRepository;
     private final EFFolderService folderService;
 
-    public String uploadFile (MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError{
+    public String uploadFile(MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError {
         EFFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID)).orElseThrow();
         System.out.println("DEBUG uploadfile service: folder user: " + parentFolder.getUser().getUsername());
-        if (!user.equals(parentFolder.getUser())){
-            throw new IllegalAccessError ("You are not authorized to upload a file to this folder");
+        if (!user.equals(parentFolder.getUser())) {
+            throw new IllegalAccessError("You are not authorized to upload a file to this folder");
         }
         try {
             EFFile efFile = new EFFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
@@ -44,8 +44,8 @@ public class EFFileService {
         return EFFileDTO.fromEFFile(efFile);
     }
 
-    public String deleteFile (String fileID, User user) throws Exception {
-        EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(()-> new NoSuchElementException("File not found"));
+    public String deleteFile(String fileID, User user) throws Exception {
+        EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!file.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not authorized to access this file.");
         }
@@ -56,7 +56,7 @@ public class EFFileService {
     }
 
     public EFFileDTO changeFileName(String fileID, String newName, User user) throws Exception {
-        EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(()-> new NoSuchElementException("File not found."));
+        EFFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found."));
         if (folderService.userIsNotFolderOwner(file.getParentFolder(), user)) {
             throw new IllegalAccessException("You are not allowed to acces this file");
         }

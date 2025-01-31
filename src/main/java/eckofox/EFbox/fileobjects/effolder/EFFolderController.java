@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 public class EFFolderController {
     private EFFolderService folderService;
 
+    /**
+     * all methods sends to EFFolderService which returns accordingly
+     */
+
     @PostMapping("/create")
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user, @RequestParam String parentFolderID) {
         try {

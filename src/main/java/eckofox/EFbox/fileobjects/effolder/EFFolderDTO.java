@@ -15,6 +15,11 @@ public class EFFolderDTO {
     private List<String> folderNames;
     private List<String> fileNames;
 
+    /**
+     * converts model to DTO
+     * @param folder to be converted
+     * @return folder dto
+     */
     public static EFFolderDTO fromEFFolder(EFFolder folder) {
         return new EFFolderDTO(
                 folder.getFolderID(),

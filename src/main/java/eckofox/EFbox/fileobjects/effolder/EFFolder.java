@@ -41,9 +41,6 @@ public class EFFolder {
         this.user = user;
     }
 
-    public String getName(EFFolder efFolder) {
-        return efFolder.getName();
-    }
 }
 
 

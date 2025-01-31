@@ -12,6 +12,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * class not very different from what has been taught in the course
+ */
+
 @AllArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
     private final UserService userService;

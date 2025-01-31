@@ -17,6 +17,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+/**
+ * class not very different from what has been taught in the course
+ */
+
 @Component
 @Data
 public class JWTService {
@@ -47,7 +51,10 @@ public class JWTService {
         return UUID.fromString(idString);
     }
 
-
+    /**
+     * fetches secret string in separate text file that (in theory) should not be share on git hub. Shared here for simplicity
+     * @return secret string for algorithm
+     */
     private String setSecretString() {
         File file = new File("./src/main/resources/secret.txt");
 

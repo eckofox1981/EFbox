@@ -6,6 +6,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+/**
+ * prepared class to be used if I have time to try and make a frontend website
+ */
 @Configuration
 public class GlobalCorsConfig {
 

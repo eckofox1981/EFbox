@@ -21,7 +21,12 @@ import java.util.UUID;
 public class UserController {
     private final UserService userservice;
 
-    //POST create user
+
+    /**
+     * creates user
+     * @param userDTO
+     * @return NoPasswordDTO
+     */
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
         try {
@@ -32,7 +37,11 @@ public class UserController {
         }
     }
 
-    //PUT login user
+    /**
+     * logs user
+     * @param userDTO
+     * @return token
+     */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         try {
@@ -43,6 +52,11 @@ public class UserController {
 
     }
 
+    /**
+     * shows the user info based on its token
+     * @param user
+     * @return
+     */
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {
@@ -52,7 +66,11 @@ public class UserController {
         }
     }
 
-    //DELETE user account and relevant data
+    /**
+     * deletes account based on token
+     * @param user based on token
+     * @return
+     */
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
@@ -62,7 +80,9 @@ public class UserController {
         }
     }
 
-
+    /**
+     * NoPasswordDTO for user DTO not showing password and displaying user's folders
+     */
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
@@ -73,6 +93,11 @@ public class UserController {
         private String lastname;
         private List<String> efFolderNames;
 
+        /**
+         * converts user to user dto (no password)
+         * @param user to be converted
+         * @return NopassWordUserDTO
+         */
         public static NoPasswordUserDTO fromUser(User user) {
             List<String> folderNames = new ArrayList<>();
             if (user.getRootFolder() == null || user.getRootFolder().isEmpty()) {

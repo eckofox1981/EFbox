@@ -23,9 +23,9 @@ public class UserController {
 
 
     /**
-     * creates user
+     * sends request to Service
      * @param userDTO
-     * @return NoPasswordDTO
+     * @return NoPasswordDTO or error
      */
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
@@ -38,9 +38,9 @@ public class UserController {
     }
 
     /**
-     * logs user
+     * sends request to Service
      * @param userDTO
-     * @return token
+     * @return token or error
      */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
@@ -53,9 +53,9 @@ public class UserController {
     }
 
     /**
-     * shows the user info based on its token
+     * sends request to Service
      * @param user
-     * @return
+     * @return or error
      */
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
@@ -67,9 +67,9 @@ public class UserController {
     }
 
     /**
-     * deletes account based on token
+     * sends request to Service
      * @param user based on token
-     * @return
+     * @return message or error
      */
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {

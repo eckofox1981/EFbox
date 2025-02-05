@@ -1,4 +1,4 @@
-package eckofox.EFbox.fileobjects.effolder;
+package eckofox.EFbox.fileobjects.efboxfolder;
 
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/folder")
-public class EFFolderController {
-    private EFFolderService folderService;
+public class EFBoxFolderController {
+    private EFBoxFolderService folderService;
 
     /**
-     * all methods sends to EFFolderService which returns accordingly
+     * all methods sends to EFBoxFolderService which returns accordingly
      */
 
     @PostMapping("/create")

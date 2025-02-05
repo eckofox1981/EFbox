@@ -1,8 +1,7 @@
-package eckofox.EFbox.fileobjects.effile;
+package eckofox.EFbox.fileobjects.efboxfile;
 
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/file")
 @AllArgsConstructor
-public class EFFileController {
-    private EFFileService fileService;
+public class EFBoxFileController {
+    private EFBoxFileService fileService;
 
 
     /**
@@ -43,7 +42,7 @@ public class EFFileController {
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(@RequestParam String fileID, @AuthenticationPrincipal User user) {
         try {
-            EFFileDTO file = fileService.getFile(fileID, user);
+            EFBoxFileDTO file = fileService.getFile(fileID, user);
             byte[] fileContent = file.getContent();
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(file.getType()))

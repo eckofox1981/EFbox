@@ -1,6 +1,6 @@
 package eckofox.EFbox.user;
 
-import eckofox.EFbox.fileobjects.effolder.EFFolder;
+import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @Column
     private final String password;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private final List<EFFolder> RootFolder;
+    private final List<EFBoxFolder> RootFolder;
 
     public User(UUID userID, String username, String firstName, String lastName, String password) {
         this.userID = userID;

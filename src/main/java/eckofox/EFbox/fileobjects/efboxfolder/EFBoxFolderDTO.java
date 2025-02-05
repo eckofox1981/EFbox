@@ -1,6 +1,6 @@
-package eckofox.EFbox.fileobjects.effolder;
+package eckofox.EFbox.fileobjects.efboxfolder;
 
-import eckofox.EFbox.fileobjects.effile.EFFile;
+import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Data
-public class EFFolderDTO {
+public class EFBoxFolderDTO {
     private UUID folderID;
     private String name;
     private List<String> folderNames;
@@ -20,17 +20,17 @@ public class EFFolderDTO {
      * @param folder to be converted
      * @return folder dto
      */
-    public static EFFolderDTO fromEFFolder(EFFolder folder) {
-        return new EFFolderDTO(
+    public static EFBoxFolderDTO fromEFFolder(EFBoxFolder folder) {
+        return new EFBoxFolderDTO(
                 folder.getFolderID(),
                 folder.getName(),
                 folder.getFolders()
                         .stream()
-                        .map(EFFolder::getName)
+                        .map(EFBoxFolder::getName)
                         .toList(),
                 folder.getFiles()
                         .stream()
-                        .map(EFFile::getFileName)
+                        .map(EFBoxFile::getFileName)
                         .toList()
         );
     }

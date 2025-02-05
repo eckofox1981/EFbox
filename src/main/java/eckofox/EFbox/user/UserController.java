@@ -1,6 +1,6 @@
 package eckofox.EFbox.user;
 
-import eckofox.EFbox.fileobjects.effolder.EFFolder;
+import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -105,7 +105,7 @@ public class UserController {
             } else {
                 folderNames = user.getRootFolder()
                         .stream()
-                        .map(EFFolder::getName)
+                        .map(EFBoxFolder::getName)
                         .toList();
             }
             return new NoPasswordUserDTO(

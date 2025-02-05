@@ -1,6 +1,6 @@
-package eckofox.EFbox.fileobjects.effile;
+package eckofox.EFbox.fileobjects.efboxfile;
 
-import eckofox.EFbox.fileobjects.effolder.EFFolder;
+import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class EFFile {
+public class EFBoxFile {
     @Id
     private UUID fileID;
     @Column
@@ -25,7 +25,7 @@ public class EFFile {
     @Column
     private String type;
     @ManyToOne
-    private EFFolder parentFolder;
+    private EFBoxFolder parentFolder;
 
     public String getFileName() {
         return filename;

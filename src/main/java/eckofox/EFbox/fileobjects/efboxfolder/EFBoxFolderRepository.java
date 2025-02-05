@@ -1,4 +1,4 @@
-package eckofox.EFbox.fileobjects.effolder;
+package eckofox.EFbox.fileobjects.efboxfolder;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,11 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface EFFolderRepository extends JpaRepository<EFFolder, UUID> {
+public interface EFBoxFolderRepository extends JpaRepository<EFBoxFolder, UUID> {
 
     /**
      * custom query since I couldn't find inbuild query (easier)
      */
     @Query(value = "SELECT * FROM folders WHERE name ILIKE %?1% AND user_userid = ?2", nativeQuery = true)
-    Optional<Collection<EFFolder>> findByNameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
+    Optional<Collection<EFBoxFolder>> findByNameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
 }

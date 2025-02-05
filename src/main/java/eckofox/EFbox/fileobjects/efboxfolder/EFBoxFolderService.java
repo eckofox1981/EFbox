@@ -1,8 +1,8 @@
-package eckofox.EFbox.fileobjects.effolder;
+package eckofox.EFbox.fileobjects.efboxfolder;
 
-import eckofox.EFbox.fileobjects.effile.EFFile;
-import eckofox.EFbox.fileobjects.effile.EFFileDTO;
-import eckofox.EFbox.fileobjects.effile.EFFileRepository;
+import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
+import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileDTO;
+import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileRepository;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserService;
@@ -13,17 +13,17 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class EFFolderService {
-    private EFFolderRepository folderRespository;
-    private EFFileRepository fileRepository;
+public class EFBoxFolderService {
+    private EFBoxFolderRepository folderRespository;
+    private EFBoxFileRepository fileRepository;
     private UserService userService;
     private UserRepository userRepository;
 
     /**
-     * creates EFFolder, if in "root folder" (User.EFFolder.rootfolder) the parentID is set to "0" and the folder is
+     * creates EFBoxFolder, if in "root folder" (User.EFBoxFolder.rootfolder) the parentID is set to "0" and the folder is
      * created directly in the arrayList. parent_folderid will show blank in database.
      * @param folderName to be set
-     * @param user if root folder -> to add the folder to User.EFFolder.rootfolder else -> check for access rights
+     * @param user if root folder -> to add the folder to User.EFBoxFolder.rootfolder else -> check for access rights
      * @param parentFolderID -> to set parent folder
      * @return message
      * @throws IllegalAccessException
@@ -31,18 +31,18 @@ public class EFFolderService {
      */
     public String createFolder(String folderName, User user, String parentFolderID) throws IllegalAccessException, NoSuchElementException {
         if (parentFolderID.equals("0")) {
-            EFFolder folder = new EFFolder(UUID.randomUUID(), folderName, user);
+            EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, user);
             folderRespository.save(folder);
             return folder.getName() + " created at root level";
         }
 
-        EFFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
+        EFBoxFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
 
         if (userIsNotFolderOwner(parentFolder, user)) {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
 
-        EFFolder folder = new EFFolder(UUID.randomUUID(), folderName, parentFolder, user);
+        EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, parentFolder, user);
         folderRespository.save(folder);
 
         return "Folder \"" + folder.getName() + "\" saved in parent folder \"" + parentFolder.getName() + "\"";
@@ -55,13 +55,13 @@ public class EFFolderService {
      * @return folder dto
      * @throws IllegalAccessException
      */
-    public EFFolderDTO seeFolderContent(String folderID, User user) throws IllegalAccessException {
-        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
+    public EFBoxFolderDTO seeFolderContent(String folderID, User user) throws IllegalAccessException {
+        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
         if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
 
-        return EFFolderDTO.fromEFFolder(folder);
+        return EFBoxFolderDTO.fromEFFolder(folder);
     }
 
     /**
@@ -71,16 +71,16 @@ public class EFFolderService {
      * @return searchresponseDTO (list of folder and list of files)
      */
     public SearchResponseDTO searchInAllFolders(String query, User user) {
-        Collection<EFFolder> folders = folderRespository.findByNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
-        Collection<EFFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query).orElse(new ArrayList<>());
+        Collection<EFBoxFolder> folders = folderRespository.findByNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
+        Collection<EFBoxFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query).orElse(new ArrayList<>());
 
         SearchResponseDTO responseDTO = new SearchResponseDTO();
         folders.stream()
-                .map(EFFolderDTO::fromEFFolder)
+                .map(EFBoxFolderDTO::fromEFFolder)
                 .forEach(folder -> responseDTO.getFolders().add(folder));
         files.stream()
                 .filter(file -> userIsNotFolderOwner(file.getParentFolder(), user)) //since files aren't directly connected to their user
-                .map(EFFileDTO::fromEFFile)
+                .map(EFBoxFileDTO::fromEFFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
         return responseDTO;
     }
@@ -93,7 +93,7 @@ public class EFFolderService {
      * @throws IllegalAccessException
      */
     public String deleteFolder(String folderID, User user) throws IllegalAccessException {
-        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
+        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not allowed to delete this folder");
         }
@@ -111,25 +111,25 @@ public class EFFolderService {
      * @return updated folder dto
      * @throws Exception
      */
-    public EFFolderDTO changeFolderName(String folderID, String newName, User user) throws Exception {
-        EFFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("File not found."));
+    public EFBoxFolderDTO changeFolderName(String folderID, String newName, User user) throws Exception {
+        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("File not found."));
         if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not allowed to access this file");
         }
         folder.setName(newName);
         folderRespository.save(folder);
-        return EFFolderDTO.fromEFFolder(folder);
+        return EFBoxFolderDTO.fromEFFolder(folder);
     }
 
     /**
-     * checks user access right to folder. Made public since accessed in EFFileService (through injection) where the
+     * checks user access right to folder. Made public since accessed in EFBoxFileService (through injection) where the
      * parent folder is checked before accessing a file. "Inverted boolean" since more logical that way when using the method
      * see usage line 116 above
      * @param folder of user
      * @param user of folder
      * @return boolean
      */
-    public boolean userIsNotFolderOwner(EFFolder folder, User user) {
+    public boolean userIsNotFolderOwner(EFBoxFolder folder, User user) {
         return !folder.getUser().getUserID().equals(user.getUserID());
     }
 }

@@ -20,7 +20,7 @@ public class UserService implements UserDetailsService {
     private final PasswordConfig passwordConfig;
 
     /**
-     * creates a user based a UserDTO
+     * creates a user based on a UserDTO
      * checks password format
      * @param userDTO to be saved in database and instantiated as actual User
      * @return NopasswordUserDTO

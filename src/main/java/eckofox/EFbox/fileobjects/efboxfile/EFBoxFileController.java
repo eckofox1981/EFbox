@@ -17,8 +17,9 @@ public class EFBoxFileController {
 
 
     /**
+     * receives the request and passes it to Service
      * @param file spring's multipartfile format for practical handling
-     * @param user used later to check access to folder
+     * @param user used later to check access to folder in Service
      * @param parentID where the file will be saved
      * @return message
      */
@@ -33,10 +34,9 @@ public class EFBoxFileController {
     }
 
     /**
-     * to make it work I had to chaeat a bit on the "communication only" part of the controller since I have to convert
-     * the file content before sending it as a response entity
+     * receives the request and passes it to Service
      * @param fileID to find the file in the database
-     * @param user to check for Illegal access
+     * @param user to check for Illegal access in Service
      * @return the file requested or an error message
      */
     @GetMapping("/download")
@@ -54,8 +54,9 @@ public class EFBoxFileController {
     }
 
     /**
+     * receives the request and passes it to Service
      * @param fileID to be erased
-     * @param user checks access rights
+     * @param user checks access rights in Service
      * @return message
      */
     @DeleteMapping("/delete")
@@ -68,7 +69,8 @@ public class EFBoxFileController {
     }
 
     /**
-     * @param user for access rights
+     * receives the request and passes it to Service
+     * @param user for access rights in Service
      * @param fileID to be renamed
      * @param newName self-explanatory
      * @return FileDTO

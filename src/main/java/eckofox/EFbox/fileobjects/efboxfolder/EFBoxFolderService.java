@@ -91,15 +91,16 @@ public class EFBoxFolderService {
      * @return message
      * @throws IllegalAccessException
      */
-    public String deleteFolder(String folderID, User user) throws IllegalAccessException {
+    public EFBoxFolder deleteFolder(String folderID, User user) throws IllegalAccessException {
         EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
+
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not allowed to delete this folder");
         }
-        String folderName = folder.getName();
+
         folder.getParentFolder().getFolders().remove(folder);
         folderRespository.delete(folder);
-        return "Folder \"" + folderName + "\" deleted.";
+        return folder;
     }
 
     /**

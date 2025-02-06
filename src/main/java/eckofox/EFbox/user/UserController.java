@@ -120,7 +120,9 @@ public class UserController {
 
 }
 
-//UserDTO?
+/**
+ * only used for account creation and login (input json will not use firstname and lastname)
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

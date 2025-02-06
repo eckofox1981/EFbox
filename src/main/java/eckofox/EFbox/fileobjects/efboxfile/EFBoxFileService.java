@@ -67,15 +67,15 @@ public class EFBoxFileService {
      * @return file dto
      * @throws Exception
      */
-    public String deleteFile(String fileID, User user) throws Exception {
-        EFBoxFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
-        if (!file.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
-            throw new IllegalAccessException("You are not authorized to access this file.");
+    public EFBoxFile deleteFile(String fileID, User user) throws Exception {
+        EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
+        if (!efBoxFile.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
+            throw new IllegalAccessException("You are not authorized to access this efBoxFile.");
         }
-        String fileName = file.getFileName();
-        file.getParentFolder().getFiles().remove(file);
-        fileRepository.delete(file);
-        return "File \"" + fileName + "\" deleted.";
+        String fileName = efBoxFile.getFileName();
+        efBoxFile.getParentFolder().getFiles().remove(efBoxFile);
+        fileRepository.delete(efBoxFile);
+        return efBoxFile;
     }
 
     /**

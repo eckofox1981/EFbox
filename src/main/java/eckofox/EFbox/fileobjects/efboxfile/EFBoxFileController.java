@@ -63,7 +63,7 @@ public class EFBoxFileController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(@RequestParam String fileID, @AuthenticationPrincipal User user) {
         try {
-            return ResponseEntity.ok(fileService.deleteFile(fileID, user));
+            return ResponseEntity.ok(fileService.deleteFile(fileID, user).getFileName() + " deleted.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

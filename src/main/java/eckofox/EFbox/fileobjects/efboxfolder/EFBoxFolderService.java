@@ -25,7 +25,7 @@ public class EFBoxFolderService {
      * @param folderName to be set
      * @param user if root folder -> to add the folder to User.EFBoxFolder.rootfolder else -> check for access rights
      * @param parentFolderID -> to set parent folder (set to 0 if root, the list is initialized during user account creation)
-     * @return message
+     * @return created folder
      * @throws IllegalAccessException
      * @throws NoSuchElementException
      */
@@ -48,19 +48,19 @@ public class EFBoxFolderService {
     }
 
     /**
-     * show content of folder (EFFolders or EFFIles)
+     * show content of folder (EFBoxFolders or EFBoxFiles)
      * @param folderID of folder to be shown
      * @param user to check access rights
      * @return folder dto
      * @throws IllegalAccessException
      */
-    public EFBoxFolderDTO seeFolderContent(String folderID, User user) throws IllegalAccessException {
+    public EFBoxFolder seeFolderContent(String folderID, User user) throws IllegalAccessException {
         EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
         if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
 
-        return EFBoxFolderDTO.fromEFBoxFolder(folder);
+        return folder;
     }
 
     /**

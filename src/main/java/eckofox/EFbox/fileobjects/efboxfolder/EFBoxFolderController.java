@@ -14,6 +14,7 @@ public class EFBoxFolderController {
 
     /**
      * all methods send to EFBoxFolderService which returns accordingly
+     * @param user will be used to check access rights in Service
      */
 
     @PostMapping("/create")
@@ -29,7 +30,8 @@ public class EFBoxFolderController {
     @GetMapping("/browse")
     public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user) {
         try {
-            return ResponseEntity.ok(folderService.seeFolderContent(folderID, user));
+            EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
+            return ResponseEntity.ok(efBoxFolderDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

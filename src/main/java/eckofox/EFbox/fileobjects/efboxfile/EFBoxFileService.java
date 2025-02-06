@@ -22,7 +22,7 @@ public class EFBoxFileService {
     private final EFBoxFolderService folderService;
 
     /**
-     * uploads file to a folder
+     * uploads file to a folder (adds it to list EFBoxFolder.files)
      * @param file to be uploaded
      * @param user to check access rights
      * @param parentFolderID where file will be saved and to check access rights
@@ -30,7 +30,7 @@ public class EFBoxFileService {
      * @throws IOException
      * @throws IllegalAccessError
      */
-    public String uploadFile(MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError {
+    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError {
         EFBoxFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID)).orElseThrow();
         System.out.println("DEBUG uploadfile service: folder user: " + parentFolder.getUser().getUsername());
         if (!user.equals(parentFolder.getUser())) {
@@ -39,7 +39,7 @@ public class EFBoxFileService {
         try {
             EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
             fileRepository.save(efBoxFile);
-            return "File: " + efBoxFile.getFileName() + " saved in " + parentFolder.getName();
+            return efBoxFile;
         } catch (IOException e) {
             throw new IOException(e.getMessage());
         }

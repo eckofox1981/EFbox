@@ -27,7 +27,8 @@ public class EFBoxFileController {
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
                                         @RequestParam String parentID) {
         try {
-            return ResponseEntity.ok(fileService.uploadFile(file, user, parentID));
+            EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
+            return ResponseEntity.ok("File " + efBoxfile.getFileName() + " uploaded to " + efBoxfile.getParentFolder().getName() + ".");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -26,7 +26,8 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * checks which endpoints need security filter
+     * checks which endpoints need security filter, only account creation and login are public. All other functions require
+     * authentication. Ownership of files and folders is checked in various service method.
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

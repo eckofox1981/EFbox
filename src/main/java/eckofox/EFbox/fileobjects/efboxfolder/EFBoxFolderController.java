@@ -1,10 +1,19 @@
 package eckofox.EFbox.fileobjects.efboxfolder;
 
+import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
+import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileDTO;
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -63,6 +72,43 @@ public class EFBoxFolderController {
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
+    }
+
+    @AllArgsConstructor
+    @Data
+    public class EFBoxFolderDTO {
+        private UUID folderID;
+        private String name;
+        private List<String> folderNames;
+        private List<String> fileNames;
+
+        /**
+         * converts model to DTO
+         *
+         * @param folder to be converted
+         * @return folder dto
+         */
+        public EFBoxFolderDTO fromEFBoxFolder(EFBoxFolder folder) {
+            return new EFBoxFolderDTO(
+                    folder.getFolderID(),
+                    folder.getName(),
+                    folder.getFolders()
+                            .stream()
+                            .map(EFBoxFolder::getName)
+                            .toList(),
+                    folder.getFiles()
+                            .stream()
+                            .map(EFBoxFile::getFileName)
+                            .toList()
+            );
+        }
+    }
+
+    @NoArgsConstructor
+    @Data
+    class SearchResponseDTO {
+        private Collection<EFBoxFolderDTO> folders = new ArrayList<>();
+        private Collection<EFBoxFileDTO> files = new ArrayList<>();
     }
 }
 

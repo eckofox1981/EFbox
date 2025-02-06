@@ -19,7 +19,7 @@ public class EFBoxFileDTO {
      * @param efBoxFile to be converted
      * @return dto
      */
-    public static EFBoxFileDTO fromEFFile(EFBoxFile efBoxFile) {
+    public static EFBoxFileDTO fromEFBoxFile(EFBoxFile efBoxFile) {
         return new EFBoxFileDTO(
                 efBoxFile.getFileID(),
                 efBoxFile.getFileName(),

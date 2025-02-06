@@ -93,6 +93,6 @@ public class EFBoxFileService {
         }
         file.setFilename(newName);
         fileRepository.save(file);
-        return EFBoxFileDTO.fromEFFile(file);
+        return EFBoxFileDTO.fromEFBoxFile(file);
     }
 }

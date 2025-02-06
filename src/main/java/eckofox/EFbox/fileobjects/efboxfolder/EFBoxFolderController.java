@@ -13,13 +13,14 @@ public class EFBoxFolderController {
     private EFBoxFolderService folderService;
 
     /**
-     * all methods sends to EFBoxFolderService which returns accordingly
+     * all methods send to EFBoxFolderService which returns accordingly
      */
 
     @PostMapping("/create")
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user, @RequestParam String parentFolderID) {
         try {
-            return ResponseEntity.ok().body(folderService.createFolder(folderName, user, parentFolderID));
+            EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
+            return ResponseEntity.ok().body(efBoxFolderDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

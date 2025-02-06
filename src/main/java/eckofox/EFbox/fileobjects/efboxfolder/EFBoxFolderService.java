@@ -24,16 +24,15 @@ public class EFBoxFolderService {
      * created directly in the arrayList. parent_folderid will show blank in database.
      * @param folderName to be set
      * @param user if root folder -> to add the folder to User.EFBoxFolder.rootfolder else -> check for access rights
-     * @param parentFolderID -> to set parent folder
+     * @param parentFolderID -> to set parent folder (set to 0 if root, the list is initialized during user account creation)
      * @return message
      * @throws IllegalAccessException
      * @throws NoSuchElementException
      */
-    public String createFolder(String folderName, User user, String parentFolderID) throws IllegalAccessException, NoSuchElementException {
+    public EFBoxFolder createFolder(String folderName, User user, String parentFolderID) throws IllegalAccessException, NoSuchElementException {
         if (parentFolderID.equals("0")) {
             EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, user);
-            folderRespository.save(folder);
-            return folder.getName() + " created at root level";
+            return folderRespository.save(folder);
         }
 
         EFBoxFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
@@ -43,9 +42,9 @@ public class EFBoxFolderService {
         }
 
         EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, parentFolder, user);
-        folderRespository.save(folder);
 
-        return "Folder \"" + folder.getName() + "\" saved in parent folder \"" + parentFolder.getName() + "\"";
+
+        return folderRespository.save(folder);
     }
 
     /**
@@ -61,7 +60,7 @@ public class EFBoxFolderService {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
 
-        return EFBoxFolderDTO.fromEFFolder(folder);
+        return EFBoxFolderDTO.fromEFBoxFolder(folder);
     }
 
     /**
@@ -76,11 +75,11 @@ public class EFBoxFolderService {
 
         SearchResponseDTO responseDTO = new SearchResponseDTO();
         folders.stream()
-                .map(EFBoxFolderDTO::fromEFFolder)
+                .map(EFBoxFolderDTO::fromEFBoxFolder)
                 .forEach(folder -> responseDTO.getFolders().add(folder));
         files.stream()
                 .filter(file -> userIsNotFolderOwner(file.getParentFolder(), user)) //since files aren't directly connected to their user
-                .map(EFBoxFileDTO::fromEFFile)
+                .map(EFBoxFileDTO::fromEFBoxFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
         return responseDTO;
     }
@@ -118,7 +117,7 @@ public class EFBoxFolderService {
         }
         folder.setName(newName);
         folderRespository.save(folder);
-        return EFBoxFolderDTO.fromEFFolder(folder);
+        return EFBoxFolderDTO.fromEFBoxFolder(folder);
     }
 
     /**

@@ -20,7 +20,7 @@ public class EFBoxFolderDTO {
      * @param folder to be converted
      * @return folder dto
      */
-    public static EFBoxFolderDTO fromEFFolder(EFBoxFolder folder) {
+    public static EFBoxFolderDTO fromEFBoxFolder(EFBoxFolder folder) {
         return new EFBoxFolderDTO(
                 folder.getFolderID(),
                 folder.getName(),

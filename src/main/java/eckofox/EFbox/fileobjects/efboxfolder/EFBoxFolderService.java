@@ -104,21 +104,21 @@ public class EFBoxFolderService {
     }
 
     /**
-     * changes the name of the folder
+     * looks for the folder in the database and if found changes its name
      * @param folderID to find folder
      * @param newName self-explanatory
      * @param user to check for access-right
      * @return updated folder dto
      * @throws Exception
      */
-    public EFBoxFolderDTO changeFolderName(String folderID, String newName, User user) throws Exception {
+    public EFBoxFolder changeFolderName(String folderID, String newName, User user) throws Exception {
         EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("File not found."));
         if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not allowed to access this file");
         }
+
         folder.setName(newName);
-        folderRespository.save(folder);
-        return EFBoxFolderDTO.fromEFBoxFolder(folder);
+        return folderRespository.save(folder);
     }
 
     /**

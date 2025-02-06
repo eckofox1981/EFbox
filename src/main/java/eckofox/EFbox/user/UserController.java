@@ -24,7 +24,7 @@ public class UserController {
 
     /**
      * sends request to Service
-     * @param userDTO
+     * @param userDTO gives the basic information to convert to a proper user account
      * @return NoPasswordDTO or error
      */
     @PostMapping("/register")
@@ -39,7 +39,7 @@ public class UserController {
 
     /**
      * sends request to Service
-     * @param userDTO
+     * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send)
      * @return token or error
      */
     @PutMapping("/login")
@@ -54,7 +54,7 @@ public class UserController {
 
     /**
      * sends request to Service
-     * @param user
+     * @param user will be extracted from token to identified in service and converted to UserNoPasswordDTO
      * @return NoPasswordDTO or error
      */
     @GetMapping("/info")
@@ -68,7 +68,7 @@ public class UserController {
 
     /**
      * sends request to Service
-     * @param user based on token
+     * @param user based on token to be deleted in service
      * @return message or error
      */
     @DeleteMapping("/delete")
@@ -121,7 +121,7 @@ public class UserController {
 }
 
 /**
- * only used for account creation and login (input json will not use firstname and lastname)
+ * only used for account creation and login
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -132,7 +132,7 @@ class UserDTO {
     private String lastname;
     private String password;
 
-    public UserDTO(String username, String password) {
+    UserDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }

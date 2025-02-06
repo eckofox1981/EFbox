@@ -43,11 +43,11 @@ public class EFBoxFileController {
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(@RequestParam String fileID, @AuthenticationPrincipal User user) {
         try {
-            EFBoxFileDTO file = fileService.getFile(fileID, user);
-            byte[] fileContent = file.getContent();
+            EFBoxFile efBoxFile = fileService.getFile(fileID, user);
+            byte[] fileContent = efBoxFile.getContent();
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(file.getType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                    .contentType(MediaType.parseMediaType(efBoxFile.getType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + efBoxFile.getFileName() + "\"")
                     .body(fileContent);
         } catch (IllegalAccessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

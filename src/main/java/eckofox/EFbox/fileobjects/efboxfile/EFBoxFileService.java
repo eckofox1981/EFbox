@@ -52,12 +52,12 @@ public class EFBoxFileService {
      * @return file dto
      * @throws IllegalAccessException
      */
-    public EFBoxFileDTO getFile(String fileID, User user) throws IllegalAccessException {
+    public EFBoxFile getFile(String fileID, User user) throws IllegalAccessException {
         EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!user.getUserID().equals(efBoxFile.getParentFolder().getUser().getUserID())) {
             throw new IllegalAccessException("You are not allowed to download this file.");
         }
-        return EFBoxFileDTO.fromEFFile(efBoxFile);
+        return efBoxFile;
     }
 
     /**

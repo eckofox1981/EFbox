@@ -68,10 +68,10 @@ public class UserService implements UserDetailsService {
      * @param user to be deleted
      * @return message
      */
-    public String deleteUser(User user) {
+    public User deleteUser(User user) {
         String username = user.getUsername();
         userRepository.delete(user);
-        return "Account: " + username + " deleted.";
+        return user;
     }
 
     /**

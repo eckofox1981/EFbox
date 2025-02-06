@@ -55,7 +55,7 @@ public class UserController {
     /**
      * sends request to Service
      * @param user
-     * @return or error
+     * @return NoPasswordDTO or error
      */
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
@@ -74,7 +74,8 @@ public class UserController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
-            return ResponseEntity.ok().body(userservice.deleteUser(user));
+            userservice.deleteUser(user)
+            return ResponseEntity.ok().body("Account:" + user.getUsername() + "deleted.");
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());
         }

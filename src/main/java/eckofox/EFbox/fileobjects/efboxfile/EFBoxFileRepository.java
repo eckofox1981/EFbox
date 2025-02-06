@@ -13,6 +13,7 @@ public interface EFBoxFileRepository extends JpaRepository<EFBoxFile, UUID> {
 
     /**
      * custom query since I couldn't find inbuild query (easier)
+     * TODO: SNYGGA TILL find By Filename Containing Ignore Case With User ID
      */
     //NOTE: ILIKE is postgres specific in spring
     @Query(value = "SELECT * FROM files WHERE filename ILIKE %?1%", nativeQuery = true)

@@ -69,7 +69,6 @@ public class UserService implements UserDetailsService {
      * @return message
      */
     public User deleteUser(User user) {
-        String username = user.getUsername();
         userRepository.delete(user);
         return user;
     }

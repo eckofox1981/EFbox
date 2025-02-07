@@ -28,7 +28,7 @@ public class EFBoxFileController {
                                         @RequestParam String parentID) {
         try {
             EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
-            return ResponseEntity.ok("File " + efBoxfile.getFileName() + " uploaded to " + efBoxfile.getParentFolder().getName() + ".");
+            return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

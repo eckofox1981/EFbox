@@ -26,7 +26,7 @@ public class User implements UserDetails {
     private final String lastName;
     @Column
     private final String password;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<EFBoxFolder> RootFolder;
 
     public User(UUID userID, String username, String firstName, String lastName, String password) {

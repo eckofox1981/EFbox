@@ -32,7 +32,6 @@ public class EFBoxFileService {
      */
     public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID) throws IOException, IllegalAccessError {
         EFBoxFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID)).orElseThrow();
-        System.out.println("DEBUG uploadfile service: folder user: " + parentFolder.getUser().getUsername());
         if (!user.getUserID().equals(parentFolder.getUser().getUserID())) {
             throw new IllegalAccessError("You are not authorized to upload a file to this folder");
         }

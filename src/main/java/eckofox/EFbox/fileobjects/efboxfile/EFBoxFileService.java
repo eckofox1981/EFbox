@@ -71,7 +71,6 @@ public class EFBoxFileService {
         if (!efBoxFile.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not authorized to access this efBoxFile.");
         }
-        String fileName = efBoxFile.getFileName();
         efBoxFile.getParentFolder().getFiles().remove(efBoxFile);
         fileRepository.delete(efBoxFile);
         return efBoxFile;

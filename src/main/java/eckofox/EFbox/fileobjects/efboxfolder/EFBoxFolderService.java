@@ -6,6 +6,7 @@ import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileRepository;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class EFBoxFolderService {
     private EFBoxFolderRepository folderRespository;
     private EFBoxFileRepository fileRepository;
@@ -86,6 +88,8 @@ public class EFBoxFolderService {
 
     /**
      * deletes a folder and it's content
+     * since Hibernate wouldn't take into account my cascading settings in EFBoxFolder and I wasn't able to debug the issue
+     * I made a recursive deletion of the Folders from the bottom up (see recursiveDeletionOfFolders)
      * @param folderID of folder to be deleted
      * @param user to check access rights
      * @return message
@@ -93,13 +97,12 @@ public class EFBoxFolderService {
      */
     public EFBoxFolder deleteFolder(String folderID, User user) throws IllegalAccessException {
         EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
-
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not allowed to delete this folder");
         }
 
-        folder.getParentFolder().getFolders().remove(folder);
-        folderRespository.delete(folder);
+        recursiveDeletionOfFolders(folder);
+
         return folder;
     }
 
@@ -131,5 +134,20 @@ public class EFBoxFolderService {
      */
     public boolean userIsNotFolderOwner(EFBoxFolder folder, User user) {
         return !folder.getUser().getUserID().equals(user.getUserID());
+    }
+
+    /**
+     * checks if the folder has a folder and if it has it sends the folder back to itself to check again
+     * Eventually, no folder will found and the folder is instead deleted going back to its "parent method" which will
+     * continue deleting the initial folder.
+     * @param folder
+     */
+    private void recursiveDeletionOfFolders(EFBoxFolder folder) {
+        if (!folder.getFolders().isEmpty()) {
+            for (EFBoxFolder subFolder : folder.getFolders()) {
+                recursiveDeletionOfFolders(subFolder);
+            }
+        }
+        folderRespository.customFolderDeletion(folder.getFolderID());
     }
 }

@@ -59,8 +59,8 @@ public class EFBoxFolderController {
     public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user) {
         try {
             EFBoxFolder folder = folderService.deleteFolder(folderID, user);
-            return ResponseEntity.ok("Folder: " + folder.getName() + " deleted from " + folder.getParentFolder().getName());
-        } catch (IllegalAccessException e) {
+            return ResponseEntity.ok("Folder: " + folder.getName() + " deleted.");
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

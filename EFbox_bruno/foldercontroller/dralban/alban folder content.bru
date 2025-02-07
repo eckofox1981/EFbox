@@ -1,13 +1,17 @@
 meta {
-  name: alban Search for file or folder
+  name: alban folder content
   type: http
-  seq: 14
+  seq: 4
 }
 
 get {
-  url: http://localhost:8080/folder/search/lyrics
+  url: http://localhost:8080/folder/browse?folderID=b318b12f-96c6-4920-9f0a-af0707cdeedb
   body: none
   auth: bearer
+}
+
+params:query {
+  folderID: b318b12f-96c6-4920-9f0a-af0707cdeedb
 }
 
 auth:bearer {

@@ -1,17 +1,13 @@
 meta {
-  name: alban delete folder
+  name: alban Search for file or folder
   type: http
-  seq: 15
+  seq: 6
 }
 
-delete {
-  url: http://localhost:8080/folder/delete?folderID=16567693-ecf8-4cb7-869c-da0cd02ebad4
+get {
+  url: http://localhost:8080/folder/search/lyrics
   body: none
   auth: bearer
-}
-
-params:query {
-  folderID: 16567693-ecf8-4cb7-869c-da0cd02ebad4
 }
 
 auth:bearer {

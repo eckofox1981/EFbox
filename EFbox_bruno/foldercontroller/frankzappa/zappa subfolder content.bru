@@ -1,18 +1,17 @@
 meta {
-  name: alban change file name
+  name: zappa subfolder content
   type: http
-  seq: 12
+  seq: 4
 }
 
-put {
-  url: http://localhost:8080/file/change-name?fileID=1b3e1abb-6371-46ed-824e-4ae5f2c6f48a&newName=original
+get {
+  url: http://localhost:8080/folder/browse?folderID=09214bf7-087f-4724-9eb9-a376d3e56a72
   body: none
   auth: bearer
 }
 
 params:query {
-  fileID: 1b3e1abb-6371-46ed-824e-4ae5f2c6f48a
-  newName: original
+  folderID: 09214bf7-087f-4724-9eb9-a376d3e56a72
 }
 
 auth:bearer {

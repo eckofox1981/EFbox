@@ -1,18 +1,17 @@
 meta {
-  name: alban sub sub folder
+  name: alban subfolder content
   type: http
-  seq: 11
+  seq: 5
 }
 
-post {
-  url: http://localhost:8080/folder/create?folderName=stolen lyrics&parentFolderID=4c62f7c9-5347-4cec-9945-2575e73568ec
+get {
+  url: http://localhost:8080/folder/browse?folderID=16567693-ecf8-4cb7-869c-da0cd02ebad4
   body: none
   auth: bearer
 }
 
 params:query {
-  folderName: stolen lyrics
-  parentFolderID: 4c62f7c9-5347-4cec-9945-2575e73568ec
+  folderID: 16567693-ecf8-4cb7-869c-da0cd02ebad4
 }
 
 auth:bearer {

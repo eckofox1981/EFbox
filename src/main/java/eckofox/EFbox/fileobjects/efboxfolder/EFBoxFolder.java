@@ -5,6 +5,7 @@ import eckofox.EFbox.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +33,8 @@ public class EFBoxFolder {
         this.folderID = folderID;
         this.name = name;
         this.user = user;
+        this.folders = new ArrayList<>();
+        this.files = new ArrayList<>();
     }
 
     public EFBoxFolder(UUID folderID, String name, EFBoxFolder parentFolder, User user) {
@@ -39,6 +42,8 @@ public class EFBoxFolder {
         this.name = name;
         this.parentFolder = parentFolder;
         this.user = user;
+        this.folders = new ArrayList<>();
+        this.files = new ArrayList<>();
     }
 
 }

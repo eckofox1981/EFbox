@@ -74,36 +74,6 @@ public class EFBoxFolderController {
         }
     }
 
-    @AllArgsConstructor
-    @Data
-    public class EFBoxFolderDTO {
-        private UUID folderID;
-        private String name;
-        private List<String> folderNames;
-        private List<String> fileNames;
-
-        /**
-         * converts model to DTO
-         *
-         * @param folder to be converted
-         * @return folder dto
-         */
-        public EFBoxFolderDTO fromEFBoxFolder(EFBoxFolder folder) {
-            return new EFBoxFolderDTO(
-                    folder.getFolderID(),
-                    folder.getName(),
-                    folder.getFolders()
-                            .stream()
-                            .map(EFBoxFolder::getName)
-                            .toList(),
-                    folder.getFiles()
-                            .stream()
-                            .map(EFBoxFile::getFileName)
-                            .toList()
-            );
-        }
-    }
-
     @NoArgsConstructor
     @Data
     class SearchResponseDTO {

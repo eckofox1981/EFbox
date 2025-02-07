@@ -38,7 +38,6 @@ public class EFBoxFolderService {
         }
 
         EFBoxFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
-
         if (userIsNotFolderOwner(parentFolder, user)) {
             throw new IllegalAccessException("You are not authorized to create this folder here.");
         }
@@ -89,7 +88,7 @@ public class EFBoxFolderService {
     /**
      * deletes a folder and it's content
      * since Hibernate wouldn't take into account my cascading settings in EFBoxFolder and I wasn't able to debug the issue
-     * I made a recursive deletion of the Folders from the bottom up (see recursiveDeletionOfFolders)
+     * I made a recursive deletion of the Folders and their content from the bottom up (see recursiveDeletionOfFolders)
      * @param folderID of folder to be deleted
      * @param user to check access rights
      * @return message
@@ -139,7 +138,7 @@ public class EFBoxFolderService {
     /**
      * checks if the folder has a folder and if it has it sends the folder back to itself to check again
      * Eventually, no folder will found and the folder is instead deleted going back to its "parent method" which will
-     * continue deleting the initial folder.
+     * continue deleting the files and then the initial folder.
      * @param folder
      */
     private void recursiveDeletionOfFolders(EFBoxFolder folder) {
@@ -148,6 +147,8 @@ public class EFBoxFolderService {
                 recursiveDeletionOfFolders(subFolder);
             }
         }
+
+        folder.getFiles().stream().forEach(file -> fileRepository.delete(file));
         folderRespository.customFolderDeletion(folder.getFolderID());
     }
 }

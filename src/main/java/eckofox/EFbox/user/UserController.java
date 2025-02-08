@@ -54,7 +54,7 @@ public class UserController {
 
     /**
      * sends request to Service
-     * @param user will be extracted from token to identified in service and converted to UserNoPasswordDTO
+     * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
      * @return NoPasswordDTO or error
      */
     @GetMapping("/info")
@@ -83,7 +83,7 @@ public class UserController {
     }
 
     /**
-     * NoPasswordDTO for user DTO not showing password and displaying user's folders
+     * NoPasswordDTO for user DTO not showing password hash and displaying user's folders' name only
      */
     @AllArgsConstructor
     @NoArgsConstructor
@@ -122,7 +122,7 @@ public class UserController {
 }
 
 /**
- * only used for account creation and login
+ * only used for account creation and login since it contains all details about the user.
  */
 @AllArgsConstructor
 @NoArgsConstructor

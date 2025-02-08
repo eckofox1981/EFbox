@@ -1,0 +1,19 @@
+meta {
+  name: zappa folder content of alban
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:8080/folder/browse?folderID=c0ad19fb-20ae-40af-be11-2df7bac1e527
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: c0ad19fb-20ae-40af-be11-2df7bac1e527
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjA3ZmVmYzNlLWZjOTAtNGUyYy1iYjJiLTJlZmU2MzU5MDEyNCIsImV4cCI6MTczOTAxNTI0NH0.wJJBqcvV38NsoZghepAn4OtkQ3Yk-qqUXiKkJWZyYOA
+}

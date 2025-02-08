@@ -80,8 +80,6 @@ public class EFBoxFolderController {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
     }
-
-
 }
 
 

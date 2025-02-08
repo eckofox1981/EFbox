@@ -30,7 +30,8 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok(userservice.createUser(userDTO));
+            User user = userservice.createUser(userDTO);
+            return ResponseEntity.ok(NoPasswordUserDTO.fromUser(user));
         } catch (IllegalFormatException e) {
             return ResponseEntity.badRequest().body("Unable to create user.Please check your inputs and try again. "
                     + e.getMessage());

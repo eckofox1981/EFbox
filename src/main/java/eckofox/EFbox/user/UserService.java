@@ -25,15 +25,15 @@ public class UserService implements UserDetailsService {
      * @param userDTO to be saved in database and instantiated as actual User
      * @return NopasswordUserDTO
      */
-    public UserController.NoPasswordUserDTO createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO) {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
             throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
                     "characters and at least one digit.");
         }
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
                 userDTO.getLastname(), passwordConfig.passwordEncoder().encode(userDTO.getPassword()));
-        userRepository.save(createdUser);
-        return UserController.NoPasswordUserDTO.fromUser(createdUser);
+
+        return userRepository.save(createdUser);
     }
 
     /**

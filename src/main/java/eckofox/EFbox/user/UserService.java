@@ -58,9 +58,9 @@ public class UserService implements UserDetailsService {
      * @param user to be converted to DTO
      * @return NoPasswordDTO
      */
-    public UserController.NoPasswordUserDTO seeUserInfo(User user) {
+    public User seeUserInfo(User user) {
         User userForInfo = userRepository.findById(user.getUserID()).orElseThrow();
-        return UserController.NoPasswordUserDTO.fromUser(userForInfo);
+        return userForInfo;
     }
 
     /**

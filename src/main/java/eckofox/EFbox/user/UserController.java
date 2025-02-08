@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
-import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +31,7 @@ public class UserController {
         try {
             User user = userservice.createUser(userDTO);
             return ResponseEntity.ok(NoPasswordUserDTO.fromUser(user));
-        } catch (IllegalFormatException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("Unable to create user.Please check your inputs and try again. "
                     + e.getMessage());
         }
@@ -61,7 +60,8 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {
-            return ResponseEntity.ok(userservice.seeUserInfo(user));
+            User userForInfo = userservice.seeUserInfo(user);
+            return ResponseEntity.ok(NoPasswordUserDTO.fromUser(userForInfo));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

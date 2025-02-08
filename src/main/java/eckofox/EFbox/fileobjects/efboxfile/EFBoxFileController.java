@@ -9,6 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/file")
 @AllArgsConstructor
@@ -29,6 +31,10 @@ public class EFBoxFileController {
         try {
             EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
             return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -50,7 +56,11 @@ public class EFBoxFileController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + efBoxFile.getFileName() + "\"")
                     .body(fileContent);
         } catch (IllegalAccessException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
@@ -63,9 +73,13 @@ public class EFBoxFileController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(@RequestParam String fileID, @AuthenticationPrincipal User user) {
         try {
-            return ResponseEntity.ok(fileService.deleteFile(fileID, user).getFileName() + " deleted.");
+            return ResponseEntity.status(202).body(fileService.deleteFile(fileID, user).getFileName() + " deleted.");
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
@@ -80,8 +94,12 @@ public class EFBoxFileController {
     public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID, @RequestParam String newName) {
         try {
             return ResponseEntity.ok(fileService.changeFileName(fileID, newName, user));
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.unprocessableEntity().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 }

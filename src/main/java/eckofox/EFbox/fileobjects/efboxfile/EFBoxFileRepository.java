@@ -12,10 +12,10 @@ import java.util.UUID;
 public interface EFBoxFileRepository extends JpaRepository<EFBoxFile, UUID> {
 
     /**
-     * custom query since I couldn't find inbuild query (easier than to look for it)
+     * custom query since I couldn't find inbuild query (this turned out to be easier than to look for it)
      * checks if the filename is like the query AND if the parentfolder is owned by the userID (through JOIN)
      * the ILIKE is postgres specific
-     * works fine but "RESULTS MAY VARY".
+     * works but "RESULTS MAY VARY".
      */
     //NOTE: ILIKE is postgres specific in spring
     @Query(value = "SELECT * FROM files JOIN folders ON files.parent_folder_folderid = folders.folderid " +

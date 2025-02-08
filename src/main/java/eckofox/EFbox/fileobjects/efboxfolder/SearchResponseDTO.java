@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * used for search based on string in EFBoxService.
+ */
 @NoArgsConstructor
 @Data
 public class SearchResponseDTO {

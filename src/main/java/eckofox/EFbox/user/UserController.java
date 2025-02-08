@@ -39,8 +39,8 @@ public class UserController {
 
     /**
      * sends request to Service
-     * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send)
-     * @return token or error
+     * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
+     * @return token or error (badRequest purposefully vague)
      */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
@@ -55,7 +55,7 @@ public class UserController {
     /**
      * sends request to Service
      * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
-     * @return NoPasswordDTO or error
+     * @return NoPasswordDTO or error (badRequest purposefully vague)
      */
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {

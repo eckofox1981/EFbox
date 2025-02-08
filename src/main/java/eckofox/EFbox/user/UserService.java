@@ -54,12 +54,12 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * returns NoPasswordDTO so user can see his/her info
+     * returns NoPasswordDTO so user can see his/her info. The .orEseThrow is purposefully vague for security.
      * @param user to be converted to DTO
      * @return NoPasswordDTO
      */
-    public User seeUserInfo(User user) {
-        User userForInfo = userRepository.findById(user.getUserID()).orElseThrow();
+    public User seeUserInfo(User user) throws Exception {
+        User userForInfo = userRepository.findById(user.getUserID()).orElseThrow(()-> new Exception("Error fetching data."));
         return userForInfo;
     }
 

@@ -107,7 +107,8 @@ public class EFBoxFolderService {
     }
 
     /**
-     * looks for the folder in the database and if found changes its name
+     * looks for the folder in the database the checks ownership. When checks are passed it changes the name and updates
+     * the database.
      * @param folderID to find folder
      * @param newName self-explanatory
      * @param user to check for access-right
@@ -138,8 +139,8 @@ public class EFBoxFolderService {
 
     /**
      * checks if the folder has a folder and if it has it sends the folder back to itself to check again
-     * Eventually, no folder will found and the folder is instead deleted going back to its "parent method" which will
-     * continue deleting the files and then the initial folder.
+     * Eventually, no folder will be found and the folder and its files are deleted instead.
+     * Then it goes back to its "parent method" which will continue deleting the files and then the initial folder.
      * @param folder
      */
     private void recursiveDeletionOfFolders(EFBoxFolder folder, User user) {

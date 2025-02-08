@@ -1,7 +1,6 @@
 package eckofox.EFbox.fileobjects.efboxfolder;
 
-import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
-import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileDTO;
+
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;

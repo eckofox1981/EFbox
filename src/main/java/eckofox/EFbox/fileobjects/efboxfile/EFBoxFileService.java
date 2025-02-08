@@ -31,10 +31,9 @@ public class EFBoxFileService {
      * @return EFBoxFile
      * @throws Exception
      */
-    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID) throws IllegalAccessException, NoSuchElementException, Exception {
+    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID) throws Exception {
         EFBoxFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID))
                 .orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
-
         if (!user.getUserID().equals(parentFolder.getUser().getUserID())) {
             throw new IllegalAccessException("You are not authorized to upload a file to this folder");
         }
@@ -57,11 +56,12 @@ public class EFBoxFileService {
      * @return EFBoxFile
      * @throws Exception
      */
-    public EFBoxFile getFile(String fileID, User user) throws IllegalAccessException, NoSuchElementException, Exception {
+    public EFBoxFile getFile(String fileID, User user) throws Exception {
         EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!user.getUserID().equals(efBoxFile.getParentFolder().getUser().getUserID())) {
             throw new IllegalAccessException("You are not allowed to download this file.");
         }
+
         return efBoxFile;
     }
 
@@ -73,11 +73,12 @@ public class EFBoxFileService {
      * @return EFBoxFile
      * @throws Exception
      */
-    public EFBoxFile deleteFile(String fileID, User user) throws IllegalAccessException, NoSuchElementException, Exception {
+    public EFBoxFile deleteFile(String fileID, User user) throws Exception {
         EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!efBoxFile.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not authorized to access this efBoxFile.");
         }
+
         efBoxFile.getParentFolder().getFiles().remove(efBoxFile);
         fileRepository.delete(efBoxFile);
         return efBoxFile;
@@ -92,11 +93,12 @@ public class EFBoxFileService {
      * @return updated EFBoxFile
      * @throws Exception
      */
-    public EFBoxFile changeFileName(String fileID, String newName, User user) throws IllegalAccessException, NoSuchElementException {
+    public EFBoxFile changeFileName(String fileID, String newName, User user) throws Exception {
         EFBoxFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found."));
         if (folderService.userIsNotFolderOwner(file.getParentFolder(), user)) {
             throw new IllegalAccessException("You are not allowed to acces this file");
         }
+
         file.setFilename(newName);
         return fileRepository.save(file);
     }

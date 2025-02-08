@@ -23,6 +23,7 @@ public class UserController {
 
     /**
      * sends request to Service
+     *
      * @param userDTO gives the basic information to convert to a proper user account
      * @return NoPasswordDTO or error
      */
@@ -39,6 +40,7 @@ public class UserController {
 
     /**
      * sends request to Service
+     *
      * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
      * @return token or error (badRequest purposefully vague)
      */
@@ -54,6 +56,7 @@ public class UserController {
 
     /**
      * sends request to Service
+     *
      * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
      * @return NoPasswordDTO or error (badRequest purposefully vague)
      */
@@ -69,6 +72,7 @@ public class UserController {
 
     /**
      * sends request to Service
+     *
      * @param user based on token to be deleted in service
      * @return message or error
      */
@@ -97,6 +101,7 @@ public class UserController {
 
         /**
          * converts user to user dto (no password)
+         *
          * @param user to be converted
          * @return NopassWordUserDTO
          */

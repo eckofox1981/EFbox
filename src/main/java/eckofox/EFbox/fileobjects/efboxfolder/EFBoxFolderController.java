@@ -3,8 +3,6 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +17,12 @@ public class EFBoxFolderController {
 
     /**
      * all methods send to EFBoxFolderService which returns accordingly
+     *
      * @param user will be used to check access rights in Service
      */
-
     @PostMapping("/create")
-    public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user, @RequestParam String parentFolderID) {
+    public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user,
+                                          @RequestParam String parentFolderID) {
         try {
             EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
             return ResponseEntity.ok().body(efBoxFolderDTO);
@@ -50,10 +49,11 @@ public class EFBoxFolderController {
 
     /**
      * search any file- or foldername matching the query and returns the results as a searchResponseDTO.
-     * For cleaner code I convert the return to DTO in EFBoxService with stream.
+     * For cleaner code I convert the return into DTO in EFBoxService with stream.
+     *
      * @param query a string trying to be matched in EFBoxFolderRepository and EFBoxFileRepository
-     * @param user used to filter out matches not belonging to the user
-     * @return
+     * @param user  used to filter out matches not belonging to the user
+     * @return ResponseEntity
      */
     @GetMapping("/search/{query}")
     public ResponseEntity<?> searchWithQuery(@PathVariable String query, @AuthenticationPrincipal User user) {

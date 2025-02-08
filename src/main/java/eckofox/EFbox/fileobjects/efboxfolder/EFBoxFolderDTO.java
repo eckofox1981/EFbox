@@ -17,6 +17,7 @@ public class EFBoxFolderDTO {
 
     /**
      * converts model to DTO
+     *
      * @param folder to be converted
      * @return folder dto
      */

@@ -24,6 +24,7 @@ public interface EFBoxFolderRepository extends JpaRepository<EFBoxFolder, UUID> 
      * for a reason I haven't been able to debug, hibernate stopped deleting folder and their descendants.
      * This method does remove the folder with the folderID given. User ownership is checked before calling the method
      * but the method double-checks the userID when deleting with the AND-statement.
+     *
      * @param folderID to removed from database
      * @return int of rows deleted (not used, but void is apparently unacceptable)
      */

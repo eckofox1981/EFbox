@@ -53,6 +53,7 @@ public class JWTService {
 
     /**
      * fetches secret string in separate text file that (in theory) should not be share on git hub. Shared here for simplicity
+     *
      * @return secret string for algorithm
      */
     private String setSecretString() {

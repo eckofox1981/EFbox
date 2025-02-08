@@ -21,7 +21,9 @@ public class UserService implements UserDetailsService {
 
     /**
      * creates a user based on a UserDTO
-     * checks password format
+     * checks password format in passwordValidation
+     * efbox_users table is set up for unique username
+     *
      * @param userDTO to be saved in database and instantiated as actual User
      * @return NopasswordUserDTO
      */
@@ -30,6 +32,7 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
                     "characters and at least one digit.");
         }
+
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
                 userDTO.getLastname(), passwordConfig.passwordEncoder().encode(userDTO.getPassword()));
 
@@ -37,15 +40,15 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * logs the user and generates token through JWTService
+     * checks the username and password against the database and generates token through JWTService
+     *
      * @param username to find user in database
      * @param password to be checked in database
      * @return token
-     * @throws LoginException
+     * @throws LoginException purposefully vague for security
      */
     public String login(String username, String password) throws LoginException {
         User user = userRepository.findByUsername(username).orElseThrow();
-
         if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
             throw new LoginException("Incorrect username or password");
         }
@@ -55,16 +58,17 @@ public class UserService implements UserDetailsService {
 
     /**
      * returns NoPasswordDTO so user can see his/her info. The .orEseThrow is purposefully vague for security.
+     *
      * @param user to be converted to DTO
      * @return NoPasswordDTO
      */
     public User seeUserInfo(User user) throws Exception {
-        User userForInfo = userRepository.findById(user.getUserID()).orElseThrow(()-> new Exception("Error fetching data."));
-        return userForInfo;
+        return userRepository.findById(user.getUserID()).orElseThrow(() -> new Exception("Error fetching data."));
     }
 
     /**
      * delete the user account from the database
+     *
      * @param user to be deleted
      * @return message
      */
@@ -75,6 +79,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * checks that password has 5 letters minimum, lower and uppercase characters and at least one digit.
+     *
      * @param password to be checked
      * @return true if password format is correct
      */
@@ -84,6 +89,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * sends token to JWTService to check token is valid
+     *
      * @param token to be checked
      * @return user (optional, may return empty if the validation fails)
      */

@@ -16,6 +16,7 @@ public class EFBoxFileDTO {
 
     /**
      * converts model to dto
+     *
      * @param efBoxFile to be converted
      * @return dto
      */

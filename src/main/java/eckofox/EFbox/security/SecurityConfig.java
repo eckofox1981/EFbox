@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,8 +25,9 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * checks which endpoints need security filter, only account creation and login are public. All other functions require
-     * authentication. Ownership of files and folders is checked in various service method.
+     * checks which endpoints need security filter, only account creation and login are public. All other functions
+     * require authentication. Ownership of files and folders is checked in various service methods and sometimes
+     * even in repository methods.
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

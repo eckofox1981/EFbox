@@ -58,7 +58,7 @@ public class EFBoxFolderService {
     public EFBoxFolder seeFolderContent(String folderID, User user) throws IllegalAccessException {
         EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
         if (userIsNotFolderOwner(folder, user)) {
-            throw new IllegalAccessException("You are not authorized to create this folder here.");
+            throw new IllegalAccessException("You are not authorized to access this folder.");
         }
 
         return folder;
@@ -72,14 +72,13 @@ public class EFBoxFolderService {
      */
     public SearchResponseDTO searchInAllFolders(String query, User user) {
         Collection<EFBoxFolder> folders = folderRespository.findByNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
-        Collection<EFBoxFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query).orElse(new ArrayList<>());
+        Collection<EFBoxFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
 
         SearchResponseDTO responseDTO = new SearchResponseDTO();
         folders.stream()
                 .map(EFBoxFolderDTO::fromEFBoxFolder)
                 .forEach(folder -> responseDTO.getFolders().add(folder));
         files.stream()
-                .filter(file -> userIsNotFolderOwner(file.getParentFolder(), user)) //since files aren't directly connected to their user
                 .map(EFBoxFileDTO::fromEFBoxFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
         return responseDTO;

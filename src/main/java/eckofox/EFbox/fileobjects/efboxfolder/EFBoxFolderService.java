@@ -85,9 +85,11 @@ public class EFBoxFolderService {
     }
 
     /**
-     * deletes a folder and it's content
+     * deletes a folder and its content
      * since Hibernate wouldn't take into account my cascading settings in EFBoxFolder and I wasn't able to debug the issue
      * I made a recursive deletion of the Folders and their content from the bottom up (see recursiveDeletionOfFolders)
+     * folder ownership is checked before calling for folder deletion but it is also checked at repository level through
+     * a custom query.
      * @param folderID of folder to be deleted
      * @param user to check access rights
      * @return message
@@ -99,7 +101,7 @@ public class EFBoxFolderService {
             throw new IllegalAccessException("You are not allowed to delete this folder");
         }
 
-        recursiveDeletionOfFolders(folder);
+        recursiveDeletionOfFolders(folder, user);
 
         return folder;
     }
@@ -140,14 +142,14 @@ public class EFBoxFolderService {
      * continue deleting the files and then the initial folder.
      * @param folder
      */
-    private void recursiveDeletionOfFolders(EFBoxFolder folder) {
+    private void recursiveDeletionOfFolders(EFBoxFolder folder, User user) {
         if (!folder.getFolders().isEmpty()) {
             for (EFBoxFolder subFolder : folder.getFolders()) {
-                recursiveDeletionOfFolders(subFolder);
+                recursiveDeletionOfFolders(subFolder, user);
             }
         }
 
         folder.getFiles().stream().forEach(file -> fileRepository.delete(file));
-        folderRespository.customFolderDeletion(folder.getFolderID());
+        folderRespository.customFolderDeletion(folder.getFolderID(), user.getUserID());
     }
 }

@@ -76,7 +76,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
             userservice.deleteUser(user);
-            return ResponseEntity.ok().body("Account:" + user.getUsername() + "deleted.");
+            return ResponseEntity.status(202).body("Account: " + user.getUsername() + " deleted.");
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());
         }

@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -31,8 +28,12 @@ public class EFBoxFolderController {
         try {
             EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
             return ResponseEntity.ok().body(efBoxFolderDTO);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
@@ -41,8 +42,10 @@ public class EFBoxFolderController {
         try {
             EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
             return ResponseEntity.ok(efBoxFolderDTO);
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
@@ -66,7 +69,11 @@ public class EFBoxFolderController {
     public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user) {
         try {
             EFBoxFolder folder = folderService.deleteFolder(folderID, user);
-            return ResponseEntity.ok("Folder: " + folder.getName() + " deleted.");
+            return ResponseEntity.status(202).body("Folder: " + folder.getName() + " deleted.");
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -76,6 +83,10 @@ public class EFBoxFolderController {
     public ResponseEntity<?> changeFolderName(@AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName) {
         try {
             return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }

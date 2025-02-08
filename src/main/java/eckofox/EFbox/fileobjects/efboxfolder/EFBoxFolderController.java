@@ -46,6 +46,13 @@ public class EFBoxFolderController {
         }
     }
 
+    /**
+     * search any file- or foldername matching the query and returns the results as a searchResponseDTO.
+     * For cleaner code I convert the return in EFBoxService with stream.
+     * @param query a string trying to be matched in EFBoxFolderRepository and EFBoxFileRepository
+     * @param user used to filter out matches not belonging to the user
+     * @return
+     */
     @GetMapping("/search/{query}")
     public ResponseEntity<?> searchWithQuery(@PathVariable String query, @AuthenticationPrincipal User user) {
         try {
@@ -74,12 +81,7 @@ public class EFBoxFolderController {
         }
     }
 
-    @NoArgsConstructor
-    @Data
-    class SearchResponseDTO {
-        private Collection<EFBoxFolderDTO> folders = new ArrayList<>();
-        private Collection<EFBoxFileDTO> files = new ArrayList<>();
-    }
+
 }
 
 

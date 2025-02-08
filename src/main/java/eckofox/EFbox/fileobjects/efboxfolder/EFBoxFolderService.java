@@ -125,8 +125,8 @@ public class EFBoxFolderService {
 
     /**
      * checks user access right to folder. Made public since accessed in EFBoxFileService (through injection) where the
-     * parent folder is checked before accessing a file. "Inverted boolean" since more logical that way when using the method
-     * see usage line 116 above
+     * parent folder is checked before accessing a file. "Inverted boolean" since more logical when using the method
+     * see usage line 118 above
      * @param folder of user
      * @param user of folder
      * @return boolean

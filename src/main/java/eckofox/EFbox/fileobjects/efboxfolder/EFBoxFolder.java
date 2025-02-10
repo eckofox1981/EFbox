@@ -19,7 +19,7 @@ public class EFBoxFolder {
     private UUID folderID;
     @Column
     private String name;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "parent_folderID")
     private EFBoxFolder parentFolder;
     @OneToMany(mappedBy = "parentFolder", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)

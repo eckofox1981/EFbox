@@ -1,5 +1,6 @@
 package eckofox.EFbox.security;
 
+import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,17 +33,17 @@ public class SecurityConfig {
      * even in repository methods.
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf((AbstractHttpConfigurer::disable))
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity,
+                                           JWTFilter jwtFilter) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests
                         (auth -> auth
                                 .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
                                 .anyRequest().authenticated()
                         )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(new JWTFilter(userService), UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth2 -> {})
+                .addFilterAfter(jwtFilter, OAuth2LoginAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

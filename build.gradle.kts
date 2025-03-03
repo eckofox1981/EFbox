@@ -36,7 +36,6 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-	testImplementation("io.projectreactor:reactor-test")
 }
 
 tasks.withType<Test> {

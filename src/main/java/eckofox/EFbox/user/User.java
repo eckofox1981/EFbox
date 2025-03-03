@@ -3,7 +3,9 @@ package eckofox.EFbox.user;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,18 +16,23 @@ import java.util.UUID;
 
 @Entity(name = "efbox_users")
 @NoArgsConstructor(force = true)
-@Data
+@Getter
+@Setter
 public class User implements UserDetails {
     @Id
-    private final UUID userID;
+    private UUID userID;
     @Column(unique = true)
-    private final String username;
+    private String username;
     @Column
-    private final String firstName;
+    private String firstName;
     @Column
-    private final String lastName;
+    private String lastName;
     @Column
-    private final String password;
+    private String password;
+    @Column
+    private String openIDconnectID = null;
+    @Column
+    private String openIDconnectProvider = null;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) //makes sure no files are left if not owned (ex. user removal)
     private final List<EFBoxFolder> RootFolder;
 

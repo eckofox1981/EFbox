@@ -35,56 +35,43 @@ public class JWTFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        Authentication potentialOAuth2Authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication potentialOAuth2Auth = SecurityContextHolder.getContext().getAuthentication();
 
-        var user = new User();
-
-
-        if (potentialOAuth2Authentication != null) {
-            //if auth is OAuth2
-            if (potentialOAuth2Authentication instanceof OAuth2AuthenticationToken oAuth2token) {
-                OAuth2User oAuth2User = oAuth2token.getPrincipal(); //TODO question: why don't I need to cast it?
+        if (potentialOAuth2Auth != null) {
+            if (potentialOAuth2Auth instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+                OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
 
                 Optional<User> optionalUser = userRepository.findByOpenIDconnectID(oAuth2User.getName());
 
-                if (optionalUser == null) {
-                    user.setUserID(UUID.randomUUID());
-                    user.setUsername(oAuth2User.getAttribute("login"));
-                    user.setOpenIDconnectID(oAuth2User.getName());
-                    user.setOpenIDconnectProvider(oAuth2token.getAuthorizedClientRegistrationId());
-                    userRepository.save(user);
-                } else {
-                    user = optionalUser.get();
+                if (optionalUser.isEmpty()) {
+                    response.sendError(401, "User not found, check OAuth2 token validity");
+                    return;
                 }
 
-                SecurityContextHolder.getContext()
-                        .setAuthentication(
-                                new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
+                var localUser = optionalUser.get();
+
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                        localUser, localUser.getPassword(), localUser.getAuthorities()));
                 filterChain.doFilter(request, response);
             }
+        }
 
-            //if not OAuth2
-            //Authorization empty
-            if (request.getHeader("Authorization") == null || request.getHeader("Authorization").isBlank()) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            UUID userID;
-            try {
-                userID = jwtService.verifyToken(request.getHeader("Authorization"));
-            } catch (Exception e) {
-                response.sendError(401, "Invalid authorization token");
-                return;
-            }
-
-            user = userRepository.findById(userID).get();
-
-            SecurityContextHolder.getContext()
-                    .setAuthentication(
-                            new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
+        if (request.getHeader("Authorization") == null || request.getHeader("Authorization").isBlank()) {
             filterChain.doFilter(request, response);
         }
 
+        UUID userID;
+        try {
+            userID = jwtService.verifyToken(request.getHeader("Authorization"));
+        } catch (Exception e) {
+            response.sendError(401, "Authorization token invalid.");
+            return;
+        }
+
+        var user = userRepository.findById(userID).get();
+
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                user, user.getPassword(), user.getAuthorities()));
+        filterChain.doFilter(request, response);
     }
 }

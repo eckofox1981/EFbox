@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         if (optionalUser.isEmpty()) {
             var user = new User(UUID.randomUUID(), oAuth2User.getAttribute("login"), oAuth2User.getName(),
-                    optionalUser.get().getOpenIDconnectProvider());
+                    oAuth2Token.getAuthorizedClientRegistrationId());
             userRepository.save(user);
             System.out.println(user.getOpenIDconnectProvider() + " - " + user.getUsername() + " saved as " + user.getUserID());
         } else {

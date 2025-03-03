@@ -34,7 +34,8 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity,
-                                           JWTFilter jwtFilter) throws Exception {
+                                           JWTFilter jwtFilter,
+                                           OAuth2SuccessHandler oAuth2SuccessHandler) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests
                         (auth -> auth
@@ -42,7 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
                                 .anyRequest().authenticated()
                         )
-                .oauth2Login(oauth2 -> {})
+                .oauth2Login(oauth2 ->oauth2.successHandler(oAuth2SuccessHandler))
                 .addFilterAfter(jwtFilter, OAuth2LoginAuthenticationFilter.class);
 
         return httpSecurity.build();

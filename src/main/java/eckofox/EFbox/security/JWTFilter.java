@@ -58,6 +58,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (request.getHeader("Authorization") == null || request.getHeader("Authorization").isBlank()) {
             filterChain.doFilter(request, response);
+            return;
         }
 
         UUID userID;

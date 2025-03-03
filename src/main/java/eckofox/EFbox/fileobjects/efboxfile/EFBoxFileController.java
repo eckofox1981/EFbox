@@ -1,7 +1,14 @@
 package eckofox.EFbox.fileobjects.efboxfile;
 
+import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderController;
 import eckofox.EFbox.user.User;
+import eckofox.EFbox.user.UserController;
+import eckofox.EFbox.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.repository.query.DefaultQueryEnhancer;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +23,8 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class EFBoxFileController {
     private EFBoxFileService fileService;
+    private UserController userController;
+    private EFBoxFolderController folderController;
 
 
     /**
@@ -31,7 +40,21 @@ public class EFBoxFileController {
                                         @RequestParam String parentID) {
         try {
             EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
-            return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
+
+            EntityModel<EFBoxFileDTO> efBoxFileDTOEntityModel = EntityModel.of(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
+
+            Link parentFolderLink = WebMvcLinkBuilder.linkTo(
+                    folderController.seeFolderContent(String.valueOf(efBoxfile.getParentFolder().getFolderID()), user))
+                    .withRel("parentFolder");
+
+            Link userLink = WebMvcLinkBuilder.linkTo(userController.showUserInfo(user)).withRel("owner");
+
+            efBoxFileDTOEntityModel
+                    .add(parentFolderLink)
+                    .add(userLink);
+
+
+            return ResponseEntity.ok(efBoxFileDTOEntityModel);
         } catch (IllegalAccessException e) {
             return ResponseEntity.status(403).body(e.getMessage());
         } catch (NoSuchElementException e) {
@@ -98,7 +121,22 @@ public class EFBoxFileController {
     public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID,
                                             @RequestParam String newName) {
         try {
-            return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(fileService.changeFileName(fileID, newName, user)));
+            EFBoxFile efBoxFile = fileService.changeFileName(fileID, newName, user);
+
+            EntityModel<EFBoxFileDTO> efBoxFileDTOEntityModel = EntityModel.of(EFBoxFileDTO.fromEFBoxFile(efBoxFile));
+
+            Link parentFolderLink = WebMvcLinkBuilder.linkTo(
+                            folderController.seeFolderContent(String.valueOf(efBoxFile.getParentFolder().getFolderID()), user))
+                    .withRel("parentFolder");
+
+            Link userLink = WebMvcLinkBuilder.linkTo(userController.showUserInfo(user)).withRel("owner");
+
+            efBoxFileDTOEntityModel
+                    .add(parentFolderLink)
+                    .add(userLink);
+
+
+            return ResponseEntity.ok(efBoxFileDTOEntityModel);
         } catch (IllegalAccessException e) {
             return ResponseEntity.status(403).body(e.getMessage());
         } catch (NoSuchElementException e) {

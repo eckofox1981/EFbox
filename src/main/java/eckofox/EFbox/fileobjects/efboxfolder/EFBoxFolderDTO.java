@@ -1,8 +1,10 @@
 package eckofox.EFbox.fileobjects.efboxfolder;
 
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
+import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.hateoas.EntityModel;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +34,6 @@ public class EFBoxFolderDTO {
                 folder.getFiles()
                         .stream()
                         .map(EFBoxFile::getFileName)
-                        .toList()
-        );
+                        .toList());
     }
 }

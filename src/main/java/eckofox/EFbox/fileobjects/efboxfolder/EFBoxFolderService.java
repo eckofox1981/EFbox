@@ -108,7 +108,7 @@ public class EFBoxFolderService {
     }
 
     /**
-     * looks for the folder in the database the checks ownership. When checks are passed it changes the name and updates
+     * looks for the folder in the database then checks ownership. When checks are passed it changes the name and updates
      * the database.
      *
      * @param folderID to find folder

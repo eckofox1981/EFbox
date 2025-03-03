@@ -2,7 +2,11 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 
 
 import eckofox.EFbox.user.User;
+import eckofox.EFbox.user.UserController;
 import lombok.AllArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +28,16 @@ public class EFBoxFolderController {
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user,
                                           @RequestParam String parentFolderID) {
         try {
-            EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
-            return ResponseEntity.ok().body(efBoxFolderDTO);
+            EntityModel<EFBoxFolderDTO> efBoxFolderDTOEntityModel =
+                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID)));
+
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    .withRel("owner");
+
+            efBoxFolderDTOEntityModel.add(userLink);
+
+            return ResponseEntity.ok().body(efBoxFolderDTOEntityModel);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (IllegalAccessException e) {
@@ -38,8 +50,16 @@ public class EFBoxFolderController {
     @GetMapping("/browse")
     public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user) {
         try {
-            EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
-            return ResponseEntity.ok(efBoxFolderDTO);
+            EntityModel<EFBoxFolderDTO> efBoxFolderDTOEntityModel =
+                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user)));
+
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    .withRel("owner");
+
+            efBoxFolderDTOEntityModel.add(userLink);
+
+            return ResponseEntity.ok(efBoxFolderDTOEntityModel);
         } catch (IllegalAccessException e) {
             return ResponseEntity.status(403).body(e.getMessage());
         } catch (Exception e) {
@@ -58,7 +78,17 @@ public class EFBoxFolderController {
     @GetMapping("/search/{query}")
     public ResponseEntity<?> searchWithQuery(@PathVariable String query, @AuthenticationPrincipal User user) {
         try {
-            return ResponseEntity.ok(folderService.searchInAllFolders(query, user));
+            SearchResponseDTO searchResponseDTO = folderService.searchInAllFolders(query, user);
+
+            EntityModel<SearchResponseDTO> searchResponseDTOEntityModel = EntityModel.of(searchResponseDTO);
+
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    .withRel("owner");
+
+            searchResponseDTOEntityModel.add(userLink);
+
+            return ResponseEntity.ok(searchResponseDTOEntityModel);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -81,7 +111,15 @@ public class EFBoxFolderController {
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFolderName(@AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName) {
         try {
-            return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
+            EntityModel<EFBoxFolderDTO> efBoxFolderDTOEntityModel =
+                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
+
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    .withRel("owner");
+
+            efBoxFolderDTOEntityModel.add(userLink);
+            return ResponseEntity.ok(efBoxFolderDTOEntityModel);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (IllegalAccessException e) {

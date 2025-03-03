@@ -45,6 +45,14 @@ public class User implements UserDetails {
         this.RootFolder = new ArrayList<>();
     }
 
+    public User(UUID userID, String username, String openIDconnectID, String openIDconnectProvider) {
+        this.userID = userID;
+        this.username = username;
+        this.openIDconnectID = openIDconnectID;
+        this.openIDconnectProvider = openIDconnectProvider;
+        this.RootFolder = new ArrayList<>();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

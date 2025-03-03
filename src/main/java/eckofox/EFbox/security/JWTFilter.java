@@ -34,6 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         Authentication potentialOAuth2Authentication = SecurityContextHolder.getContext().getAuthentication();
 
         var user = new User();

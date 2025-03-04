@@ -63,7 +63,9 @@ public class UserController {
                     description = "returns a bearer token to be cached",
                     content = {
                             @Content(mediaType = "String", schema = @Schema(implementation = String.class),
-                                    examples = @ExampleObject("LaaODciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.kdQQWAwlwc3MiOiJhdXRoMCIsInN1YiI6ImFlNTJisfvzFFDSSRkMS05MjUxLTZhNzgwOTQyYjNlMiIsImV4cCI6MTc0MTA5MDMzMn0.FN76t3ksmoaLqPeDW-kHmiXTCYYBljsrFIzTCF-1sKc"))
+                                    examples = @ExampleObject("LaaODciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.kdQQWAwlwc3MiOiJhdXRo" +
+                                            "MCIsInN1YiI6ImFlNTJisfvzFFDSSRkMS05MjUxLTZhNzgwOTQyYjNlMiIsImV4cCI6MTc0MTA5" +
+                                            "MDMzMn0.FN76t3ksmoaLqPeDW-kHmiXTCYYBljsrFIzTCF-1sKc"))
                     }),
             @ApiResponse(
                     responseCode = "400",

@@ -50,8 +50,18 @@ public class EFBoxFolderController {
     @GetMapping("/browse")
     public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user) {
         try {
+            EFBoxFolder efBoxFolder = folderService.seeFolderContent(folderID, user);
+
             EntityModel<EFBoxFolderDTO> efBoxFolderDTOEntityModel =
-                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user)));
+                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(efBoxFolder));
+
+            if (!efBoxFolderDTOEntityModel.getContent().getParentFolderName().isEmpty()) {
+                Link parentFolderLink = WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder.methodOn(EFBoxFolderController.class)
+                                .seeFolderContent(efBoxFolder.getFolderID().toString(), user))
+                        .withRel("parentFolder");
+                efBoxFolderDTOEntityModel.add(parentFolderLink);
+            }
 
             Link userLink = WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
@@ -111,8 +121,18 @@ public class EFBoxFolderController {
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFolderName(@AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName) {
         try {
+            EFBoxFolder efBoxFolder = folderService.changeFolderName(folderID, newName, user);
+
             EntityModel<EFBoxFolderDTO> efBoxFolderDTOEntityModel =
-                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
+                    EntityModel.of(EFBoxFolderDTO.fromEFBoxFolder(efBoxFolder));
+
+            if (!efBoxFolderDTOEntityModel.getContent().getParentFolderName().isEmpty()) {
+                Link parentFolderLink = WebMvcLinkBuilder.linkTo(
+                                WebMvcLinkBuilder.methodOn(EFBoxFolderController.class)
+                                        .seeFolderContent(efBoxFolder.getFolderID().toString(), user))
+                        .withRel("parentFolder");
+                efBoxFolderDTOEntityModel.add(parentFolderLink);
+            }
 
             Link userLink = WebMvcLinkBuilder.linkTo(
                             WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))

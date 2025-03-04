@@ -3,6 +3,7 @@ package eckofox.EFbox.fileobjects.efboxfile;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderController;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -19,6 +20,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/file")
 @AllArgsConstructor
+@Tag(name = "File")
 public class EFBoxFileController {
     private EFBoxFileService fileService;
     private UserController userController;

@@ -21,8 +21,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 						url = "https://github.com/eckofox1981"
 				),
 				title = "EFBox OpenAPI documentation",
-				description = "Documentation for the EFBox API\nThere are three controllers: User, EFBoxFolder and EFBox" +
-						"File.\nThis application is not cacheable.",
+				description = "Documentation for the EFBox API. There are three controllers: User, EFBoxFolder and EFBox" +
+						"File. This application is non-cacheable.",
 				version = "webservices"
 		),
 		security = {

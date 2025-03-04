@@ -3,6 +3,7 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -16,6 +17,7 @@ import java.util.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/folder")
+@Tag(name = "Folder")
 public class EFBoxFolderController {
     private EFBoxFolderService folderService;
 

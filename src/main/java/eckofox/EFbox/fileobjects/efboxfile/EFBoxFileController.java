@@ -3,9 +3,7 @@ package eckofox.EFbox.fileobjects.efboxfile;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderController;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserController;
-import eckofox.EFbox.user.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.repository.query.DefaultQueryEnhancer;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -24,7 +22,6 @@ import java.util.NoSuchElementException;
 public class EFBoxFileController {
     private EFBoxFileService fileService;
     private UserController userController;
-    private EFBoxFolderController folderController;
 
 
     /**
@@ -43,11 +40,15 @@ public class EFBoxFileController {
 
             EntityModel<EFBoxFileDTO> efBoxFileDTOEntityModel = EntityModel.of(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
 
+            String parentFolderID = efBoxfile.getParentFolder().getFolderID().toString();
+
             Link parentFolderLink = WebMvcLinkBuilder.linkTo(
-                    folderController.seeFolderContent(String.valueOf(efBoxfile.getParentFolder().getFolderID()), user))
+                    WebMvcLinkBuilder.methodOn(EFBoxFolderController.class).seeFolderContent(parentFolderID, user))
                     .withRel("parentFolder");
 
-            Link userLink = WebMvcLinkBuilder.linkTo(userController.showUserInfo(user)).withRel("owner");
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    .withRel("owner");
 
             efBoxFileDTOEntityModel
                     .add(parentFolderLink)
@@ -125,16 +126,19 @@ public class EFBoxFileController {
 
             EntityModel<EFBoxFileDTO> efBoxFileDTOEntityModel = EntityModel.of(EFBoxFileDTO.fromEFBoxFile(efBoxFile));
 
+            String parentFolderID = efBoxFile.getParentFolder().getFolderID().toString();
+
             Link parentFolderLink = WebMvcLinkBuilder.linkTo(
-                            folderController.seeFolderContent(String.valueOf(efBoxFile.getParentFolder().getFolderID()), user))
+                            WebMvcLinkBuilder.methodOn(EFBoxFolderController.class).seeFolderContent(parentFolderID, user))
                     .withRel("parentFolder");
 
-            Link userLink = WebMvcLinkBuilder.linkTo(userController.showUserInfo(user)).withRel("owner");
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    .withRel("owner");
 
             efBoxFileDTOEntityModel
                     .add(parentFolderLink)
                     .add(userLink);
-
 
             return ResponseEntity.ok(efBoxFileDTOEntityModel);
         } catch (IllegalAccessException e) {

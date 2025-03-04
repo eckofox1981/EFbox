@@ -1,6 +1,13 @@
 package eckofox.EFbox.user;
 
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +28,22 @@ public class UserController {
     private final UserService userservice;
 
 
-    /**
-     * sends request to Service
-     *
-     * @param userDTO gives the basic information to convert to a proper user account
-     * @return NoPasswordDTO or error
-     */
+    @Operation(summary = "Registers a user", description = "creates and save a user to the database", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "returns a NoPasswordDTO of the User model",
+                    content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = NoPasswordUserDTO.class))
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "error message",
+                    content = {
+                            @Content(mediaType = "String", schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Unable to create user.Please check your inputs and try again. + error message"))
+                    }),
+    })
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
         try {
@@ -38,12 +55,24 @@ public class UserController {
         }
     }
 
-    /**
-     * sends request to Service
-     *
-     * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
-     * @return token or error (badRequest purposefully vague)
-     */
+    @Operation(summary = "logs a user in", description = "checks username against password-hash in database. Only these " +
+            "parameters are necessary to be sent in with the UserDTO-JSON object.", method = "PUT")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "returns a bearer token to be cached",
+                    content = {
+                            @Content(mediaType = "String", schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject("LaaODciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.kdQQWAwlwc3MiOiJhdXRoMCIsInN1YiI6ImFlNTJisfvzFFDSSRkMS05MjUxLTZhNzgwOTQyYjNlMiIsImV4cCI6MTc0MTA5MDMzMn0.FN76t3ksmoaLqPeDW-kHmiXTCYYBljsrFIzTCF-1sKc"))
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "error message",
+                    content = {
+                            @Content(mediaType = "String", schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Incorrect username or password"))
+                    }),
+    })
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         try {
@@ -51,15 +80,25 @@ public class UserController {
         } catch (LoginException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
-    /**
-     * sends request to Service
-     *
-     * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
-     * @return NoPasswordDTO or error (badRequest purposefully vague)
-     */
+    @Operation(summary = "Shows the user info", description = "AuthenticationPrincipal user will be extracted from token" +
+            " to be identified in service and converted to NoPasswordUserDTO", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "returns a NoPasswordUserDTO with userID\nusername\nfirstname\nlastname\nefFolderNames (list)",
+                    content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = NoPasswordUserDTO.class))
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "error message, purposefully vague for security",
+                    content = {
+                            @Content(mediaType = "String", schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Error fetching data. + error message"))
+                    }),
+    })
     @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {
@@ -70,19 +109,31 @@ public class UserController {
         }
     }
 
-    /**
-     * sends request to Service
-     *
-     * @param user based on token to be deleted in service
-     * @return message or error
-     */
+    @Operation(summary = "deletes the user", description = "deletes the users and its folders and files from the database." +
+            "The token is used for identification.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "202",
+                    description = "returns a confimation message.",
+                    content = {
+                            @Content(mediaType = "String", schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject("Account: XXXXXX deleted."))
+                    }),
+            @ApiResponse(
+                    responseCode = "422",
+                    description = "error message: unprocessable entity",
+                    content = {
+                            @Content(mediaType = "String", schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Unable to delete account. + error message"))
+                    }),
+    })
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
             userservice.deleteUser(user);
             return ResponseEntity.status(202).body("Account: " + user.getUsername() + " deleted.");
         } catch (Exception e) {
-            return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());
+            return ResponseEntity.unprocessableEntity().body("Unable to delete account. " + e.getMessage());
         }
     }
 

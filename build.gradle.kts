@@ -37,6 +37,7 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation("org.springframework.boot:spring-boot-starter-hateoas")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
 }
 
 tasks.withType<Test> {

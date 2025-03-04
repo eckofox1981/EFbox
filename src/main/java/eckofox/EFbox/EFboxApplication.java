@@ -45,7 +45,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 ),
 	@SecurityScheme(
 			name = "OpenIDConnect",
-			description = "OpenIDConnect JSESSION token (github only as of March 2025)",
+			description = "OpenIDConnect JSESSION token (github and google as of March 2025)",
 			scheme = "JSESSION",
 			type = SecuritySchemeType.OAUTH2,
 			bearerFormat = "OAuth2",

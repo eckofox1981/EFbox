@@ -53,6 +53,7 @@ public class JWTService {
 
     /**
      * fetches secret string in separate text file that (in theory) should not be share on git hub. Shared here for simplicity
+     * if the secret string is not found the application will exit
      *
      * @return secret string for algorithm
      */
@@ -63,7 +64,9 @@ public class JWTService {
              BufferedReader reader = new BufferedReader(fileReader)) {
             return reader.readLine();
         } catch (IOException e) {
-            return null;
+            System.out.println("Error: secret string not found. The Application has shutdown.");
+            System.exit(0);
+            return null; //will never be accessed (shutdown above) but the IDE requires a return statement.
         }
     }
 }

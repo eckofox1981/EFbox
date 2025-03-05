@@ -120,25 +120,25 @@ public class UserController {
             return new NoPasswordUserDTO(user.getUserID(), user.getUsername(), user.getFirstName(), user.getLastName(), folderNames);
         }
     }
+    /**
+     * only used for account creation and login since it contains all details about the user.
+     */
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class UserDTO {
+        private String username;
+        private String firstname;
+        private String lastname;
+        private String password;
 
-}
-
-/**
- * only used for account creation and login since it contains all details about the user.
- */
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-class UserDTO {
-    private String username;
-    private String firstname;
-    private String lastname;
-    private String password;
-
-    UserDTO(String username, String password) {
-        this.username = username;
-        this.password = password;
+        UserDTO(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
     }
 }
+
+
 
 

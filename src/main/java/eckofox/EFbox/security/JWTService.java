@@ -64,7 +64,7 @@ public class JWTService {
              BufferedReader reader = new BufferedReader(fileReader)) {
             return reader.readLine();
         } catch (IOException e) {
-            System.out.println("Error: secret string not found. The Application has shutdown.");
+            System.err.println("Error: secret string not found. The Application has shutdown.");
             System.exit(0);
             return null; //will never be accessed (shutdown above) but the IDE requires a return statement.
         }

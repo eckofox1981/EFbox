@@ -45,7 +45,7 @@ public class EFBoxFileService {
             fileRepository.save(efBoxFile);
             return efBoxFile;
         } catch (IOException e) {
-            throw new IOException(e.getMessage());
+            throw new IOException("IOException - Failed to save files: " + e.getMessage());
         }
     }
 

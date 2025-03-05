@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
 @AllArgsConstructor
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -43,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         Authentication potentialOAuth2Auth = SecurityContextHolder.getContext().getAuthentication();
 
-        //if OAuth2 loggin
+        //if OAuth2 login
         if (potentialOAuth2Auth != null) {
             if (potentialOAuth2Auth instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
                 OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
@@ -64,7 +63,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
-        //if JWT loggin
+        //if JWT login
         if (request.getHeader("Authorization") == null || request.getHeader("Authorization").isBlank()) {
             filterChain.doFilter(request, response);
             return;

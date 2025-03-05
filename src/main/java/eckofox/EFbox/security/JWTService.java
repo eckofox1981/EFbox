@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
@@ -58,13 +55,12 @@ public class JWTService {
      * @return secret string for algorithm
      */
     private String setSecretString() {
-        File file = new File("./src/main/resources/secret.txt");
-
-        try (FileReader fileReader = new FileReader(file.getAbsolutePath());
-             BufferedReader reader = new BufferedReader(fileReader)) {
+        try {
+            var secret = getClass().getResourceAsStream("/secret.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(secret));
             return reader.readLine();
         } catch (IOException e) {
-            System.err.println("Error: secret string not found. The Application has shutdown.");
+            System.err.println("Error: secret string not found. The Application has shutdown.\n" + e.getMessage());
             System.exit(0);
             return null; //will never be accessed (shutdown above) but the IDE requires a return statement.
         }

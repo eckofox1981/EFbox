@@ -40,9 +40,7 @@ public class EFBoxFileController {
                                         @RequestParam String parentID) {
         try {
             EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
-
             EntityModel<EFBoxFileDTO> efBoxFileDTOEntityModel = EntityModel.of(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
-
             String parentFolderID = efBoxfile.getParentFolder().getFolderID().toString();
 
             Link parentFolderLink = WebMvcLinkBuilder.linkTo(
@@ -50,7 +48,7 @@ public class EFBoxFileController {
                     .withRel("parentFolder");
 
             Link userLink = WebMvcLinkBuilder.linkTo(
-                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
                     .withRel("owner");
 
             efBoxFileDTOEntityModel

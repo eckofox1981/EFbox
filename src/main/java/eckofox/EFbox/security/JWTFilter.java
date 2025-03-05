@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings("ALL")
 @AllArgsConstructor
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -47,7 +48,7 @@ public class JWTFilter extends OncePerRequestFilter {
             if (potentialOAuth2Auth instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
                 OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
 
-                Optional<User> optionalUser = userRepository.findByOpenIDconnectID(oAuth2User.getName());
+                Optional<User> optionalUser = userRepository.findByOpenIDConnectID(oAuth2User.getName());
 
                 if (optionalUser.isEmpty()) {
                     response.sendError(401, "User not found, check OAuth2 token validity");

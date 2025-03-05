@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +27,7 @@ public class UserService implements UserDetailsService {
      * @return NoPasswordUserDTO
      */
     public User createUser(UserController.UserDTO userDTO) {
+
         if (!passwordValidationIsOk(userDTO.getPassword())) {
             throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase "
                     + "characters and at least one digit.");
@@ -49,6 +49,7 @@ public class UserService implements UserDetailsService {
      */
     public String login(String username, String password) throws LoginException {
         User user = userRepository.findByUsername(username).orElseThrow();
+
         if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
             throw new LoginException("Incorrect username or password");
         }
@@ -87,20 +88,20 @@ public class UserService implements UserDetailsService {
         return (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$"));
     }
 
-    /**
-     * sends token to JWTService to check token is valid
-     *
-     * @param token to be checked
-     * @return user (optional, may return empty if the validation fails)
-     */
-    public Optional<User> verifyAuthentication(String token) {
-        try {
-            UUID userID = jwtService.verifyToken(token);
-            return userRepository.findById(userID);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
+//    /**
+//     * sends token to JWTService to check token is valid
+//     *
+//     * @param token to be checked
+//     * @return user (optional, may return empty if the validation fails)
+//     */
+//    public Optional<User> verifyAuthentication(String token) {
+//        try {
+//            UUID userID = jwtService.verifyToken(token);
+//            return userRepository.findById(userID);
+//        } catch (Exception e) {
+//            return Optional.empty();
+//        }
+//    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

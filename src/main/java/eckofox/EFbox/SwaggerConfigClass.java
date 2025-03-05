@@ -47,7 +47,7 @@ import org.springframework.context.annotation.Import;
         )
 })
 public class SwaggerConfigClass {
-    /**
-     * class exist only for swagger-ui documentation (you're welcome to read it above though).
+    /*
+      class exist only for swagger-ui documentation (you're welcome to read it above though).
      */
 }

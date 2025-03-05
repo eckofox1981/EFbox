@@ -24,17 +24,16 @@ import java.util.NoSuchElementException;
 public class EFBoxFileController {
 
     private EFBoxFileService fileService;
-    private UserController userController;
 
 
     /**
      * receives the request and passes it to Service
      * non-cacheable
      *
-     * @param file     spring's multipartfile format for practical handling
+     * @param file     spring's Multipartfile format for practical handling
      * @param user     used later to check access to folder in Service
      * @param parentID where the file will be saved
-     * @return ResponseEntity with entitymodel including hyperdia
+     * @return ResponseEntity with EntityModel including hypermedia
      */
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
@@ -122,7 +121,7 @@ public class EFBoxFileController {
      * @param user    for access rights in Service
      * @param fileID  to be renamed
      * @param newName self-explanatory
-     * @return ResponseEntity with either FileDTO or a error response
+     * @return ResponseEntity with either FileDTO or an error response
      */
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID,

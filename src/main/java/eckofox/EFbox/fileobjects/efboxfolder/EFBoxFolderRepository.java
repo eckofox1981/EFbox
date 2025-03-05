@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface EFBoxFolderRepository extends JpaRepository<EFBoxFolder, UUID> {
 
     /**
-     * custom SQLquery which looks for foldernames like (ILIKE for postgres) the string pattern with the specific
+     * custom SQLquery which looks for folderNames like (ILIKE for postgres) the string pattern with the specific
      * user attached to (through user id)
      */
     @Query(value = "SELECT * FROM folders WHERE name ILIKE %?1% AND user_userid = ?2", nativeQuery = true)

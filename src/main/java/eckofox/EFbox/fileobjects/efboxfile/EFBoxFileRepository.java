@@ -12,8 +12,8 @@ import java.util.UUID;
 public interface EFBoxFileRepository extends JpaRepository<EFBoxFile, UUID> {
 
     /**
-     * custom query since I couldn't find inbuild query (this turned out to be easier than to look for it)
-     * checks if the fileName is like the query AND if the parentfolder is owned by the userID (through JOIN)
+     * custom query since I couldn't find in-build query (this turned out to be easier than to look for it)
+     * checks if the fileName is like the query AND if the parentFolder is owned by the userID (through JOIN)
      * the ILIKE is postgres specific
      * works but "RESULTS MAY VARY".
      */

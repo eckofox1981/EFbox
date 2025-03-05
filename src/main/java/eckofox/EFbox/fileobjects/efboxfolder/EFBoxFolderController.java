@@ -26,6 +26,7 @@ public class EFBoxFolderController {
      *
      * @param user will be used to check access rights in Service
      */
+    @SuppressWarnings("DataFlowIssue")
     @PostMapping("/create")
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user,
                                           @RequestParam String parentFolderID) {
@@ -90,7 +91,7 @@ public class EFBoxFolderController {
     }
 
     /**
-     * search any file- or foldername matching the query and returns the results as a searchResponseDTO.
+     * search any file- or folderName matching the query and returns the results as a searchResponseDTO.
      * For cleaner code I convert the return into DTO in EFBoxService with stream.
      *
      * @param query a string trying to be matched in EFBoxFolderRepository and EFBoxFileRepository

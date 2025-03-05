@@ -29,7 +29,7 @@ public class EFBoxFileService {
      * @param user           to check access rights
      * @param parentFolderID where file will be saved and to check access rights
      * @return EFBoxFile
-     * @throws Exception
+     * @throws Exception for IllegalAccessException and IOException
      */
     public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID) throws Exception {
         EFBoxFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID))
@@ -56,10 +56,11 @@ public class EFBoxFileService {
      * @param fileID to find file
      * @param user   to check access rights
      * @return EFBoxFile
-     * @throws Exception
+     * @throws Exception for NoSuchElementException and IllegalAccessException
      */
     public EFBoxFile getFile(String fileID, User user) throws Exception {
         EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
+
         if (!user.getUserID().equals(efBoxFile.getParentFolder().getUser().getUserID())) {
             throw new IllegalAccessException("You are not allowed to download this file.");
         }
@@ -73,7 +74,7 @@ public class EFBoxFileService {
      * @param fileID to find file
      * @param user   to check access rights
      * @return EFBoxFile
-     * @throws Exception
+     * @throws Exception for NoSuchElementException and IllegalAccessException
      */
     public EFBoxFile deleteFile(String fileID, User user) throws Exception {
         EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID))
@@ -95,14 +96,14 @@ public class EFBoxFileService {
      * @param newName self-explanatory
      * @param user    to check access rights
      * @return updated EFBoxFile
-     * @throws Exception
+     * @throws Exception for NoSuchElementException and IllegalAccessException
      */
     public EFBoxFile changeFileName(String fileID, String newName, User user) throws Exception {
         EFBoxFile file = fileRepository.findById(UUID.fromString(fileID))
                 .orElseThrow(() -> new NoSuchElementException("File not found."));
 
         if (folderService.userIsNotFolderOwner(file.getParentFolder(), user)) {
-            throw new IllegalAccessException("You are not allowed to acces this file");
+            throw new IllegalAccessException("You are not allowed to access this file");
         }
 
         file.setFileName(newName);

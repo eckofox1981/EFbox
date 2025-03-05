@@ -1,7 +1,6 @@
 package eckofox.EFbox;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -10,10 +9,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springframework.context.annotation.Configuration;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @Configuration
@@ -52,23 +47,7 @@ import org.springframework.context.annotation.Import;
         )
 })
 public class SwaggerConfigClass {
-
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .components(new Components()
-                        .addSecuritySchemes("bearerToken",
-                                new io.swagger.v3.oas.models.security.SecurityScheme()
-                                        .type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                        )
-                        .addSecuritySchemes("openIDConnect",
-                                new io.swagger.v3.oas.models.security.SecurityScheme()
-                                        .type(io.swagger.v3.oas.models.security.SecurityScheme.Type.OAUTH2)
-                                        .scheme("oauth2")
-                                        .bearerFormat("OAuth2")
-                        ));
-    }
-
+    /**
+     * class exist only for swagger-ui documentation (you're welcome to read it above though)
+     */
 }

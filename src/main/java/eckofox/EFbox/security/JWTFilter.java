@@ -26,9 +26,14 @@ public class JWTFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     /**
-     * checks if User is login with OpenID(OAuth2) or JWT, if logging in with OAuth2 and no corresponding user is present
-     * in the database it will create the user (it made more sense to have it here than in a separate OAuth2SuccessHandler).
+     * checks if User is login with OpenID(OAuth2) or JWT.
+     * If logging in with OAuth2 it fetches the user from the database and runs it thorugh security context.
      * If logging in with JWT, the process is handled "normally" through JWTServices.
+     * @param request being processed
+     * @param response might be used in error handling
+     * @param filterChain for continuing porcessing
+     * @throws ServletException for servlet issues
+     * @throws IOException for error handling in responses and doFilter
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,6 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         Authentication potentialOAuth2Auth = SecurityContextHolder.getContext().getAuthentication();
 
+        //if OAuth2 loggin
         if (potentialOAuth2Auth != null) {
             if (potentialOAuth2Auth instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
                 OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
@@ -57,6 +63,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
+        //if JWT loggin
         if (request.getHeader("Authorization") == null || request.getHeader("Authorization").isBlank()) {
             filterChain.doFilter(request, response);
             return;

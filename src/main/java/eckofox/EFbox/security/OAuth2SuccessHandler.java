@@ -22,7 +22,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JWTService jwtService;
 
-
+    /**
+     * Handles successfull OAuth2-authentication.
+     * If the user is not present in the database an account is created and saved.
+     *
+     * @param request associated with the authentication
+     * @param response used after authentication
+     * @param authentication token used for authentication
+     * @throws IOException related to authentication issues
+     * @throws ServletException related to servlet issues
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -33,9 +42,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         Optional<User> optionalUser = userRepository.findByOpenIDconnectID(oAuth2User.getName());
 
-        if (optionalUser.isEmpty()) {
+        if (optionalUser.isEmpty()) { //if the OpenIDUser exists
             String username = "";
 
+            /**
+             * since Google and GitHub do not have the same attributes the following if statements gets the username
+             * based on the authroized client registration ID extracted from the authenticaiton-token.
+             */
             if (oAuth2Token.getAuthorizedClientRegistrationId().equals("github")) {
                 username = oAuth2User.getAttribute("login");
             }
@@ -52,6 +65,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             System.out.println(optionalUser.get().getOpenIDconnectProvider() + " - " + optionalUser.get().getUsername()
                     + " logged in as " + optionalUser.get().getUserID());
         }
-
     }
 }

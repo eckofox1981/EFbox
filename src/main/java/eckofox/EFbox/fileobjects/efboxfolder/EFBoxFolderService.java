@@ -31,6 +31,7 @@ public class EFBoxFolderService {
      * @throws NoSuchElementException
      */
     public EFBoxFolder createFolder(String folderName, User user, String parentFolderID) throws IllegalAccessException, NoSuchElementException {
+
         if (parentFolderID.equals("0")) {
             EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, user);
             return folderRespository.save(folder);
@@ -42,7 +43,6 @@ public class EFBoxFolderService {
         }
 
         EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, parentFolder, user);
-
 
         return folderRespository.save(folder);
     }
@@ -82,6 +82,7 @@ public class EFBoxFolderService {
         files.stream()
                 .map(EFBoxFileDTO::fromEFBoxFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
+
         return responseDTO;
     }
 
@@ -97,7 +98,9 @@ public class EFBoxFolderService {
      * @throws IllegalAccessException
      */
     public EFBoxFolder deleteFolder(String folderID, User user) throws IllegalAccessException {
-        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
+        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID))
+                .orElseThrow(() -> new NoSuchElementException("Folder not found"));
+
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not allowed to delete this folder");
         }
@@ -118,7 +121,9 @@ public class EFBoxFolderService {
      * @throws Exception
      */
     public EFBoxFolder changeFolderName(String folderID, String newName, User user) throws Exception {
-        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("File not found."));
+        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID))
+                .orElseThrow(() -> new NoSuchElementException("File not found."));
+
         if (userIsNotFolderOwner(folder, user)) {
             throw new IllegalAccessException("You are not allowed to access this file");
         }
@@ -148,6 +153,7 @@ public class EFBoxFolderService {
      * @param folder to be deleted (with its content)
      */
     private void recursiveDeletionOfFolders(EFBoxFolder folder, User user) {
+
         if (!folder.getFolders().isEmpty()) {
             for (EFBoxFolder subFolder : folder.getFolders()) {
                 recursiveDeletionOfFolders(subFolder, user);

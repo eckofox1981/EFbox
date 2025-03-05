@@ -22,17 +22,19 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 @Tag(name = "File")
 public class EFBoxFileController {
+
     private EFBoxFileService fileService;
     private UserController userController;
 
 
     /**
      * receives the request and passes it to Service
+     * non-cacheable
      *
      * @param file     spring's multipartfile format for practical handling
      * @param user     used later to check access to folder in Service
      * @param parentID where the file will be saved
-     * @return ResponseEntity
+     * @return ResponseEntity with entitymodel including hyperdia
      */
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
@@ -69,9 +71,10 @@ public class EFBoxFileController {
 
     /**
      * receives the request and passes it to Service
+     * non-cacheable
      *
      * @param fileID to find the file in the database
-     * @param user   to check for Illegal access in Service
+     * @param user   to check later for Illegal access in Service
      * @return ResponseEntity of the file requested or an error message
      */
     @GetMapping("/download")
@@ -81,7 +84,7 @@ public class EFBoxFileController {
             byte[] fileContent = efBoxFile.getContent();
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(efBoxFile.getType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + efBoxFile.getFileName() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"" + efBoxFile.getFileName() + "\"")
                     .body(fileContent);
         } catch (IllegalAccessException e) {
             return ResponseEntity.status(403).body(e.getMessage());
@@ -114,6 +117,7 @@ public class EFBoxFileController {
 
     /**
      * receives the request and passes it to Service
+     * non-cacheable
      *
      * @param user    for access rights in Service
      * @param fileID  to be renamed

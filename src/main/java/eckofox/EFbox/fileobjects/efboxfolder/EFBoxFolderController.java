@@ -44,7 +44,7 @@ public class EFBoxFolderController {
             }
 
             Link userLink = WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
                     .withRel("owner");
 
             efBoxFolderDTOEntityModel.add(userLink);
@@ -69,14 +69,14 @@ public class EFBoxFolderController {
 
             if (!efBoxFolderDTOEntityModel.getContent().getParentFolderName().isEmpty()) {
                 Link parentFolderLink = WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(EFBoxFolderController.class)
-                                .seeFolderContent(efBoxFolder.getParentFolder().getFolderID().toString(), user))
+                                WebMvcLinkBuilder.methodOn(EFBoxFolderController.class)
+                                        .seeFolderContent(efBoxFolder.getParentFolder().getFolderID().toString(), user))
                         .withRel("parentFolder");
                 efBoxFolderDTOEntityModel.add(parentFolderLink);
             }
 
             Link userLink = WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
                     .withRel("owner");
 
             efBoxFolderDTOEntityModel.add(userLink);
@@ -105,7 +105,7 @@ public class EFBoxFolderController {
             EntityModel<SearchResponseDTO> searchResponseDTOEntityModel = EntityModel.of(searchResponseDTO);
 
             Link userLink = WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
+                            WebMvcLinkBuilder.methodOn(UserController.class).showUserInfo(user))
                     .withRel("owner");
 
             searchResponseDTOEntityModel.add(userLink);

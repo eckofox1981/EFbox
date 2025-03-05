@@ -29,8 +29,8 @@ public class UserService implements UserDetailsService {
      */
     public User createUser(UserDTO userDTO) {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
-            throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
-                    "characters and at least one digit.");
+            throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase "
+                    + "characters and at least one digit.");
         }
 
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
      *
      * @param username to find user in database
      * @param password to be checked in database
-     * @return token
+     * @return JWT token
      * @throws LoginException purposefully vague for security
      */
     public String login(String username, String password) throws LoginException {

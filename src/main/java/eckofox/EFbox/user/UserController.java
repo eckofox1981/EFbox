@@ -30,10 +30,11 @@ public class UserController {
     private final UserService userservice;
 
     /**
-     * sends request to Service
+     * sends request to Service which creates a User object and returns it.
+     *
      *
      * @param userDTO gives the basic information to convert to a proper user account
-     * @return NoPasswordDTO or error
+     * @return NoPasswordDTO converted from User or error
      */
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
@@ -41,8 +42,7 @@ public class UserController {
             User user = userservice.createUser(userDTO);
             return ResponseEntity.ok(NoPasswordUserDTO.fromUser(user));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Unable to create user.Please check your inputs and try again. "
-                    + e.getMessage());
+            return ResponseEntity.badRequest().body("Unable to create user.Please check your inputs and try again. " + e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class UserController {
      * sends request to Service
      *
      * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
-     * @return token or error (badRequest purposefully vague)
+     * @return token or error (badRequest purposefully vague for security)
      */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
@@ -62,10 +62,10 @@ public class UserController {
     }
 
     /**
-     * sends request to Service
+     * sends request to Service which return a User object
      *
      * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
-     * @return NoPasswordDTO or error (badRequest purposefully vague)
+     * @return NoPasswordDTO converted from User or error (badRequest purposefully vague)
      */
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {
@@ -115,17 +115,9 @@ public class UserController {
             if (user.getRootFolder() == null || user.getRootFolder().isEmpty()) {
                 folderNames.add("EMPTY");
             } else {
-                folderNames = user.getRootFolder()
-                        .stream()
-                        .map(EFBoxFolder::getName)
-                        .toList();
+                folderNames = user.getRootFolder().stream().map(EFBoxFolder::getName).toList();
             }
-            return new NoPasswordUserDTO(
-                    user.getUserID(),
-                    user.getUsername(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    folderNames);
+            return new NoPasswordUserDTO(user.getUserID(), user.getUsername(), user.getFirstName(), user.getLastName(), folderNames);
         }
     }
 

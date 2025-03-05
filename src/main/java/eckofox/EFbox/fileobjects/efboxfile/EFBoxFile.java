@@ -14,20 +14,22 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class EFBoxFile {
+
     @Id
     private UUID fileID;
+
     @Column
-    private String filename;
+    private String fileName;
+
     @Lob
     @Column(name = "content")
     @JdbcTypeCode(SqlTypes.VARBINARY)
     private byte[] content;
+
     @Column
     private String type;
+
     @ManyToOne
     private EFBoxFolder parentFolder;
 
-    public String getFileName() {
-        return filename;
-    }
 }

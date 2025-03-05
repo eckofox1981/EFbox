@@ -17,15 +17,20 @@ import java.util.UUID;
 public class EFBoxFolder {
     @Id
     private UUID folderID;
+
     @Column
     private String name;
+
     @ManyToOne
     @JoinColumn(name = "parent_folderID")
     private EFBoxFolder parentFolder;
+
     @OneToMany(mappedBy = "parentFolder", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<EFBoxFolder> folders;
+
     @OneToMany(mappedBy = "parentFolder", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<EFBoxFile> files;
+
     @ManyToOne
     private User user;
 

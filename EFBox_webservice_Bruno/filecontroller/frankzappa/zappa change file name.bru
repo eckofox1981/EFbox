@@ -1,0 +1,20 @@
+meta {
+  name: zappa change file name
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8080/file/change-name?fileID=faf8f25a-65b6-4838-8599-bb852c5a353b&newName=new name
+  body: none
+  auth: none
+}
+
+params:query {
+  fileID: faf8f25a-65b6-4838-8599-bb852c5a353b
+  newName: new name
+}
+
+headers {
+  Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6ImFlNTJiYjkzLWI2MzYtNDRkMS05MjUxLTZhNzgwOTQyYjNlMiIsImV4cCI6MTc0MTA4MTk3N30.hiRorSjS3DX0Y72IxnDy3ejVRy5IM83lMwAqUEjwgaY
+}

@@ -1,0 +1,19 @@
+meta {
+  name: zappa delete folder
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:8080/folder/delete?folderID=6b352dff-0be0-4499-85ea-7368b2579b4f
+  body: none
+  auth: bearer
+}
+
+params:query {
+  folderID: 6b352dff-0be0-4499-85ea-7368b2579b4f
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6ImU3ZmM2MTIxLWMzNjQtNDg0Ny05Y2UyLWRkZjFjMTAxNzJmZCIsImV4cCI6MTczOTE4MjExM30.Jx16GdjSvV-SSvkftZsMZ-dOPVPOMdPBjllneb1DJAA
+}

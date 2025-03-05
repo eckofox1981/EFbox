@@ -1,0 +1,19 @@
+meta {
+  name: github delete folder
+  type: http
+  seq: 7
+}
+
+delete {
+  url: http://localhost:8080/folder/delete?folderID=64ead019-9f29-4083-82d5-7ee9200dfd50
+  body: none
+  auth: none
+}
+
+params:query {
+  folderID: 64ead019-9f29-4083-82d5-7ee9200dfd50
+}
+
+headers {
+  Cookie: JSESSIONID=5AD327745DC28397644D9978950F8F22
+}

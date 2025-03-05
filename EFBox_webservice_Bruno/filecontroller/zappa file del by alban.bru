@@ -1,0 +1,19 @@
+meta {
+  name: zappa file del by alban
+  type: http
+  seq: 3
+}
+
+delete {
+  url: http://localhost:8080/file/delete?fileID=628c41ca-19b7-4f68-95c8-d44ff0bca4c2
+  body: none
+  auth: bearer
+}
+
+params:query {
+  fileID: 628c41ca-19b7-4f68-95c8-d44ff0bca4c2
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6Ijg3Zjc4YzdmLTFhNzQtNDFjZS1hNmFhLTFmNTNiMTcwMGY0ZSIsImV4cCI6MTczOTAyMDAxNH0.l5pj-qvbFqAb3JLMU1y7n9qrPE-0zBK0YD86CWDun6c
+}

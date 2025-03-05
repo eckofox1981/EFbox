@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "EFBox_webservice_Bruno",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

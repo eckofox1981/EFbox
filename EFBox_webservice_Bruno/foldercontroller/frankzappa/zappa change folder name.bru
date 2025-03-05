@@ -1,0 +1,20 @@
+meta {
+  name: zappa change folder name
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8080/folder/change-name?folderID=c3efca31-f1db-47cd-ba41-9454548c1ce6&newName=new name here
+  body: none
+  auth: none
+}
+
+params:query {
+  folderID: c3efca31-f1db-47cd-ba41-9454548c1ce6
+  newName: new name here
+}
+
+headers {
+  Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6ImFlNTJiYjkzLWI2MzYtNDRkMS05MjUxLTZhNzgwOTQyYjNlMiIsImV4cCI6MTc0MTA4MTk3N30.hiRorSjS3DX0Y72IxnDy3ejVRy5IM83lMwAqUEjwgaY
+}

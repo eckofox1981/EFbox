@@ -1,0 +1,23 @@
+meta {
+  name: gihub png file
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/file/upload?parentID=11597fad-8458-48b9-88b8-ab1722c5ba71
+  body: multipartForm
+  auth: none
+}
+
+params:query {
+  parentID: 11597fad-8458-48b9-88b8-ab1722c5ba71
+}
+
+headers {
+  Cookie: JSESSIONID=68C797D841AC2AEB2AE8C6F2D2B9C151
+}
+
+body:multipart-form {
+  file: @file(/run/user/1000/doc/71fe1d65/elgrupocincoLOGO.png)
+}

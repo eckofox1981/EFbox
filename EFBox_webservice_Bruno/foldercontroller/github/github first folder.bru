@@ -1,0 +1,20 @@
+meta {
+  name: github first folder
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/folder/create?folderName=Main Folder&parentFolderID=0
+  body: none
+  auth: none
+}
+
+params:query {
+  folderName: Main Folder
+  parentFolderID: 0
+}
+
+headers {
+  Cookie: JSESSIONID=5AD327745DC28397644D9978950F8F22
+}

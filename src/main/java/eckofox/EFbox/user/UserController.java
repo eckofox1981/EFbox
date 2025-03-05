@@ -29,7 +29,12 @@ import java.util.UUID;
 public class UserController {
     private final UserService userservice;
 
-
+    /**
+     * sends request to Service
+     *
+     * @param userDTO gives the basic information to convert to a proper user account
+     * @return NoPasswordDTO or error
+     */
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
         try {
@@ -41,7 +46,12 @@ public class UserController {
         }
     }
 
-
+    /**
+     * sends request to Service
+     *
+     * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
+     * @return token or error (badRequest purposefully vague)
+     */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         try {
@@ -51,7 +61,12 @@ public class UserController {
         }
     }
 
-
+    /**
+     * sends request to Service
+     *
+     * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
+     * @return NoPasswordDTO or error (badRequest purposefully vague)
+     */
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {
             User userForInfo = userservice.seeUserInfo(user);
@@ -61,7 +76,12 @@ public class UserController {
         }
     }
 
-
+    /**
+     * sends request to Service
+     *
+     * @param user based on token to be deleted in service
+     * @return message or error
+     */
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
             userservice.deleteUser(user);

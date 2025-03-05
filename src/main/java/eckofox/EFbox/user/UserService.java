@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
      * efbox_users table is set up for unique username
      *
      * @param userDTO to be saved in database and instantiated as actual User
-     * @return NopasswordUserDTO
+     * @return NoPasswordUserDTO
      */
     public User createUser(UserDTO userDTO) {
         if (!passwordValidationIsOk(userDTO.getPassword())) {

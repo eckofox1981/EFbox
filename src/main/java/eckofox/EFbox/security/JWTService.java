@@ -49,7 +49,8 @@ public class JWTService {
     }
 
     /**
-     * fetches secret string in separate text file that (in theory) should not be shared on GitHub. Shared here for simplicity
+     * fetches secret string in separate text file that (in theory) should not be shared on GitHub. Shared here to
+     * simplify review
      * if the secret string is not found the application will exit
      *
      * @return secret string for algorithm

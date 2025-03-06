@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     /**
      * checks which endpoints need security filter, only account creation and login are public. All other functions
-     * require authentication. Ownership of files and folders is checked in various service methods and sometimes
+     * require authentication. Ownership of files and folders is checked in various service-methods and sometimes
      * even in repository methods.
      */
     @Bean

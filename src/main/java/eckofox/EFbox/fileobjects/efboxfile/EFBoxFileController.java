@@ -33,7 +33,7 @@ public class EFBoxFileController {
      * @param file     spring's Multipartfile format for practical handling
      * @param user     used later to check access to folder in Service
      * @param parentID where the file will be saved
-     * @return ResponseEntity with EntityModel including hypermedia
+     * @return ResponseEntity with EntityModel including hypermedia or error message
      */
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
@@ -119,7 +119,7 @@ public class EFBoxFileController {
      * @param user    for access rights in Service
      * @param fileID  to be renamed
      * @param newName self-explanatory
-     * @return ResponseEntity with either FileDTO or an error response
+     * @return ResponseEntity with EntityModel including hypermedia or error message
      */
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID,

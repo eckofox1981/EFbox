@@ -42,7 +42,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             String username = "";
 
             /*
-              since Google and GitHub do not have the same attributes the following if statements gets the username
+              since Google and GitHub do not have the same attributes the following if-statements gets the username
               based on the authorized client registration ID extracted from the authentication-token.
              */
             if (oAuth2Token.getAuthorizedClientRegistrationId().equals("github")) {

@@ -32,8 +32,9 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity,
-                                           JWTFilter jwtFilter,
-                                           OAuth2SuccessHandler oAuth2SuccessHandler) throws Exception {
+                                           JWTService jwtService,
+                                           OAuth2SuccessHandler oAuth2SuccessHandler,
+                                           UserRepository userRepository) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests
                         (auth -> auth
@@ -42,7 +43,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                         )
                 .oauth2Login(oauth2 ->oauth2.successHandler(oAuth2SuccessHandler))
-                .addFilterAfter(jwtFilter, OAuth2LoginAuthenticationFilter.class);
+                .addFilterAfter(new JWTFilter(jwtService, userRepository), OAuth2LoginAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

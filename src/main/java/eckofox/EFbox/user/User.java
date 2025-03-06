@@ -20,27 +20,19 @@ import java.util.UUID;
 public class User implements UserDetails {
     @Id
     private UUID userID;
-
     @Column(unique = true)
     private String username;
-
     @Column
     private String firstName;
-
     @Column
     private String lastName;
-
     @Column
     private String password;
-
     @Column
-    private String openIDConnectID = null;
-
+    private String openIDconnectID = null;
     @Column
     private String openIDConnectProvider = null;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    //ln.42 makes sure no files are left if not owned (ex. user removal)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) //makes sure no files are left if not owned (ex. user removal)
     private final List<EFBoxFolder> RootFolder;
 
     public User(UUID userID, String username, String firstName, String lastName, String password) {
@@ -52,10 +44,10 @@ public class User implements UserDetails {
         this.RootFolder = new ArrayList<>();
     }
 
-    public User(UUID userID, String username, String openIDConnectID, String openIDConnectProvider) {
+    public User(UUID userID, String username, String openIDconnectID, String openIDConnectProvider) {
         this.userID = userID;
         this.username = username;
-        this.openIDConnectID = openIDConnectID;
+        this.openIDconnectID = openIDconnectID;
         this.openIDConnectProvider = openIDConnectProvider;
         this.RootFolder = new ArrayList<>();
     }

@@ -29,23 +29,24 @@ public class EFBoxFileService {
      * @param user           to check access rights
      * @param parentFolderID where file will be saved and to check access rights
      * @return EFBoxFile
-     * @throws Exception for IllegalAccessException and IOException
+     * @throws NoSuchElementException if parentFolder not found
+     * @throws IllegalAccessException if user not owner of parentFolder
+     * @throws IOException if unable to save
      */
-    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID) throws Exception {
+    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID)
+            throws NoSuchElementException, IllegalAccessException, IOException {
         EFBoxFolder parentFolder = folderRepository.findById(UUID.fromString(parentFolderID))
                 .orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
-
         if (!user.getUserID().equals(parentFolder.getUser().getUserID())) {
             throw new IllegalAccessException("You are not authorized to upload a file to this folder");
         }
 
         try {
-            EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(),
-                    file.getContentType(), parentFolder);
+            EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
             fileRepository.save(efBoxFile);
             return efBoxFile;
         } catch (IOException e) {
-            throw new IOException("IOException - Failed to save files: " + e.getMessage());
+            throw new IOException(e.getMessage());
         }
     }
 
@@ -56,11 +57,11 @@ public class EFBoxFileService {
      * @param fileID to find file
      * @param user   to check access rights
      * @return EFBoxFile
-     * @throws Exception for NoSuchElementException and IllegalAccessException
+     * @throws NoSuchElementException if file not found
+     * @throws IllegalAccessException if user not owner of parentFolder
      */
-    public EFBoxFile getFile(String fileID, User user) throws Exception {
+    public EFBoxFile getFile(String fileID, User user) throws NoSuchElementException, IllegalAccessException {
         EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
-
         if (!user.getUserID().equals(efBoxFile.getParentFolder().getUser().getUserID())) {
             throw new IllegalAccessException("You are not allowed to download this file.");
         }
@@ -74,12 +75,11 @@ public class EFBoxFileService {
      * @param fileID to find file
      * @param user   to check access rights
      * @return EFBoxFile
-     * @throws Exception for NoSuchElementException and IllegalAccessException
+     * @throws NoSuchElementException if file not found
+     * @throws IllegalAccessException if user not owner of parentFolder
      */
-    public EFBoxFile deleteFile(String fileID, User user) throws Exception {
-        EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID))
-                .orElseThrow(() -> new NoSuchElementException("File not found"));
-
+    public EFBoxFile deleteFile(String fileID, User user) throws NoSuchElementException, IllegalAccessException {
+        EFBoxFile efBoxFile = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found"));
         if (!efBoxFile.getParentFolder().getUser().getUserID().equals(user.getUserID())) {
             throw new IllegalAccessException("You are not authorized to access this efBoxFile.");
         }
@@ -96,17 +96,18 @@ public class EFBoxFileService {
      * @param newName self-explanatory
      * @param user    to check access rights
      * @return updated EFBoxFile
-     * @throws Exception for NoSuchElementException and IllegalAccessException
+     * @throws NoSuchElementException if file not found
+     * @throws IllegalAccessException if user not owner of parentFolder
+
      */
-    public EFBoxFile changeFileName(String fileID, String newName, User user) throws Exception {
-        EFBoxFile file = fileRepository.findById(UUID.fromString(fileID))
-                .orElseThrow(() -> new NoSuchElementException("File not found."));
+    public EFBoxFile changeFileName(String fileID, String newName, User user) throws NoSuchElementException, IllegalAccessException {
+        EFBoxFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found."));
 
         if (folderService.userIsNotFolderOwner(file.getParentFolder(), user)) {
-            throw new IllegalAccessException("You are not allowed to access this file");
+            throw new IllegalAccessException("You are not allowed to acces this file");
         }
 
-        file.setFileName(newName);
-        return fileRepository.save(file);
+            file.setFilename(newName);
+            return fileRepository.save(file);
     }
 }

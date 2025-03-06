@@ -71,7 +71,7 @@ public class EFBoxFolderService {
      */
     public SearchResponseDTO searchInAllFolders(String query, User user) {
         Collection<EFBoxFolder> folders = folderRepository.findByNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
-        Collection<EFBoxFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
+        Collection<EFBoxFile> files = fileRepository.findByFileNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
 
         SearchResponseDTO responseDTO = new SearchResponseDTO();
         folders.stream()

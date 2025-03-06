@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -45,9 +46,11 @@ public class UserService implements UserDetailsService {
      * @param password to be checked in database
      * @return token
      * @throws LoginException purposefully vague for security
+     * @throws NoSuchElementException purposefully vague for security
      */
-    public String login(String username, String password) throws LoginException {
-        User user = userRepository.findByUsername(username).orElseThrow();
+    public String login(String username, String password) throws LoginException, NoSuchElementException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("Incorrect username or password"));
         if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
             throw new LoginException("Incorrect username or password");
         }

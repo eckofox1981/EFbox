@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
@@ -43,14 +44,17 @@ public class UserController {
      * sends request to Service
      *
      * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
-     * @return token or error (badRequest purposefully vague for security)
+     * @return token or error (forbidden purposefully vague for security and "I am tea pot" for fun (not to be used IRL,
+     * I would then use 403 for vagueness)
      */
     @PutMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         try {
             return ResponseEntity.ok(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
         } catch (LoginException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(418).body(e.getMessage());
         }
     }
 
@@ -60,6 +64,7 @@ public class UserController {
      * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
      * @return NoPasswordDTO converted from User or error (badRequest purposefully vague)
      */
+    @GetMapping("/info")
     public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
         try {
             User userForInfo = userservice.seeUserInfo(user);

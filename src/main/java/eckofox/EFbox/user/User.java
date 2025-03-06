@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column
-    private String openIDconnectID = null;
+    private String openIDConnectID = null;
 
     @Column
     private String openIDConnectProvider = null;
@@ -52,10 +52,10 @@ public class User implements UserDetails {
         this.RootFolder = new ArrayList<>();
     }
 
-    public User(UUID userID, String username, String openIDconnectID, String openIDConnectProvider) {
+    public User(UUID userID, String username, String openIDConnectID, String openIDConnectProvider) {
         this.userID = userID;
         this.username = username;
-        this.openIDconnectID = openIDconnectID;
+        this.openIDConnectID = openIDConnectID;
         this.openIDConnectProvider = openIDConnectProvider;
         this.RootFolder = new ArrayList<>();
     }

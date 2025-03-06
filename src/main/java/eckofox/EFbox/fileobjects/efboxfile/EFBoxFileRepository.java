@@ -19,6 +19,6 @@ public interface EFBoxFileRepository extends JpaRepository<EFBoxFile, UUID> {
      */
     //NOTE: ILIKE is postgres specific in spring
     @Query(value = "SELECT * FROM files JOIN folders ON files.parent_folder_folderid = folders.folderid " +
-            "WHERE files.fileName ILIKE %?1% AND folders.user_userid = ?2", nativeQuery = true)
-    Optional<Collection<EFBoxFile>> findByFilenameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
+            "WHERE files.file_name ILIKE %?1% AND folders.user_userid = ?2", nativeQuery = true)
+    Optional<Collection<EFBoxFile>> findByFileNameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
 }

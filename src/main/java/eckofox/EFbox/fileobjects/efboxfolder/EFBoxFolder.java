@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class EFBoxFolder {
+
     @Id
     private UUID folderID;
 

@@ -98,7 +98,6 @@ public class EFBoxFileService {
      * @return updated EFBoxFile
      * @throws NoSuchElementException if file not found
      * @throws IllegalAccessException if user not owner of parentFolder
-
      */
     public EFBoxFile changeFileName(String fileID, String newName, User user) throws NoSuchElementException, IllegalAccessException {
         EFBoxFile file = fileRepository.findById(UUID.fromString(fileID)).orElseThrow(() -> new NoSuchElementException("File not found."));
@@ -107,7 +106,7 @@ public class EFBoxFileService {
             throw new IllegalAccessException("You are not allowed to acces this file");
         }
 
-            file.setFilename(newName);
+            file.setFileName(newName);
             return fileRepository.save(file);
     }
 }

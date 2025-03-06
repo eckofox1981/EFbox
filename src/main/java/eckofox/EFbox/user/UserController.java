@@ -1,13 +1,6 @@
 package eckofox.EFbox.user;
 
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -82,6 +75,7 @@ public class UserController {
      * @param user based on token to be deleted in service
      * @return message or error
      */
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user) {
         try {
             userservice.deleteUser(user);
@@ -108,7 +102,7 @@ public class UserController {
          * converts user to user dto (no password)
          *
          * @param user to be converted
-         * @return NopassWordUserDTO
+         * @return NoPassWordUserDTO
          */
         public static NoPasswordUserDTO fromUser(User user) {
             List<String> folderNames = new ArrayList<>();

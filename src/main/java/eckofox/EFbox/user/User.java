@@ -18,20 +18,28 @@ import java.util.UUID;
 @Getter
 @Setter
 public class User implements UserDetails {
+
     @Id
     private UUID userID;
+
     @Column(unique = true)
     private String username;
+
     @Column
     private String firstName;
+
     @Column
     private String lastName;
+
     @Column
     private String password;
+
     @Column
     private String openIDconnectID = null;
+
     @Column
     private String openIDConnectProvider = null;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) //makes sure no files are left if not owned (ex. user removal)
     private final List<EFBoxFolder> RootFolder;
 

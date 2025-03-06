@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,9 +24,9 @@ public class UserService implements UserDetailsService {
      * efbox_users table is set up for unique username
      *
      * @param userDTO to be saved in database and instantiated as actual User
-     * @return NopasswordUserDTO
+     * @return NoPasswordUserDTO
      */
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserController.UserDTO userDTO) {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
             throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
                     "characters and at least one digit.");

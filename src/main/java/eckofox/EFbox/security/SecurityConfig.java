@@ -1,6 +1,7 @@
 package eckofox.EFbox.security;
 
 
+import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

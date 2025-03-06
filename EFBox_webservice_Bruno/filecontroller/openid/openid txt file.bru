@@ -1,0 +1,23 @@
+meta {
+  name: openid txt file
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/file/upload?parentID=d092974a-a4f6-45cd-9d83-d6412c3024c5
+  body: multipartForm
+  auth: none
+}
+
+params:query {
+  parentID: d092974a-a4f6-45cd-9d83-d6412c3024c5
+}
+
+headers {
+  Cookie: JSESSIONID=E64B1A751881A9463E1C54DF4D2DED91
+}
+
+body:multipart-form {
+  file: @file(/run/user/1000/doc/4b6200fb/Cheat sheet.odt)
+}

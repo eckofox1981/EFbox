@@ -1,0 +1,20 @@
+meta {
+  name: openid change folder name
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:8080/folder/change-name?folderID=11597fad-8458-48b9-88b8-ab1722c5ba71&newName=best hits of 1999
+  body: none
+  auth: none
+}
+
+params:query {
+  folderID: 11597fad-8458-48b9-88b8-ab1722c5ba71
+  newName: best hits of 1999
+}
+
+headers {
+  Cookie: JSESSIONID=0AE8EC9C169101D82358199CAE7C5842
+}

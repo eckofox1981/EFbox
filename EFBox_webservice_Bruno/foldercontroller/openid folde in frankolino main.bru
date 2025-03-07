@@ -5,16 +5,16 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/folder/create?folderName=should not work&parentFolderID=d70d757b-46c7-47b6-b797-97f282ddf544
+  url: http://localhost:8080/folder/create?folderName=should not work&parentFolderID=b3dabd45-086b-42da-a921-752329221286
   body: none
-  auth: bearer
+  auth: none
 }
 
 params:query {
   folderName: should not work
-  parentFolderID: d70d757b-46c7-47b6-b797-97f282ddf544
+  parentFolderID: b3dabd45-086b-42da-a921-752329221286
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6Ijg3Zjc4YzdmLTFhNzQtNDFjZS1hNmFhLTFmNTNiMTcwMGY0ZSIsImV4cCI6MTczOTAyMDAxNH0.l5pj-qvbFqAb3JLMU1y7n9qrPE-0zBK0YD86CWDun6c
+headers {
+  Cookie: JSESSIONID=F4B9F521429A3585F784D3279449433D
 }

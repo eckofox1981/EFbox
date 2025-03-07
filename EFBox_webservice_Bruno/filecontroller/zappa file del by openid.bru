@@ -5,15 +5,15 @@ meta {
 }
 
 delete {
-  url: http://localhost:8080/file/delete?fileID=628c41ca-19b7-4f68-95c8-d44ff0bca4c2
+  url: http://localhost:8080/file/delete?fileID=be25b6df-02fe-4172-a6cd-b49f62ce096d
   body: none
-  auth: bearer
+  auth: none
 }
 
 params:query {
-  fileID: 628c41ca-19b7-4f68-95c8-d44ff0bca4c2
+  fileID: be25b6df-02fe-4172-a6cd-b49f62ce096d
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6Ijg3Zjc4YzdmLTFhNzQtNDFjZS1hNmFhLTFmNTNiMTcwMGY0ZSIsImV4cCI6MTczOTAyMDAxNH0.l5pj-qvbFqAb3JLMU1y7n9qrPE-0zBK0YD86CWDun6c
+headers {
+  Cookie: JSESSIONID=F4B9F521429A3585F784D3279449433D
 }

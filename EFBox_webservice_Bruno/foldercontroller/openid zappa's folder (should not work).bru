@@ -5,16 +5,16 @@ meta {
 }
 
 put {
-  url: http://localhost:8080/folder/change-name?folderID=d70d757b-46c7-47b6-b797-97f282ddf544&newName=I am stealing it
+  url: http://localhost:8080/folder/change-name?folderID=dc1768c1-f2e5-4136-9a0e-241265f22509&newName=I am stealing it
   body: none
-  auth: bearer
+  auth: none
 }
 
 params:query {
-  folderID: d70d757b-46c7-47b6-b797-97f282ddf544
+  folderID: dc1768c1-f2e5-4136-9a0e-241265f22509
   newName: I am stealing it
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6Ijg3Zjc4YzdmLTFhNzQtNDFjZS1hNmFhLTFmNTNiMTcwMGY0ZSIsImV4cCI6MTczOTAxNTA3Nn0.98zOn0dD2teQpyyFLn5sy9IRSuQlp7OnyIFnSQRARb4
+headers {
+  Cookie: JSESSIONID=F4B9F521429A3585F784D3279449433D
 }

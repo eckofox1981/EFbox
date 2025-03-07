@@ -5,15 +5,15 @@ meta {
 }
 
 delete {
-  url: http://localhost:8080/folder/delete?folderID=6b352dff-0be0-4499-85ea-7368b2579b4f
+  url: http://localhost:8080/folder/delete?folderID=dc1768c1-f2e5-4136-9a0e-241265f22509
   body: none
-  auth: bearer
+  auth: none
 }
 
 params:query {
-  folderID: 6b352dff-0be0-4499-85ea-7368b2579b4f
+  folderID: dc1768c1-f2e5-4136-9a0e-241265f22509
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6ImU3ZmM2MTIxLWMzNjQtNDg0Ny05Y2UyLWRkZjFjMTAxNzJmZCIsImV4cCI6MTczOTE4MjExM30.Jx16GdjSvV-SSvkftZsMZ-dOPVPOMdPBjllneb1DJAA
+headers {
+  Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjQ3YTZhNWU0LTcyN2MtNGQ0ZS1iODdlLTc3ZTY1MzhiM2ZlZiIsImV4cCI6MTc0MTI1NjI2Nn0.-KUJV08m00uA8W58byvKOriNqicL4gFLMdqPLrk8g40
 }

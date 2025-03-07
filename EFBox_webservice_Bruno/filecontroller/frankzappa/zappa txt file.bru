@@ -5,17 +5,17 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/file/upload?parentID=d092974a-a4f6-45cd-9d83-d6412c3024c5
+  url: http://localhost:8080/file/upload?parentID=571a56f5-5459-496e-bfa9-1637608d459c
   body: multipartForm
-  auth: bearer
+  auth: none
 }
 
 params:query {
-  parentID: d092974a-a4f6-45cd-9d83-d6412c3024c5
+  parentID: 571a56f5-5459-496e-bfa9-1637608d459c
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6ImU3ZmM2MTIxLWMzNjQtNDg0Ny05Y2UyLWRkZjFjMTAxNzJmZCIsImV4cCI6MTczOTAyNjQzOH0.VI4ggr_fCzWS2Nz_smWwHTm1O9LrxY0jJuJqDb-iY5s
+headers {
+  Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IjQ3YTZhNWU0LTcyN2MtNGQ0ZS1iODdlLTc3ZTY1MzhiM2ZlZiIsImV4cCI6MTc0MTI1NDI1M30.kgXA50g2lWCaFAqFfsxMf0AuNy2AFVzE61baFz1zEfo
 }
 
 body:multipart-form {

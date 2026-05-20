@@ -58,7 +58,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private String resolveToken(HttpServletRequest request) {
         if (request.getCookies() != null) {
-            //TODO: add validation (3 points etc, look up examples)
             return Arrays.stream(request.getCookies())
                     .filter(c -> "efbox-token".equals(c.getName()))
                     .findFirst()

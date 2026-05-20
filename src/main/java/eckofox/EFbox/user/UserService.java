@@ -63,7 +63,7 @@ public class UserService implements UserDetailsService {
         //cookie.setDomain(System.getenv("DOMAIN_BASEURL")); removed for local development purposes
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(6000);
+        cookie.setMaxAge(600);
         return cookie;
     }
 

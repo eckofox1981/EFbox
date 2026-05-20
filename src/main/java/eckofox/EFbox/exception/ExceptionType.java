@@ -5,6 +5,7 @@ public enum ExceptionType {
     ILLEGAL_ACCESS_EXCEPTION("Illegal Access Exception"),
     ILLEGAL_ARGUMENT_EXCEPTION("Illegal Argument Exception"),
     ILLEGAL_REGEX_EXCEPTION("Illegal Regex Exception"),
+    ILLEGIBLE_PASSWORD_EXCEPTION("Illegible Password Exception"),
     IO_EXCEPTION("Input-Output Exception"),
     LOGIN_EXCEPTION("Login exception"),
     NO_SUCH_ELEMENT_EXCEPTION("No Such Element Exception"),

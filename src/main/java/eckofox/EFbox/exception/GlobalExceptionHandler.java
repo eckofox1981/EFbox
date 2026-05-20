@@ -50,6 +50,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errMsg.getCode()).body("You have used forbidden characters (ex: <,>,:,?,=,...).");
     }
 
+    @ExceptionHandler(IllegiblePasswordException.class)
+    public ResponseEntity<String> handleIllegiblePasswordException(IllegiblePasswordException exception) {
+        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.LOGIN_EXCEPTION, 406, exception.getMessage());
+
+        return ResponseEntity
+                .status(errMsg.getCode())
+                .body("Password not eligible. Requirements: 5 letters minimum, lower and uppercase \" +\n" +
+                        "                    \"characters and at least one digit.");
+    }
+
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIllegalIOException(IOException exception) {
         EFBoxErrorMessage errMsg = messageCreator(ExceptionType.IO_EXCEPTION, 406, exception.getMessage());

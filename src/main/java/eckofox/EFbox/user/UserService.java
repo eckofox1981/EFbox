@@ -2,6 +2,7 @@ package eckofox.EFbox.user;
 
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,16 +45,26 @@ public class UserService implements UserDetailsService {
      *
      * @param username to find user in database
      * @param password to be checked in database
-     * @return token
+     * @return cookie
      * @throws LoginException purposefully vague for security
      */
-    public String login(String username, String password) throws LoginException {
+    public Cookie login(String username, String password) throws LoginException {
         User user = userRepository.findByUsername(username).orElseThrow();
         if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
             throw new LoginException("Incorrect username or password");
         }
 
-        return jwtService.generateToken(user.getUserID());
+        //https://codingtechroom.com/question/insert-cookies-in-rest-response-spring
+        //
+        //+ information from Cookie class
+        String token = jwtService.generateToken(user.getUserID());
+        Cookie cookie = new Cookie("efbox-token", token);
+        cookie.setPath("/");
+        //cookie.setDomain(System.getenv("DOMAIN_BASEURL")); removed for local development purposes
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(600);
+        return cookie;
     }
 
     /**

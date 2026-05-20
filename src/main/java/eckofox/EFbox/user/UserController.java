@@ -1,6 +1,7 @@
 package eckofox.EFbox.user;
 
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,12 +43,13 @@ public class UserController {
      * sends request to Service
      *
      * @param userDTO used for login but first- and lastname will not be checked (assumes frontend to send proper format)
-     * @return token or error (badRequest purposefully vague)
+     * @return token-cookie or error (badRequest purposefully vague)
      */
     @PutMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
         try {
-            return ResponseEntity.ok(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
+            response.addCookie(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
+            return ResponseEntity.ok("Login successful. Welcome to EFBox!");
         } catch (LoginException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -60,7 +61,7 @@ public class SecurityConfig {
     }
 
     /** https://www.baeldung.com/spring-cors
-     *
+     * https://www.youngju.dev/blog/architecture/2026-03-08-sso-cookie-jwt-auth-spring-boot.en#cors--credential-transmission-setup
      * @return
      */
     @Bean
@@ -71,8 +72,8 @@ public class SecurityConfig {
                 "http://127.0.0.1"
         ));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
-        corsConfiguration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Content-Type", "X-Requested-With", "Accept"));
+        corsConfiguration.setExposedHeaders(List.of("Set-Cookie"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(60L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

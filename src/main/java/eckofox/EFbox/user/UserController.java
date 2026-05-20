@@ -57,9 +57,11 @@ public class UserController {
     }
 
     /**
+     * https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/cookievalue.html#page-title
+     *
      * sends request to Service
      *
-     * @param user will be extracted from token to be identified in service and converted to NoPasswordUserDTO
+     * @param user based on cookie with JWT
      * @return NoPasswordDTO or error (badRequest purposefully vague)
      */
     @GetMapping("/info")

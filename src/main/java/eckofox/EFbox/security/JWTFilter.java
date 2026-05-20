@@ -27,6 +27,12 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String authenticationToken = resolveToken(request);
+
+        if(!jwtRegexValidation(authenticationToken)) {
+            System.out.println("EXCEPTION");
+            //todo for exception handler
+        }
+
         if (authenticationToken == null || authenticationToken.isBlank()) {
             filterChain.doFilter(request, response);
             return;
@@ -61,5 +67,17 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         return null;
+    }
+
+    /**
+     * small guard rail against token tampering
+     * @param token
+     * @return boolean
+     */
+    private boolean jwtRegexValidation(String token) {
+        if (token.matches("^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+$")) {
+            return true;
+        }
+        return false;
     }
 }

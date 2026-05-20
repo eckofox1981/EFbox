@@ -1,5 +1,6 @@
 package eckofox.EFbox.user;
 
+import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
 import jakarta.servlet.http.Cookie;
@@ -19,6 +20,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
     private final PasswordConfig passwordConfig;
+    private final CookieMaker cookieMaker;
 
     /**
      * creates a user based on a UserDTO
@@ -60,12 +62,7 @@ public class UserService implements UserDetailsService {
         //
         //+ information from Cookie class
         String token = jwtService.generateToken(user.getUserID());
-        Cookie cookie = new Cookie("efbox-token", token);
-        cookie.setPath("/");
-        //cookie.setDomain(System.getenv("DOMAIN_BASEURL")); removed for local development purposes
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setMaxAge(600);
+        Cookie cookie = cookieMaker.cookieBaker(token);
         return cookie;
     }
 

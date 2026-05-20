@@ -1,0 +1,25 @@
+package eckofox.EFbox.exception;
+
+public enum ExceptionType {
+    FILE_VALIDATION_EXCEPTION("File Validation Exception"),
+    ILLEGAL_ACCESS_EXCEPTION("Illegal Access Exception"),
+    ILLEGAL_ARGUMENT_EXCEPTION("Illegal Argument Exception"),
+    ILLEGAL_REGEX_EXCEPTION("Illegal Regex Exception"),
+    IO_EXCEPTION("Input-Output Exception"),
+    LOGIN_EXCEPTION("Login exception"),
+    NO_SUCH_ELEMENT_EXCEPTION("No Such Element Exception"),
+    SERVLET_EXCEPTION("Servlet Exception"),
+    UNDEFINED_EXCEPTION("Undefined Exception"),
+    USERNAME_NOT_FOUND_EXCEPTION("Username Not Found Exception");
+
+
+    private String description;
+
+    private ExceptionType(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+}

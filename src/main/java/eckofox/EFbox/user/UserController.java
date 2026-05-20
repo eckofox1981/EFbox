@@ -1,5 +1,6 @@
 package eckofox.EFbox.user;
 
+import eckofox.EFbox.exception.GlobalExceptionHandler;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userservice;
+    private final GlobalExceptionHandler exceptionHandler;
 
 
     /**
@@ -46,14 +48,9 @@ public class UserController {
      * @return token-cookie or error (badRequest purposefully vague)
      */
     @PutMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
-        try {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) throws LoginException {
             response.addCookie(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
             return ResponseEntity.ok("Login successful. Welcome to EFBox!");
-        } catch (LoginException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
     }
 
     /**

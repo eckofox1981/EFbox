@@ -49,9 +49,11 @@ public class UserService implements UserDetailsService {
      * @throws LoginException purposefully vague for security
      */
     public Cookie login(String username, String password) throws LoginException {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new LoginException("User " + username + " not found." ));
         if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
-            throw new LoginException("Incorrect username or password");
+            throw new LoginException("Password didn't match for username: " + username);
         }
 
         //https://codingtechroom.com/question/insert-cookies-in-rest-response-spring

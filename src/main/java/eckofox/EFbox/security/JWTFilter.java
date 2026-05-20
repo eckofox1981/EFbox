@@ -69,7 +69,7 @@ public class JWTFilter extends OncePerRequestFilter {
         return null;
     }
 
-    /**
+    /** https://testregex.com/patterns/jwt-token
      * small guard rail against token tampering
      * @param token
      * @return boolean

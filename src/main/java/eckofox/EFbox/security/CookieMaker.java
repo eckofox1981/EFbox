@@ -1,7 +1,9 @@
 package eckofox.EFbox.security;
 
 import jakarta.servlet.http.Cookie;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class CookieMaker {
     public Cookie cookieBaker(String token) {
         Cookie cookie = new Cookie("efbox-token", token);

@@ -11,6 +11,7 @@ public enum ExceptionType {
     NO_SUCH_ELEMENT_EXCEPTION("No Such Element Exception"),
     SERVLET_EXCEPTION("Servlet Exception"),
     UNDEFINED_EXCEPTION("Undefined Exception"),
+    USER_NOT_FOUND_EXPTION("User Not Found Exception"),
     USERNAME_NOT_FOUND_EXCEPTION("Username Not Found Exception");
 
 

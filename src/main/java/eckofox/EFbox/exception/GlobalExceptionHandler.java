@@ -56,8 +56,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(errMsg.getCode())
-                .body("Password not eligible. Requirements: 5 letters minimum, lower and uppercase \" +\n" +
-                        "                    \"characters and at least one digit.");
+                .body("Password not eligible. Requirements: 5 letters minimum, lower and uppercase characters and at least one digit.");
     }
 
     @ExceptionHandler(IOException.class)
@@ -91,6 +90,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public  ResponseEntity<String> handleUndefinedException(Exception exception) {
         EFBoxErrorMessage errMsg = messageCreator(ExceptionType.UNDEFINED_EXCEPTION, 400, exception.getMessage());
+
+        return ResponseEntity.status(errMsg.getCode()).body("Something went during the request.");
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public  ResponseEntity<String> handleUserNotFoundException(UserNotFoundException exception) {
+        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.USER_NOT_FOUND_EXPTION, 404, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("Something went during the request.");
     }

@@ -1,5 +1,7 @@
 package eckofox.EFbox.user;
 
+import eckofox.EFbox.exception.IllegiblePasswordException;
+import eckofox.EFbox.exception.UserNotFoundException;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
@@ -30,10 +32,9 @@ public class UserService implements UserDetailsService {
      * @param userDTO to be saved in database and instantiated as actual User
      * @return NopasswordUserDTO
      */
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
-            throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
-                    "characters and at least one digit.");
+            throw new IllegiblePasswordException("Password too weak.");
         }
 
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
@@ -62,8 +63,8 @@ public class UserService implements UserDetailsService {
         //
         //+ information from Cookie class
         String token = jwtService.generateToken(user.getUserID());
-        Cookie cookie = cookieMaker.cookieBaker(token);
-        return cookie;
+
+        return cookieMaker.cookieBaker(token);
     }
 
     /**
@@ -72,8 +73,10 @@ public class UserService implements UserDetailsService {
      * @param user to be converted to DTO
      * @return NoPasswordDTO
      */
-    public User seeUserInfo(User user) throws Exception {
-        return userRepository.findById(user.getUserID()).orElseThrow(() -> new Exception("Error fetching data."));
+    public User seeUserInfo(User user) throws UserNotFoundException {
+        return userRepository
+                .findById(user.getUserID())
+                .orElseThrow(() -> new UserNotFoundException("User:" + user.getUsername()));
     }
 
     /**

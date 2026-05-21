@@ -1,6 +1,5 @@
 package eckofox.EFbox.fileobjects.efboxfile;
 
-import eckofox.EFbox.exception.IllegiblePasswordException;
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -66,7 +65,7 @@ public class EFBoxFileController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(@RequestParam String fileID, @AuthenticationPrincipal User user)
-            throws IllegiblePasswordException, NoSuchElementException, AccessDeniedException {
+            throws NoSuchElementException, AccessDeniedException {
 
         return ResponseEntity.status(202).body(fileService.deleteFile(fileID, user).getFileName() + " deleted.");
     }

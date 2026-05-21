@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException exception) {
         EFBoxErrorMessage errMsg =
-                messageCreator(ExceptionType.ACCESS_DENIED_EXCEPTION, 401, exception.getMessage());
+                messageCreator(ExceptionType.ACCESS_DENIED_EXCEPTION, 403, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("The file was not accepted.");
     }
@@ -47,21 +47,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
-        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.LOGIN_EXCEPTION, 406, exception.getMessage());
+        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.ILLEGAL_ARGUMENT_EXCEPTION, 406, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("The data entered was not correct.");
     }
 
     @ExceptionHandler(IllegalRegexException.class)
     public ResponseEntity<String> handleIllegalRegexException(IllegalRegexException exception) {
-        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.LOGIN_EXCEPTION, 401, exception.getMessage());
+        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.ILLEGAL_REGEX_EXCEPTION, 422, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("You have used forbidden characters (ex: <,>,:,?,=,...).");
     }
 
     @ExceptionHandler(IllegiblePasswordException.class)
     public ResponseEntity<String> handleIllegiblePasswordException(IllegiblePasswordException exception) {
-        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.LOGIN_EXCEPTION, 406, exception.getMessage());
+        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.ILLEGIBLE_PASSWORD_EXCEPTION, 406, exception.getMessage());
 
         return ResponseEntity
                 .status(errMsg.getCode())
@@ -105,9 +105,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public  ResponseEntity<String> handleUserNotFoundException(UserNotFoundException exception) {
-        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.USER_NOT_FOUND_EXPTION, 404, exception.getMessage());
+        EFBoxErrorMessage errMsg = messageCreator(ExceptionType.USER_NOT_FOUND_EXCEPTION, 404, exception.getMessage());
 
-        return ResponseEntity.status(errMsg.getCode()).body("Something went during the request.");
+        return ResponseEntity.status(errMsg.getCode()).body("Error accessing user.");
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)

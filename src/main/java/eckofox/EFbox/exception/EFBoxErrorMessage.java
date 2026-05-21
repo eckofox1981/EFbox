@@ -1,16 +1,34 @@
 package eckofox.EFbox.exception;
 
-import lombok.AllArgsConstructor;
+import eckofox.EFbox.logger.LoggEventType;
+import eckofox.EFbox.logger.LogMsg;
+import eckofox.EFbox.user.User;
+import jakarta.persistence.Entity;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 
-@AllArgsConstructor
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
 @Getter
-@Setter
-public class EFBoxErrorMessage {
+@NoArgsConstructor
+public class EFBoxErrorMessage extends LogMsg {
     private ExceptionType exceptionType;
-    private String timestamp;
     private HttpStatusCode code;
-    private String logMessage;
+
+    public EFBoxErrorMessage(
+            UUID msgId,
+            LoggEventType type,
+            LocalDateTime timestamp,
+            String logMessage,
+            User user,
+            ExceptionType exceptionType,
+            HttpStatusCode code
+    ) {
+        super(msgId, type, timestamp, logMessage, user);
+        this.exceptionType = exceptionType;
+        this.code = code;
+    }
 }

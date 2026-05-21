@@ -8,6 +8,7 @@ import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,18 +28,27 @@ public class EFBoxFolderService {
      * @param user           if root folder -> to add the folder to User.EFBoxFolder.rootfolder else -> check for access rights
      * @param parentFolderID -> to set parent folder (set to 0 if root, the list is initialized during user account creation)
      * @return created folder
-     * @throws IllegalAccessException
+     * @throws AccessDeniedException
      * @throws NoSuchElementException
      */
-    public EFBoxFolder createFolder(String folderName, User user, String parentFolderID) throws IllegalAccessException, NoSuchElementException {
+    public EFBoxFolder createFolder(String folderName, User user, String parentFolderID)
+            throws AccessDeniedException, NoSuchElementException {
         if (parentFolderID.equals("0")) {
             EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, user);
             return folderRespository.save(folder);
         }
 
-        EFBoxFolder parentFolder = folderRespository.findById(UUID.fromString(parentFolderID)).orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
+        EFBoxFolder parentFolder = folderRespository
+                .findById(UUID.fromString(parentFolderID))
+                .orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
+
         if (userIsNotFolderOwner(parentFolder, user)) {
-            throw new IllegalAccessException("You are not authorized to create this folder here.");
+            throw new AccessDeniedException(
+                    user.getUsername()
+                            + ": illegal upload/access attempt on folder "
+                            + parentFolder.getName()
+                            + "/"
+                            + parentFolder.getFolderID());
         }
 
         EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, parentFolder, user);
@@ -53,12 +63,21 @@ public class EFBoxFolderService {
      * @param folderID of folder to be shown
      * @param user     to check access rights
      * @return folder dto
-     * @throws IllegalAccessException
+     * @throws AccessDeniedException
      */
-    public EFBoxFolder seeFolderContent(String folderID, User user) throws IllegalAccessException {
-        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
+    public EFBoxFolder seeFolderContent(String folderID, User user)
+            throws AccessDeniedException, NoSuchElementException {
+        EFBoxFolder folder = folderRespository
+                .findById(UUID.fromString(folderID))
+                .orElseThrow(() -> new NoSuchElementException("Folder not found"));
+
         if (userIsNotFolderOwner(folder, user)) {
-            throw new IllegalAccessException("You are not authorized to access this folder.");
+            throw new AccessDeniedException(
+                    user.getUsername()
+                            + ": illegal upload/access attempt on folder "
+                            + folder.getName()
+                            + "/"
+                            + folder.getFolderID());
         }
 
         return folder;
@@ -72,8 +91,12 @@ public class EFBoxFolderService {
      * @return searchresponseDTO (list of folder and list of files)
      */
     public SearchResponseDTO searchInAllFolders(String query, User user) {
-        Collection<EFBoxFolder> folders = folderRespository.findByNameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
-        Collection<EFBoxFile> files = fileRepository.findByFilenameContainingIgnoreCaseWithUserID(query, user.getUserID()).orElse(new ArrayList<>());
+        Collection<EFBoxFolder> folders = folderRespository
+                .findByNameContainingIgnoreCaseWithUserID(query, user.getUserID())
+                .orElse(new ArrayList<>());
+        Collection<EFBoxFile> files = fileRepository
+                .findByFilenameContainingIgnoreCaseWithUserID(query, user.getUserID())
+                .orElse(new ArrayList<>());
 
         SearchResponseDTO responseDTO = new SearchResponseDTO();
         folders.stream()
@@ -82,6 +105,7 @@ public class EFBoxFolderService {
         files.stream()
                 .map(EFBoxFileDTO::fromEFBoxFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
+
         return responseDTO;
     }
 
@@ -94,12 +118,21 @@ public class EFBoxFolderService {
      * @param folderID of folder to be deleted
      * @param user     to check access rights
      * @return message
-     * @throws IllegalAccessException
+     * @throws AccessDeniedException
      */
-    public EFBoxFolder deleteFolder(String folderID, User user) throws IllegalAccessException {
-        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("Folder not found"));
+    public EFBoxFolder deleteFolder(String folderID, User user)
+            throws AccessDeniedException, NoSuchElementException {
+        EFBoxFolder folder = folderRespository
+                .findById(UUID.fromString(folderID))
+                .orElseThrow(() -> new NoSuchElementException("Folder not found"));
+
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
-            throw new IllegalAccessException("You are not allowed to delete this folder");
+            throw new AccessDeniedException(
+                    user.getUsername()
+                            + ": illegal upload/access attempt on folder "
+                            + folder.getName()
+                            + "/"
+                            + folder.getFolderID());
         }
 
         recursiveDeletionOfFolders(folder, user);
@@ -108,7 +141,8 @@ public class EFBoxFolderService {
     }
 
     /**
-     * looks for the folder in the database the checks ownership. When checks are passed it changes the name and updates
+     * looks for the folder in the database then checks ownership.
+     * When checks are passed it changes the name and updates
      * the database.
      *
      * @param folderID to find folder
@@ -117,13 +151,23 @@ public class EFBoxFolderService {
      * @return updated folder dto
      * @throws Exception
      */
-    public EFBoxFolder changeFolderName(String folderID, String newName, User user) throws Exception {
-        EFBoxFolder folder = folderRespository.findById(UUID.fromString(folderID)).orElseThrow(() -> new NoSuchElementException("File not found."));
+    public EFBoxFolder changeFolderName(String folderID, String newName, User user)
+            throws NoSuchElementException, AccessDeniedException {
+        EFBoxFolder folder = folderRespository
+                .findById(UUID.fromString(folderID))
+                .orElseThrow(() -> new NoSuchElementException("File not found."));
+
         if (userIsNotFolderOwner(folder, user)) {
-            throw new IllegalAccessException("You are not allowed to access this file");
+            throw new AccessDeniedException(
+                    user.getUsername()
+                            + ": illegal upload/access attempt on folder "
+                            + folder.getName()
+                            + "/"
+                            + folder.getFolderID());
         }
 
         folder.setName(newName);
+
         return folderRespository.save(folder);
     }
 

@@ -3,11 +3,13 @@ package eckofox.EFbox.logger;
 import eckofox.EFbox.exception.EFBoxErrorMessage;
 import eckofox.EFbox.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,11 +34,12 @@ public class LoggerService {
         saveLogg(logMsg);
 
         List<LogMsg> allLogs = loggerRepository.findAll();
+        allLogs.sort(Comparator.comparing(LogMsg::getTimestamp).reversed());
 
         return logsToHTMLCodeConverter(allLogs, user);
     }
 
-    private String logsToHTMLCodeConverter(List<LogMsg> logs, User user) throws IOException, BadLocationException {
+    private String logsToHTMLCodeConverter(List<LogMsg> logs, User user) {
         StringBuilder htmlCode = new StringBuilder();
         htmlCode.append("<html><h1>EFBox Event Logs</h1><h2><i>requested by: " + user.getUsername() + "</h2>");
 
@@ -59,11 +62,11 @@ public class LoggerService {
 
         if (log instanceof EFBoxErrorMessage errorMessage) {
             statusCodeBox = "<td colspan=\"1\""
-                    + errorMessage.getCode().toString()
+                    + HttpStatusCode.valueOf(errorMessage.getCode())
                     + "Type<br><i>Status-Code to user</i></td>";
             exceptionTypeBox =
                     "<td colspan=\"1\">"
-                            + errorMessage.getExceptionType().toString()
+                            + errorMessage.getExceptionType().getDescription()
                             + "Type<br><i>Type of exception</i></td>";
             msgColSpan = "3";
         }

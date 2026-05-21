@@ -59,9 +59,6 @@ public class UserService implements UserDetailsService {
             throw new LoginException("Password didn't match for username: " + username);
         }
 
-        //https://codingtechroom.com/question/insert-cookies-in-rest-response-spring
-        //
-        //+ information from Cookie class
         String token = jwtService.generateToken(user.getUserID());
 
         return cookieMaker.cookieBaker(token);

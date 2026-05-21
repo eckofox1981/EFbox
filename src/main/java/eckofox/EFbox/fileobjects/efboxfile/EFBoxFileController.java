@@ -5,12 +5,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.rmi.AccessException;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -31,7 +31,7 @@ public class EFBoxFileController {
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
                                         @RequestParam String parentID)
-            throws AccessDeniedException, NoSuchElementException, IOException {
+            throws AccessException, NoSuchElementException, IOException {
         EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
 
         return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
@@ -46,7 +46,7 @@ public class EFBoxFileController {
      */
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(@RequestParam String fileID, @AuthenticationPrincipal User user)
-    throws AccessDeniedException, NoSuchElementException{
+    throws AccessException, NoSuchElementException{
         EFBoxFile efBoxFile = fileService.getFile(fileID, user);
         byte[] fileContent = efBoxFile.getContent();
 
@@ -65,7 +65,7 @@ public class EFBoxFileController {
      */
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFile(@RequestParam String fileID, @AuthenticationPrincipal User user)
-            throws NoSuchElementException, AccessDeniedException {
+            throws NoSuchElementException, AccessException {
 
         return ResponseEntity.status(202).body(fileService.deleteFile(fileID, user).getFileName() + " deleted.");
     }
@@ -81,7 +81,7 @@ public class EFBoxFileController {
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID,
                                             @RequestParam String newName)
-            throws AccessDeniedException, NoSuchElementException {
+            throws AccessException, NoSuchElementException {
 
         return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(fileService.changeFileName(fileID, newName, user)));
     }

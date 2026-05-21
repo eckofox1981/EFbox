@@ -6,9 +6,9 @@ import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileRepository;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.rmi.AccessException;
 import java.util.*;
 
 @Service
@@ -26,11 +26,11 @@ public class EFBoxFolderService {
      * @param user           if root folder -> to add the folder to User.EFBoxFolder.rootfolder else -> check for access rights
      * @param parentFolderID -> to set parent folder (set to 0 if root, the list is initialized during user account creation)
      * @return created folder
-     * @throws AccessDeniedException
+     * @throws AccessException
      * @throws NoSuchElementException
      */
     public EFBoxFolder createFolder(String folderName, User user, String parentFolderID)
-            throws AccessDeniedException, NoSuchElementException {
+            throws NoSuchElementException, AccessException {
         if (parentFolderID.equals("0")) {
             EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, user);
             return folderRespository.save(folder);
@@ -41,7 +41,7 @@ public class EFBoxFolderService {
                 .orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
 
         if (userIsNotFolderOwner(parentFolder, user)) {
-            throw new AccessDeniedException(
+            throw new AccessException(
                     user.getUsername()
                             + ": illegal upload/access attempt on folder "
                             + parentFolder.getName()
@@ -61,16 +61,16 @@ public class EFBoxFolderService {
      * @param folderID of folder to be shown
      * @param user     to check access rights
      * @return folder dto
-     * @throws AccessDeniedException
+     * @throws AccessException
      */
     public EFBoxFolder seeFolderContent(String folderID, User user)
-            throws AccessDeniedException, NoSuchElementException {
+            throws AccessException, NoSuchElementException {
         EFBoxFolder folder = folderRespository
                 .findById(UUID.fromString(folderID))
                 .orElseThrow(() -> new NoSuchElementException("Folder not found"));
 
         if (userIsNotFolderOwner(folder, user)) {
-            throw new AccessDeniedException(
+            throw new AccessException(
                     user.getUsername()
                             + ": illegal upload/access attempt on folder "
                             + folder.getName()
@@ -116,16 +116,16 @@ public class EFBoxFolderService {
      * @param folderID of folder to be deleted
      * @param user     to check access rights
      * @return message
-     * @throws AccessDeniedException
+     * @throws AccessException
      */
     public EFBoxFolder deleteFolder(String folderID, User user)
-            throws AccessDeniedException, NoSuchElementException {
+            throws AccessException, NoSuchElementException {
         EFBoxFolder folder = folderRespository
                 .findById(UUID.fromString(folderID))
                 .orElseThrow(() -> new NoSuchElementException("Folder not found"));
 
         if (!folder.getUser().getUserID().equals(user.getUserID())) {
-            throw new AccessDeniedException(
+            throw new AccessException(
                     user.getUsername()
                             + ": illegal upload/access attempt on folder "
                             + folder.getName()
@@ -150,13 +150,13 @@ public class EFBoxFolderService {
      * @throws Exception
      */
     public EFBoxFolder changeFolderName(String folderID, String newName, User user)
-            throws NoSuchElementException, AccessDeniedException {
+            throws NoSuchElementException, AccessException {
         EFBoxFolder folder = folderRespository
                 .findById(UUID.fromString(folderID))
                 .orElseThrow(() -> new NoSuchElementException("File not found."));
 
         if (userIsNotFolderOwner(folder, user)) {
-            throw new AccessDeniedException(
+            throw new AccessException(
                     user.getUsername()
                             + ": illegal upload/access attempt on folder "
                             + folder.getName()

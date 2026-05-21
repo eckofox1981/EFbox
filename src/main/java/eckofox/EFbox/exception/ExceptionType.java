@@ -1,6 +1,7 @@
 package eckofox.EFbox.exception;
 
 public enum ExceptionType {
+    ACCESS_DENIED_EXCEPTION("Access Denied_Exception"),
     FILE_VALIDATION_EXCEPTION("File Validation Exception"),
     ILLEGAL_ACCESS_EXCEPTION("Illegal Access Exception"),
     ILLEGAL_ARGUMENT_EXCEPTION("Illegal Argument Exception"),

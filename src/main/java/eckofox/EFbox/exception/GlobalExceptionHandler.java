@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -20,6 +21,14 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 @AllArgsConstructor
 public class GlobalExceptionHandler {
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException exception) {
+        EFBoxErrorMessage errMsg =
+                messageCreator(ExceptionType.ACCESS_DENIED_EXCEPTION, 401, exception.getMessage());
+
+        return ResponseEntity.status(errMsg.getCode()).body("The file was not accepted.");
+    }
+
     @ExceptionHandler(FileValidationException.class)
     public ResponseEntity<String> handleFileValidationException(FileValidationException exception) {
         EFBoxErrorMessage errMsg =
@@ -63,7 +72,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalIOException(IOException exception) {
         EFBoxErrorMessage errMsg = messageCreator(ExceptionType.IO_EXCEPTION, 406, exception.getMessage());
 
-        return ResponseEntity.status(errMsg.getCode()).body("Something went during the request.");
+        return ResponseEntity.status(errMsg.getCode()).body("Something went wrong during the request.");
     }
 
     @ExceptionHandler(LoginException.class)
@@ -91,7 +100,7 @@ public class GlobalExceptionHandler {
     public  ResponseEntity<String> handleUndefinedException(Exception exception) {
         EFBoxErrorMessage errMsg = messageCreator(ExceptionType.UNDEFINED_EXCEPTION, 400, exception.getMessage());
 
-        return ResponseEntity.status(errMsg.getCode()).body("Something went during the request.");
+        return ResponseEntity.status(errMsg.getCode()).body("Something went wrong during the request.");
     }
 
     @ExceptionHandler(UserNotFoundException.class)

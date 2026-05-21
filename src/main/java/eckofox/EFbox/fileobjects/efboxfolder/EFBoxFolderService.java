@@ -4,8 +4,6 @@ import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileDTO;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileRepository;
 import eckofox.EFbox.user.User;
-import eckofox.EFbox.user.UserRepository;
-import eckofox.EFbox.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;

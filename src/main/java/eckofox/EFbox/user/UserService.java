@@ -1,5 +1,8 @@
 package eckofox.EFbox.user;
 
+import eckofox.EFbox.exception.IllegiblePasswordException;
+import eckofox.EFbox.exception.UserNotFoundException;
+import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
 import jakarta.servlet.http.Cookie;
@@ -19,6 +22,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
     private final PasswordConfig passwordConfig;
+    private final CookieMaker cookieMaker;
 
     /**
      * creates a user based on a UserDTO
@@ -28,10 +32,9 @@ public class UserService implements UserDetailsService {
      * @param userDTO to be saved in database and instantiated as actual User
      * @return NopasswordUserDTO
      */
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
-            throw new IllegalArgumentException("Password not eligible. Requirements: 5 letters minimum, lower and uppercase " +
-                    "characters and at least one digit.");
+            throw new IllegiblePasswordException("Password too weak.");
         }
 
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
@@ -49,22 +52,16 @@ public class UserService implements UserDetailsService {
      * @throws LoginException purposefully vague for security
      */
     public Cookie login(String username, String password) throws LoginException {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new LoginException("User " + username + " not found." ));
         if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
-            throw new LoginException("Incorrect username or password");
+            throw new LoginException("Password didn't match for username: " + username);
         }
 
-        //https://codingtechroom.com/question/insert-cookies-in-rest-response-spring
-        //
-        //+ information from Cookie class
         String token = jwtService.generateToken(user.getUserID());
-        Cookie cookie = new Cookie("efbox-token", token);
-        cookie.setPath("/");
-        //cookie.setDomain(System.getenv("DOMAIN_BASEURL")); removed for local development purposes
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setMaxAge(600);
-        return cookie;
+
+        return cookieMaker.cookieBaker(token);
     }
 
     /**
@@ -73,8 +70,10 @@ public class UserService implements UserDetailsService {
      * @param user to be converted to DTO
      * @return NoPasswordDTO
      */
-    public User seeUserInfo(User user) throws Exception {
-        return userRepository.findById(user.getUserID()).orElseThrow(() -> new Exception("Error fetching data."));
+    public User seeUserInfo(User user) throws UserNotFoundException {
+        return userRepository
+                .findById(user.getUserID())
+                .orElseThrow(() -> new UserNotFoundException("User:" + user.getUsername()));
     }
 
     /**

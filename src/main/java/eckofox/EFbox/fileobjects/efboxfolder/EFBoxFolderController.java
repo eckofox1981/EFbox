@@ -4,6 +4,7 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,29 +23,20 @@ public class EFBoxFolderController {
      */
     @PostMapping("/create")
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user,
-                                          @RequestParam String parentFolderID) {
-        try {
-            EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
-            return ResponseEntity.ok().body(efBoxFolderDTO);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+                                          @RequestParam String parentFolderID)
+            throws AccessDeniedException, NoSuchElementException  {
+        EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
+
+        return ResponseEntity.ok().body(efBoxFolderDTO);
+
     }
 
     @GetMapping("/browse")
-    public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user) {
-        try {
-            EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
-            return ResponseEntity.ok(efBoxFolderDTO);
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+    public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user)
+            throws AccessDeniedException, NoSuchElementException  {
+        EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
+
+        return ResponseEntity.ok(efBoxFolderDTO);
     }
 
     /**
@@ -57,38 +49,22 @@ public class EFBoxFolderController {
      */
     @GetMapping("/search/{query}")
     public ResponseEntity<?> searchWithQuery(@PathVariable String query, @AuthenticationPrincipal User user) {
-        try {
-            return ResponseEntity.ok(folderService.searchInAllFolders(query, user));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(folderService.searchInAllFolders(query, user));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user) {
-        try {
-            EFBoxFolder folder = folderService.deleteFolder(folderID, user);
-            return ResponseEntity.status(202).body("Folder: " + folder.getName() + " deleted.");
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user)
+            throws AccessDeniedException, NoSuchElementException  {
+        EFBoxFolder folder = folderService.deleteFolder(folderID, user);
+
+        return ResponseEntity.status(202).body("Folder: " + folder.getName() + " deleted.");
     }
 
     @PutMapping("/change-name")
-    public ResponseEntity<?> changeFolderName(@AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName) {
-        try {
+    public ResponseEntity<?> changeFolderName(
+            @AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName
+    ) throws NoSuchElementException, AccessDeniedException {
             return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.unprocessableEntity().body(e.getMessage());
-        }
     }
 }
 

@@ -74,7 +74,8 @@ public class JWTFilter extends OncePerRequestFilter {
      * @return boolean
      */
     private boolean jwtRegexValidation(String token) {
-        if (token.matches("^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+$")) {
+        if (token == null
+        || token.matches("^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+$")) {
             return true;
         }
         return false;

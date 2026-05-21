@@ -1,5 +1,8 @@
 package eckofox.EFbox.user;
 
+import eckofox.EFbox.exception.GlobalExceptionHandler;
+import eckofox.EFbox.exception.IllegiblePasswordException;
+import eckofox.EFbox.exception.UserNotFoundException;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -20,6 +23,7 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userservice;
+    private final GlobalExceptionHandler exceptionHandler;
 
 
     /**
@@ -29,14 +33,11 @@ public class UserController {
      * @return NoPasswordDTO or error
      */
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
-        try {
+    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) throws IllegiblePasswordException {
             User user = userservice.createUser(userDTO);
+
             return ResponseEntity.ok(NoPasswordUserDTO.fromUser(user));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Unable to create user.Please check your inputs and try again. "
-                    + e.getMessage());
-        }
+
     }
 
     /**
@@ -46,14 +47,10 @@ public class UserController {
      * @return token-cookie or error (badRequest purposefully vague)
      */
     @PutMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
-        try {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) throws LoginException {
             response.addCookie(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
-            return ResponseEntity.ok("Login successful. Welcome to EFBox!");
-        } catch (LoginException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
 
+            return ResponseEntity.ok("Login successful. Welcome to EFBox!");
     }
 
     /**
@@ -65,13 +62,10 @@ public class UserController {
      * @return NoPasswordDTO or error (badRequest purposefully vague)
      */
     @GetMapping("/info")
-    public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) {
-        try {
+    public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) throws UserNotFoundException {
             User userForInfo = userservice.seeUserInfo(user);
+
             return ResponseEntity.ok(NoPasswordUserDTO.fromUser(userForInfo));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
     /**
@@ -86,7 +80,7 @@ public class UserController {
             userservice.deleteUser(user);
             return ResponseEntity.status(202).body("Account: " + user.getUsername() + " deleted.");
         } catch (Exception e) {
-            return ResponseEntity.unprocessableEntity().body("unable to delete account. " + e.getMessage());
+            return ResponseEntity.unprocessableEntity().body("Unable to delete account.");
         }
     }
 

@@ -1,18 +1,23 @@
 package eckofox.EFbox.exception;
 
+import eckofox.EFbox.logger.LoggEventType;
+import eckofox.EFbox.user.User;
 import jakarta.servlet.ServletException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.auth.login.LoginException;
+import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 /** inspired by https://www.ignek.com/blog/centralized-exception-handling-in-spring-boot
  * https://medium.com/@AlexanderObregon/spring-boot-global-exception-handling-with-restcontrolleradvice-676c5b0b74ea
@@ -27,6 +32,14 @@ public class GlobalExceptionHandler {
                 messageCreator(ExceptionType.ACCESS_DENIED_EXCEPTION, 403, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("The file was not accepted.");
+    }
+
+    @ExceptionHandler(BadLocationException.class)
+    public ResponseEntity<String> handleBadLocationException(BadLocationException exception) {
+        EFBoxErrorMessage errMsg =
+                messageCreator(ExceptionType.BAD_LOCATION_EXCEPTION, 500, exception.getMessage());
+
+        return ResponseEntity.status(errMsg.getCode()).body("Unable to process request.");
     }
 
     @ExceptionHandler(FileValidationException.class)
@@ -118,11 +131,16 @@ public class GlobalExceptionHandler {
     }
 
     private EFBoxErrorMessage messageCreator(ExceptionType exceptionType, int code, String message) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(user.getUsername());
         EFBoxErrorMessage errMsg = new EFBoxErrorMessage(
+                UUID.randomUUID(),
+                LoggEventType.WARNING,
+                LocalDateTime.now(),
+                message,
+                user,
                 exceptionType,
-                LocalDateTime.now().toString(),
-                HttpStatusCode.valueOf(code),
-                message
+                HttpStatusCode.valueOf(code)
         );
         //TODO: Add logg (for logging-exception branch), printline for now
         System.out.println("| " + errMsg.getTimestamp() + " | " + errMsg.getCode() + " | " +

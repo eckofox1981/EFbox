@@ -1,17 +1,15 @@
 package eckofox.EFbox.logger;
 
 import eckofox.EFbox.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// https://www.baeldung.com/hibernate-inheritance
+//Mapped super class makes it possible to share a table between two entites where one extends from the other
 @Entity(name = "event_logging")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter

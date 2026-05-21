@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         EFBoxErrorMessage errMsg =
                 messageCreator(ExceptionType.ILLEGAL_ACCESS_EXCEPTION, 403, exception.getMessage());
 
-        return ResponseEntity.status(errMsg.getCode()).body("You have used forbidden characters (<,>,:,?,=,...).");
+        return ResponseEntity.status(errMsg.getCode()).body("Error accessing target (may not exist).");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

@@ -1,10 +1,11 @@
 package eckofox.EFbox.exception;
 
 import eckofox.EFbox.logger.LoggEventType;
+import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.user.User;
 import jakarta.servlet.ServletException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatusCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.security.auth.login.LoginException;
 import javax.swing.text.BadLocationException;
 import java.io.IOException;
-import org.springframework.security.access.AccessDeniedException;
+
+import java.rmi.AccessException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -24,12 +26,14 @@ import java.util.UUID;
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
  */
 @RestControllerAdvice
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException exception) {
+    private final LoggerService loggerService;
+
+    @ExceptionHandler(AccessException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessException exception) {
         EFBoxErrorMessage errMsg =
-                messageCreator(ExceptionType.ACCESS_DENIED_EXCEPTION, 403, exception.getMessage());
+                messageCreator(ExceptionType.ACCESS_EXCEPTION, 403, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("The file was not accepted.");
     }
@@ -132,7 +136,7 @@ public class GlobalExceptionHandler {
 
     private EFBoxErrorMessage messageCreator(ExceptionType exceptionType, int code, String message) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(user.getUsername());
+        System.out.println(user.getUserID());
         EFBoxErrorMessage errMsg = new EFBoxErrorMessage(
                 UUID.randomUUID(),
                 LoggEventType.WARNING,
@@ -140,11 +144,10 @@ public class GlobalExceptionHandler {
                 message,
                 user,
                 exceptionType,
-                HttpStatusCode.valueOf(code)
+                code
         );
-        //TODO: Add logg (for logging-exception branch), printline for now
-        System.out.println("| " + errMsg.getTimestamp() + " | " + errMsg.getCode() + " | " +
-                errMsg.getExceptionType().getDescription() + " | " + errMsg.getLogMessage() + " |");
+
+        loggerService.saveLogg(errMsg);
 
         return errMsg;
     }

@@ -6,7 +6,6 @@ import eckofox.EFbox.user.User;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class EFBoxErrorMessage extends LogMsg {
     private ExceptionType exceptionType;
-    private HttpStatusCode code;
+    private int code;
 
     public EFBoxErrorMessage(
             UUID msgId,
@@ -25,7 +24,7 @@ public class EFBoxErrorMessage extends LogMsg {
             String logMessage,
             User user,
             ExceptionType exceptionType,
-            HttpStatusCode code
+            int code
     ) {
         super(msgId, type, timestamp, logMessage, user);
         this.exceptionType = exceptionType;

@@ -2,7 +2,6 @@ package eckofox.EFbox.user;
 
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,7 +30,7 @@ public class User implements UserDetails {
     @Column
     private final String password;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) //makes sure no files are left if not owned (ex. user removal)
-    private final List<EFBoxFolder> RootFolder;
+    private final List<EFBoxFolder> rootFolder;
     @Column
     private final List<UserRole> roles;
     @Column
@@ -51,7 +50,7 @@ public class User implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
-        this.RootFolder = new ArrayList<>();
+        this.rootFolder = new ArrayList<>();
         this.roles = roles;
         this.grantedAuthorities = grantedAuthorities;
     }
@@ -65,13 +64,11 @@ public class User implements UserDetails {
 
 
     private List<String> getPrivileges() {
-
         List<String> authorities = new ArrayList<>();
-        List<GrantedAuthorities> authorityList = new ArrayList<>();
         for (UserRole role : getRoles()) {
             authorities.add(role.toString());
-            authorityList.addAll(getGrantedAuthorities());
         }
+        List<GrantedAuthorities> authorityList = new ArrayList<>(getGrantedAuthorities());
         for (GrantedAuthorities item : authorityList) {
             authorities.add(item.toString());
         }
@@ -80,8 +77,8 @@ public class User implements UserDetails {
 
     private List<GrantedAuthority> getGrantedAuthorities(List<String> grantedAuthorities) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String privilege : grantedAuthorities) {
-            authorities.add(new SimpleGrantedAuthority(privilege));
+        for (String authority : grantedAuthorities) {
+            authorities.add(new SimpleGrantedAuthority(authority));
         }
         return authorities;
     }

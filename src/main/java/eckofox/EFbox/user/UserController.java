@@ -95,6 +95,8 @@ public class UserController {
         private String username;
         private String firstname;
         private String lastname;
+        private List<UserRole> roles;
+        private List<GrantedAuthorities> grantedAuthorities;
         private List<String> efFolderNames;
 
         /**
@@ -118,7 +120,10 @@ public class UserController {
                     user.getUsername(),
                     user.getFirstName(),
                     user.getLastName(),
-                    folderNames);
+                    user.getRoles(),
+                    user.getGrantedAuthorities(),
+                    folderNames
+            );
         }
     }
 

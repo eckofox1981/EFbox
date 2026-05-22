@@ -9,14 +9,15 @@ import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +41,15 @@ public class UserService implements UserDetailsService {
             throw new IllegiblePasswordException("Password too weak.");
         }
 
-        User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
-                userDTO.getLastname(), passwordConfig.passwordEncoder().encode(userDTO.getPassword()));
+        User createdUser = new User(
+                UUID.randomUUID(),
+                userDTO.getUsername(),
+                userDTO.getFirstname(),
+                userDTO.getLastname(),
+                passwordConfig.passwordEncoder().encode(userDTO.getPassword()),
+                List.of(UserRole.ROLE_USER),
+                List.of()
+        );
 
         User savedUser = userRepository.save(createdUser);
 
@@ -124,10 +132,21 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    //adapted from https://www.javaguides.net/2024/04/spring-security-granted-authority.html
+    // and https://www.baeldung.com/role-and-privilege-for-spring-security-registration
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    }
 
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                user.isEnabled(),
+                true,
+                true,
+                true,
+                user.getAuthorities()
+        );
+    }
 }

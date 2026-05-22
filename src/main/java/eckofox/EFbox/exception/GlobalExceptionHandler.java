@@ -2,8 +2,10 @@ package eckofox.EFbox.exception;
 
 import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
+import eckofox.EFbox.user.GrantedAuthorities;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserRepository;
+import eckofox.EFbox.user.UserRole;
 import jakarta.servlet.ServletException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.rmi.AccessException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -155,7 +158,15 @@ public class GlobalExceptionHandler {
     ) {
         //TODO: regression testing remove at end of project
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = new User(null, "AnonymousUser", "-", "-", "-");
+        User user = new User(
+                null,
+                "AnonymousUser",
+                "-",
+                "-",
+                "-",
+                List.of(UserRole.ROLE_ANONYMOUS),
+                List.of()
+        );
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();

@@ -41,7 +41,7 @@ public class AdminService implements UserDetailsService {
 
     public String requestLogAccess(User user, String secret) throws IllegalAccessException {
         //secret hardcoded in .env, a production server would have a more advanced admin status policy
-        if (!secret.equals(System.getenv("SECRET_STRING_ADMIN"))) {
+        if (!secret.equals(System.getenv("SECRET_STRING_LOG_ACCESS"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
         }
 
@@ -97,7 +97,7 @@ public class AdminService implements UserDetailsService {
         userRepository.save(revokedUser);
 
         loggerService.saveInfoLogg(LogEventType.INFO_ADMIN,
-                "Owner revoked admin status of" + revokedUser.getUsername() + ".",
+                "Owner revoked log access of " + revokedUser.getUsername() + ".",
                 user
         );
 

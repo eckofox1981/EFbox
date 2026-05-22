@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.swing.text.BadLocationException;
 import java.io.IOException;
 
 @RestController
@@ -23,10 +22,9 @@ public class LoggerController {
      * @param user
      * @return
      * @throws IOException
-     * @throws BadLocationException
      */
     @GetMapping(value="/fetch-all-logs", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<?> getAllLogs(@AuthenticationPrincipal User user) throws IOException, BadLocationException {
+    public ResponseEntity<?> getAllLogs(@AuthenticationPrincipal User user) throws IOException {
         return ResponseEntity.status(201).body(loggerService.retriveAllLogs(user));
     }
 }

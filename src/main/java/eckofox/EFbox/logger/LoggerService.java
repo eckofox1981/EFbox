@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -34,7 +33,7 @@ public class LoggerService {
         saveInfoLogg(logMessage);
     }
 
-    public String retriveAllLogs(User user) throws IOException, BadLocationException {
+    public String retriveAllLogs(User user) throws IOException {
         LogMessage logMessage = new LogMessage(
                 UUID.randomUUID(),
                 LogEventType.INFO,

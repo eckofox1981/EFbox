@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.auth.login.LoginException;
-import javax.swing.text.BadLocationException;
 import java.io.IOException;
 
 import java.rmi.AccessException;
@@ -41,15 +40,6 @@ public class GlobalExceptionHandler {
                         LogEventType.WARNING, ExceptionType.ACCESS_EXCEPTION, 403, exception.getMessage());
 
         return ResponseEntity.status(errMsg.getCode()).body("The file was not accepted.");
-    }
-
-    @ExceptionHandler(BadLocationException.class)
-    public ResponseEntity<String> handleBadLocationException(BadLocationException exception) {
-        EFBoxErrorMessage errMsg =
-                messageCreator(
-                        LogEventType.WARNING, ExceptionType.BAD_LOCATION_EXCEPTION, 500, exception.getMessage());
-
-        return ResponseEntity.status(errMsg.getCode()).body("Unable to process request.");
     }
 
     @ExceptionHandler(FileValidationException.class)
@@ -129,7 +119,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SQLException.class)
-    public  ResponseEntity<String> handleSQLExceptionException(SQLException exception) {
+    public  ResponseEntity<String> handleSQLException(SQLException exception) {
         EFBoxErrorMessage errMsg = messageCreator(
                 LogEventType.ERROR, ExceptionType.SQL_EXCEPTION, 400, exception.getMessage());
 

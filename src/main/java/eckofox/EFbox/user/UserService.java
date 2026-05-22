@@ -2,6 +2,8 @@ package eckofox.EFbox.user;
 
 import eckofox.EFbox.exception.IllegiblePasswordException;
 import eckofox.EFbox.exception.UserNotFoundException;
+import eckofox.EFbox.logger.LogEventType;
+import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.PasswordConfig;
@@ -23,6 +25,7 @@ public class UserService implements UserDetailsService {
     private final JWTService jwtService;
     private final PasswordConfig passwordConfig;
     private final CookieMaker cookieMaker;
+    private final LoggerService loggerService;
 
     /**
      * creates a user based on a UserDTO
@@ -40,7 +43,11 @@ public class UserService implements UserDetailsService {
         User createdUser = new User(UUID.randomUUID(), userDTO.getUsername(), userDTO.getFirstname(),
                 userDTO.getLastname(), passwordConfig.passwordEncoder().encode(userDTO.getPassword()));
 
-        return userRepository.save(createdUser);
+        User savedUser = userRepository.save(createdUser);
+
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User created: " + savedUser.getUsername() + ".", savedUser);
+
+        return savedUser;
     }
 
     /**
@@ -60,6 +67,8 @@ public class UserService implements UserDetailsService {
         }
 
         String token = jwtService.generateToken(user.getUserID());
+
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User logged in: " + user.getUsername() + ".", user);
 
         return cookieMaker.cookieBaker(token);
     }
@@ -84,6 +93,9 @@ public class UserService implements UserDetailsService {
      */
     public User deleteUser(User user) {
         userRepository.delete(user);
+
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User deleted account: " + user.getUsername() + ".", user);
+
         return user;
     }
 
@@ -114,7 +126,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
 }

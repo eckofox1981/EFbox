@@ -4,10 +4,10 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 import eckofox.EFbox.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.AccessException;
 import java.util.*;
 
 @RestController
@@ -24,7 +24,7 @@ public class EFBoxFolderController {
     @PostMapping("/create")
     public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user,
                                           @RequestParam String parentFolderID)
-            throws AccessDeniedException, NoSuchElementException  {
+            throws AccessException, NoSuchElementException  {
         EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
 
         return ResponseEntity.ok().body(efBoxFolderDTO);
@@ -33,7 +33,7 @@ public class EFBoxFolderController {
 
     @GetMapping("/browse")
     public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user)
-            throws AccessDeniedException, NoSuchElementException  {
+            throws AccessException, NoSuchElementException  {
         EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
 
         return ResponseEntity.ok(efBoxFolderDTO);
@@ -54,7 +54,7 @@ public class EFBoxFolderController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user)
-            throws AccessDeniedException, NoSuchElementException  {
+            throws AccessException, NoSuchElementException  {
         EFBoxFolder folder = folderService.deleteFolder(folderID, user);
 
         return ResponseEntity.status(202).body("Folder: " + folder.getName() + " deleted.");
@@ -63,7 +63,7 @@ public class EFBoxFolderController {
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFolderName(
             @AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName
-    ) throws NoSuchElementException, AccessDeniedException {
+    ) throws NoSuchElementException, AccessException {
             return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
     }
 }

@@ -4,7 +4,6 @@ import eckofox.EFbox.logger.LoggEventType;
 import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.user.User;
 import jakarta.servlet.ServletException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -147,7 +146,7 @@ public class GlobalExceptionHandler {
                 code
         );
 
-        loggerService.saveLogg(errMsg);
+        loggerService.saveInfoLogg(errMsg);
 
         return errMsg;
     }

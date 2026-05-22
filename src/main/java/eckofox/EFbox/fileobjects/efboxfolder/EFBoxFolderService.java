@@ -3,20 +3,23 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileDTO;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileRepository;
+import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.rmi.AccessException;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class EFBoxFolderService {
-    private EFBoxFolderRepository folderRespository;
-    private EFBoxFileRepository fileRepository;
+    private final EFBoxFolderRepository folderRespository;
+    private final EFBoxFileRepository fileRepository;
+    private final LoggerService loggerService;
 
     /**
      * creates EFBoxFolder, if in "root folder" (User.EFBoxFolder.rootfolder) the parentID is set to "0" and the folder is
@@ -51,6 +54,7 @@ public class EFBoxFolderService {
 
         EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, parentFolder, user);
 
+        loggerService.saveInfoLogg("Folder created. \n" + folder.getFolderID(), user);
 
         return folderRespository.save(folder);
     }
@@ -78,6 +82,8 @@ public class EFBoxFolderService {
                             + folder.getFolderID());
         }
 
+        loggerService.saveInfoLogg("Folder accessed. \n" + folder.getFolderID(), user);
+
         return folder;
     }
 
@@ -103,6 +109,8 @@ public class EFBoxFolderService {
         files.stream()
                 .map(EFBoxFileDTO::fromEFBoxFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
+
+        loggerService.saveInfoLogg("Search performed.", user);
 
         return responseDTO;
     }
@@ -135,6 +143,8 @@ public class EFBoxFolderService {
 
         recursiveDeletionOfFolders(folder, user);
 
+        loggerService.saveInfoLogg("Folder deleted. \n" + folder.getFolderID(), user);
+
         return folder;
     }
 
@@ -166,7 +176,11 @@ public class EFBoxFolderService {
 
         folder.setName(newName);
 
-        return folderRespository.save(folder);
+        EFBoxFolder folderWithNewName = folderRespository.save(folder);
+
+        loggerService.saveInfoLogg("Folder deleted. \n" + folder.getFolderID(), user);
+
+        return folderWithNewName;
     }
 
     /**

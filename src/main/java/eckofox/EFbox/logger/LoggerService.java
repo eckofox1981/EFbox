@@ -18,8 +18,20 @@ import java.util.UUID;
 public class LoggerService {
     private final LoggerRepository loggerRepository;
 
-    public void saveLogg(LogMsg logMsg) {
+    public void saveInfoLogg(LogMsg logMsg) {
         loggerRepository.save(logMsg);
+    }
+
+    public void saveInfoLogg(String message, User user)  {
+        LogMsg logMsg = new LogMsg(
+                UUID.randomUUID(),
+                LoggEventType.INFO,
+                LocalDateTime.now(),
+                message,
+                user
+        );
+
+        saveInfoLogg(logMsg);
     }
 
     public String retriveAllLogs(User user) throws IOException, BadLocationException {
@@ -31,7 +43,7 @@ public class LoggerService {
                 user
         );
 
-        saveLogg(logMsg);
+        saveInfoLogg(logMsg);
 
         List<LogMsg> allLogs = loggerRepository.findAll();
         allLogs.sort(Comparator.comparing(LogMsg::getTimestamp).reversed());

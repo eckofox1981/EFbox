@@ -3,6 +3,7 @@ package eckofox.EFbox.fileobjects.efboxfile;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderRepository;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderService;
+import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class EFBoxFileService {
     private final EFBoxFileRepository fileRepository;
     private final EFBoxFolderRepository folderRepository;
     private final EFBoxFolderService folderService;
+    private final LoggerService loggerService;
 
     /**
      * first the method checks if the user is the parent folder's owner.
@@ -30,10 +32,10 @@ public class EFBoxFileService {
      * @param user           to check access rights
      * @param parentFolderID where file will be saved and to check access rights
      * @return EFBoxFile
-     * @throws NoSuchElementException, AccessException, IOException
+     * @throws NoSuchElementException, AccessException(through IOException), IOException
      */
     public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID)
-            throws NoSuchElementException, AccessException, IOException {
+            throws NoSuchElementException, IOException {
         EFBoxFolder parentFolder = folderRepository
                 .findById(UUID.fromString(parentFolderID))
                 .orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
@@ -47,17 +49,18 @@ public class EFBoxFileService {
                             + parentFolder.getFolderID());
         }
 
-        try {
-            EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
-            fileRepository.save(efBoxFile);
-            return efBoxFile;
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        }
+
+        EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
+        fileRepository.save(efBoxFile);
+
+        loggerService.saveInfoLogg("File uploaded. \n" + efBoxFile.getFileID(), user);
+
+        return efBoxFile;
+
     }
 
     /**
-     * looks for fileID in database then checks parentFolder is accessible by user. If  the check passes it sends the
+     * looks for fileID in database then checks parentFolder is accessible by user. If the check passes it sends the
      * EFBoxFile back to the controller.
      *
      * @param fileID to find file
@@ -77,6 +80,8 @@ public class EFBoxFileService {
                             + "/"
                             + efBoxFile.getFileID());
         }
+
+        loggerService.saveInfoLogg("File downloaded. \n" + efBoxFile.getFileID(), user);
 
         return efBoxFile;
     }
@@ -105,6 +110,8 @@ public class EFBoxFileService {
 
         efBoxFile.getParentFolder().getFiles().remove(efBoxFile);
         fileRepository.delete(efBoxFile);
+
+        loggerService.saveInfoLogg("File deleted. \n" + efBoxFile.getFileID(), user);
 
         return efBoxFile;
     }
@@ -135,6 +142,10 @@ public class EFBoxFileService {
 
         efBoxFile.setFilename(newName);
 
-        return fileRepository.save(efBoxFile);
+        EFBoxFile fileWithNewName = fileRepository.save(efBoxFile);
+
+        loggerService.saveInfoLogg("File named changed. \n" + efBoxFile.getFileID(), user);
+
+        return fileWithNewName;
     }
 }

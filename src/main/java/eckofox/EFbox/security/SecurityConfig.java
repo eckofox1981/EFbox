@@ -45,8 +45,16 @@ public class SecurityConfig {
                         (auth -> auth
                                 .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/bossmang/request-log-access").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/bossmang/fetch-all-logs").hasAuthority(GrantedAuthorities.LOG_ACCESS.toString())
+                                .requestMatchers(HttpMethod
+                                        .PUT, "/bossmang/request-log-access").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod
+                                        .GET, "/bossmang/fetch-all-logs")
+                                        .hasAuthority(GrantedAuthorities.LOG_ACCESS.toString())
+                                .requestMatchers(HttpMethod
+                                        .DELETE, "/bossmang/revoke-admin-status")
+                                        .hasAuthority(GrantedAuthorities.REVOKE_ADMIN_ROLE.toString())
+                                .requestMatchers(HttpMethod.DELETE, "/bossmang/revoke-log-access")
+                                        .hasAuthority(GrantedAuthorities.REVOKE_LOG_ACCESS.toString())
                                 .anyRequest().authenticated()
                         )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

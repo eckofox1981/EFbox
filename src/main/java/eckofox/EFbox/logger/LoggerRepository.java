@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface LoggerRepository extends JpaRepository<LogMsg, UUID> {
+public interface LoggerRepository extends JpaRepository<LogMessage, UUID> {
 
 }

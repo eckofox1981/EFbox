@@ -3,6 +3,7 @@ package eckofox.EFbox.fileobjects.efboxfolder;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFile;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileDTO;
 import eckofox.EFbox.fileobjects.efboxfile.EFBoxFileRepository;
+import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
@@ -54,7 +55,7 @@ public class EFBoxFolderService {
 
         EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, parentFolder, user);
 
-        loggerService.saveInfoLogg("Folder created. \n" + folder.getFolderID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FOLDER, "Folder created. \n" + folder.getFolderID(), user);
 
         return folderRespository.save(folder);
     }
@@ -82,7 +83,7 @@ public class EFBoxFolderService {
                             + folder.getFolderID());
         }
 
-        loggerService.saveInfoLogg("Folder accessed. \n" + folder.getFolderID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FOLDER, "Folder accessed. \n" + folder.getFolderID(), user);
 
         return folder;
     }
@@ -110,7 +111,7 @@ public class EFBoxFolderService {
                 .map(EFBoxFileDTO::fromEFBoxFile)
                 .forEach(file -> responseDTO.getFiles().add(file));
 
-        loggerService.saveInfoLogg("Search performed.", user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FOLDER, "Search performed.", user);
 
         return responseDTO;
     }
@@ -143,7 +144,7 @@ public class EFBoxFolderService {
 
         recursiveDeletionOfFolders(folder, user);
 
-        loggerService.saveInfoLogg("Folder deleted. \n" + folder.getFolderID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FOLDER, "Folder deleted. \n" + folder.getFolderID(), user);
 
         return folder;
     }
@@ -178,7 +179,7 @@ public class EFBoxFolderService {
 
         EFBoxFolder folderWithNewName = folderRespository.save(folder);
 
-        loggerService.saveInfoLogg("Folder deleted. \n" + folder.getFolderID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FOLDER, "Folder deleted. \n" + folder.getFolderID(), user);
 
         return folderWithNewName;
     }

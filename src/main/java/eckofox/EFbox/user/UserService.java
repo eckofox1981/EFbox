@@ -2,6 +2,7 @@ package eckofox.EFbox.user;
 
 import eckofox.EFbox.exception.IllegiblePasswordException;
 import eckofox.EFbox.exception.UserNotFoundException;
+import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
@@ -44,7 +45,7 @@ public class UserService implements UserDetailsService {
 
         User savedUser = userRepository.save(createdUser);
 
-        loggerService.saveInfoLogg("User created: " + savedUser.getUsername() + ".", savedUser);
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User created: " + savedUser.getUsername() + ".", savedUser);
 
         return savedUser;
     }
@@ -67,7 +68,7 @@ public class UserService implements UserDetailsService {
 
         String token = jwtService.generateToken(user.getUserID());
 
-        loggerService.saveInfoLogg("User logged in: " + user.getUsername() + ".", user);
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User logged in: " + user.getUsername() + ".", user);
 
         return cookieMaker.cookieBaker(token);
     }
@@ -93,7 +94,7 @@ public class UserService implements UserDetailsService {
     public User deleteUser(User user) {
         userRepository.delete(user);
 
-        loggerService.saveInfoLogg("User deleted account: " + user.getUsername() + ".", user);
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User deleted account: " + user.getUsername() + ".", user);
 
         return user;
     }
@@ -125,7 +126,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
 }

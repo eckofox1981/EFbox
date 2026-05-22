@@ -3,6 +3,7 @@ package eckofox.EFbox.fileobjects.efboxfile;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderRepository;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolderService;
+import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.user.User;
 import jakarta.transaction.Transactional;
@@ -53,7 +54,7 @@ public class EFBoxFileService {
         EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
         fileRepository.save(efBoxFile);
 
-        loggerService.saveInfoLogg("File uploaded. \n" + efBoxFile.getFileID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FILE, "File uploaded. \n" + efBoxFile.getFileID(), user);
 
         return efBoxFile;
 
@@ -81,7 +82,7 @@ public class EFBoxFileService {
                             + efBoxFile.getFileID());
         }
 
-        loggerService.saveInfoLogg("File downloaded. \n" + efBoxFile.getFileID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FILE, "File downloaded. \n" + efBoxFile.getFileID(), user);
 
         return efBoxFile;
     }
@@ -111,7 +112,7 @@ public class EFBoxFileService {
         efBoxFile.getParentFolder().getFiles().remove(efBoxFile);
         fileRepository.delete(efBoxFile);
 
-        loggerService.saveInfoLogg("File deleted. \n" + efBoxFile.getFileID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FILE, "File deleted. \n" + efBoxFile.getFileID(), user);
 
         return efBoxFile;
     }
@@ -144,7 +145,7 @@ public class EFBoxFileService {
 
         EFBoxFile fileWithNewName = fileRepository.save(efBoxFile);
 
-        loggerService.saveInfoLogg("File named changed. \n" + efBoxFile.getFileID(), user);
+        loggerService.saveInfoLogg(LogEventType.INFO_FILE, "File named changed. \n" + efBoxFile.getFileID(), user);
 
         return fileWithNewName;
     }

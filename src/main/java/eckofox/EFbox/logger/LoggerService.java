@@ -18,44 +18,44 @@ import java.util.UUID;
 public class LoggerService {
     private final LoggerRepository loggerRepository;
 
-    public void saveInfoLogg(LogMsg logMsg) {
-        loggerRepository.save(logMsg);
+    public void saveInfoLogg(LogMessage logMessage) {
+        loggerRepository.save(logMessage);
     }
 
-    public void saveInfoLogg(String message, User user)  {
-        LogMsg logMsg = new LogMsg(
+    public void saveInfoLogg(LogEventType type, String message, User user)  {
+        LogMessage logMessage = new LogMessage(
                 UUID.randomUUID(),
-                LoggEventType.INFO,
+                type,
                 LocalDateTime.now(),
                 message,
                 user
         );
 
-        saveInfoLogg(logMsg);
+        saveInfoLogg(logMessage);
     }
 
     public String retriveAllLogs(User user) throws IOException, BadLocationException {
-        LogMsg logMsg = new LogMsg(
+        LogMessage logMessage = new LogMessage(
                 UUID.randomUUID(),
-                LoggEventType.INFO,
+                LogEventType.INFO,
                 LocalDateTime.now(),
                 "All logs requested by " + user.getUsername() + ".",
                 user
         );
 
-        saveInfoLogg(logMsg);
+        saveInfoLogg(logMessage);
 
-        List<LogMsg> allLogs = loggerRepository.findAll();
-        allLogs.sort(Comparator.comparing(LogMsg::getTimestamp).reversed());
+        List<LogMessage> allLogs = loggerRepository.findAll();
+        allLogs.sort(Comparator.comparing(LogMessage::getTimestamp).reversed());
 
         return logsToHTMLCodeConverter(allLogs, user);
     }
 
-    private String logsToHTMLCodeConverter(List<LogMsg> logs, User user) {
+    private String logsToHTMLCodeConverter(List<LogMessage> logs, User user) {
         StringBuilder htmlCode = new StringBuilder();
         htmlCode.append("<html><h1>EFBox Event Logs</h1><h2><i>requested by: " + user.getUsername() + "</h2>");
 
-        for (LogMsg msg : logs) {
+        for (LogMessage msg : logs) {
             htmlCode.append(logTableCreator(msg));
             htmlCode.append("<br>");
         }
@@ -67,7 +67,7 @@ public class LoggerService {
         return htmlCode.toString();
     }
 
-    private String logTableCreator(LogMsg log) {
+    private String logTableCreator(LogMessage log) {
         String statusCodeBox ="";
         String exceptionTypeBox ="";
         String msgColSpan = "5";

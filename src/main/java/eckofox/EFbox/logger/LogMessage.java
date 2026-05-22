@@ -14,18 +14,18 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor
-public class LogMsg {
+public class LogMessage {
     @Id
     private UUID msgId;
-    private LoggEventType type;
+    private LogEventType type;
     private LocalDateTime timestamp;
     private String logMessage;
     private String username;
     private UUID userID;
 
-    public LogMsg(
+    public LogMessage(
             UUID msgId,
-            LoggEventType type,
+            LogEventType type,
             LocalDateTime timestamp,
             String logMessage,
             User user) {

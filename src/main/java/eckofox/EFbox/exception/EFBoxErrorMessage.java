@@ -1,7 +1,7 @@
 package eckofox.EFbox.exception;
 
-import eckofox.EFbox.logger.LoggEventType;
-import eckofox.EFbox.logger.LogMsg;
+import eckofox.EFbox.logger.LogEventType;
+import eckofox.EFbox.logger.LogMessage;
 import eckofox.EFbox.user.User;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -13,13 +13,13 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor
-public class EFBoxErrorMessage extends LogMsg {
+public class EFBoxErrorMessage extends LogMessage {
     private ExceptionType exceptionType;
     private int code;
 
     public EFBoxErrorMessage(
             UUID msgId,
-            LoggEventType type,
+            LogEventType type,
             LocalDateTime timestamp,
             String logMessage,
             User user,

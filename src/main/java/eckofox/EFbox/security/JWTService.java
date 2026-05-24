@@ -4,12 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -35,7 +38,7 @@ public class JWTService {
         return JWT.create()
                 .withIssuer("auth0")
                 .withSubject(userID.toString())
-                .withExpiresAt(Instant.now().plus(60, ChronoUnit.MINUTES))
+                .withExpiresAt(Instant.now().plus(5, ChronoUnit.MINUTES))
                 .sign(algorithm);
     }
 
@@ -43,5 +46,31 @@ public class JWTService {
         DecodedJWT decodedJWT = verifier.verify(token);
         String idString = decodedJWT.getSubject();
         return UUID.fromString(idString);
+    }
+
+    public String tokenRefreshIfThreeMinutesLeft(HttpServletRequest request, UUID userID) {
+        String token = resolveToken(request);
+
+        long now = System.currentTimeMillis();
+
+        DecodedJWT decodedJWT = verifier.verify(token);
+        long expires = decodedJWT.getExpiresAt().getTime();
+
+        long timeLeft = expires - now;
+        long threeMinutes = Duration.ofMinutes(3).toMillis();
+
+        if (timeLeft > threeMinutes) {
+            return token;
+        }
+
+        return generateToken(userID);
+    }
+
+    private String resolveToken(HttpServletRequest request) {
+            return Arrays.stream(request.getCookies())
+                    .filter(c -> "efbox-token".equals(c.getName()))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
     }
 }

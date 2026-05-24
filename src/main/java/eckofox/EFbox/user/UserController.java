@@ -4,6 +4,9 @@ import eckofox.EFbox.exception.GlobalExceptionHandler;
 import eckofox.EFbox.exception.IllegiblePasswordException;
 import eckofox.EFbox.exception.UserNotFoundException;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
+import eckofox.EFbox.security.CookieMaker;
+import eckofox.EFbox.security.JWTService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.LoginException;
@@ -24,6 +28,8 @@ import java.util.UUID;
 public class UserController {
     private final UserService userservice;
     private final GlobalExceptionHandler exceptionHandler;
+    private final CookieMaker cookieMaker;
+    private final JWTService jwtService;
 
 
     /**
@@ -62,9 +68,15 @@ public class UserController {
      * @return NoPasswordDTO or error (badRequest purposefully vague)
      */
     @GetMapping("/info")
-    public ResponseEntity<?> showUserInfo(@AuthenticationPrincipal User user) throws UserNotFoundException {
+    public ResponseEntity<?> showUserInfo(
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws UserNotFoundException {
             User userForInfo = userservice.seeUserInfo(user);
 
+            response.addCookie(cookieMaker
+                    .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
             return ResponseEntity.ok(NoPasswordUserDTO.fromUser(userForInfo));
     }
 

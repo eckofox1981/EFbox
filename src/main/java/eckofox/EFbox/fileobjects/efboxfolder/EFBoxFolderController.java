@@ -1,7 +1,11 @@
 package eckofox.EFbox.fileobjects.efboxfolder;
 
 
+import eckofox.EFbox.security.CookieMaker;
+import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.user.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +19,8 @@ import java.util.*;
 @RequestMapping("/folder")
 public class EFBoxFolderController {
     private EFBoxFolderService folderService;
+    private final CookieMaker cookieMaker;
+    private final JWTService jwtService;
 
     /**
      * all methods send to EFBoxFolderService which returns accordingly
@@ -22,20 +28,32 @@ public class EFBoxFolderController {
      * @param user will be used to check access rights in Service
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createFolder(@RequestParam String folderName, @AuthenticationPrincipal User user,
-                                          @RequestParam String parentFolderID)
-            throws AccessException, NoSuchElementException  {
+    public ResponseEntity<?> createFolder(
+            @RequestParam String folderName,
+            @AuthenticationPrincipal User user,
+            @RequestParam String parentFolderID,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws AccessException, NoSuchElementException  {
         EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok().body(efBoxFolderDTO);
 
     }
 
     @GetMapping("/browse")
-    public ResponseEntity<?> seeFolderContent(@RequestParam String folderID, @AuthenticationPrincipal User user)
-            throws AccessException, NoSuchElementException  {
+    public ResponseEntity<?> seeFolderContent(
+            @RequestParam String folderID,
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws AccessException, NoSuchElementException  {
         EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok(efBoxFolderDTO);
     }
 
@@ -48,23 +66,42 @@ public class EFBoxFolderController {
      * @return ResponseEntity
      */
     @GetMapping("/search/{query}")
-    public ResponseEntity<?> searchWithQuery(@PathVariable String query, @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> searchWithQuery(
+            @PathVariable String query,
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) {
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok(folderService.searchInAllFolders(query, user));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteFolder(@RequestParam String folderID, @AuthenticationPrincipal User user)
-            throws AccessException, NoSuchElementException  {
+    public ResponseEntity<?> deleteFolder(
+            @RequestParam String folderID,
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws AccessException, NoSuchElementException  {
         EFBoxFolder folder = folderService.deleteFolder(folderID, user);
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.status(202).body("Folder: " + folder.getName() + " deleted.");
     }
 
     @PutMapping("/change-name")
     public ResponseEntity<?> changeFolderName(
-            @AuthenticationPrincipal User user, @RequestParam String folderID, @RequestParam String newName
+            @AuthenticationPrincipal User user,
+            @RequestParam String folderID,
+            @RequestParam String newName,
+            HttpServletResponse response,
+            HttpServletRequest request
     ) throws NoSuchElementException, AccessException {
-            return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
+        return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));
     }
 }
 

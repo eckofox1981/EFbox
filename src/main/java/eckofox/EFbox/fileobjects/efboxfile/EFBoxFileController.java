@@ -1,6 +1,10 @@
 package eckofox.EFbox.fileobjects.efboxfile;
 
+import eckofox.EFbox.security.CookieMaker;
+import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.user.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,6 +22,8 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class EFBoxFileController {
     private EFBoxFileService fileService;
+    private final CookieMaker cookieMaker;
+    private final JWTService jwtService;
 
 
     /**
@@ -29,11 +35,17 @@ public class EFBoxFileController {
      * @return ResponseEntity
      */
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user,
-                                        @RequestParam String parentID)
-            throws AccessException, NoSuchElementException, IOException {
+    public ResponseEntity<?> uploadFile(
+            @RequestPart("file") MultipartFile file,
+            @AuthenticationPrincipal User user,
+            @RequestParam String parentID,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws AccessException, NoSuchElementException, IOException {
         EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
     }
 
@@ -45,11 +57,17 @@ public class EFBoxFileController {
      * @return ResponseEntity of the file requested or an error message
      */
     @GetMapping("/download")
-    public ResponseEntity<?> downloadFile(@RequestParam String fileID, @AuthenticationPrincipal User user)
-    throws AccessException, NoSuchElementException{
+    public ResponseEntity<?> downloadFile(
+            @RequestParam String fileID,
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    )throws AccessException, NoSuchElementException {
         EFBoxFile efBoxFile = fileService.getFile(fileID, user);
         byte[] fileContent = efBoxFile.getContent();
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(efBoxFile.getType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + efBoxFile.getFileName() + "\"")
@@ -64,9 +82,15 @@ public class EFBoxFileController {
      * @return message
      */
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteFile(@RequestParam String fileID, @AuthenticationPrincipal User user)
-            throws NoSuchElementException, AccessException {
+    public ResponseEntity<?> deleteFile(
+            @RequestParam String fileID,
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws NoSuchElementException, AccessException {
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.status(202).body(fileService.deleteFile(fileID, user).getFileName() + " deleted.");
     }
 
@@ -79,10 +103,16 @@ public class EFBoxFileController {
      * @return ResponseEntity with either FileDTO or a error response
      */
     @PutMapping("/change-name")
-    public ResponseEntity<?> changeFileName(@AuthenticationPrincipal User user, @RequestParam String fileID,
-                                            @RequestParam String newName)
-            throws AccessException, NoSuchElementException {
+    public ResponseEntity<?> changeFileName(
+            @AuthenticationPrincipal User user,
+            @RequestParam String fileID,
+            @RequestParam String newName,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws AccessException, NoSuchElementException {
 
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(fileService.changeFileName(fileID, newName, user)));
     }
 }

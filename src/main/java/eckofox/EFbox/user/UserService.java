@@ -6,11 +6,9 @@ import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
-import eckofox.EFbox.security.PasswordConfig;
+import eckofox.EFbox.security.argon2.Argon2PasswordEncoder;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +22,7 @@ import java.util.*;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
-    private final PasswordConfig passwordConfig;
+    private final Argon2PasswordEncoder encoder;
     private final CookieMaker cookieMaker;
     private final LoggerService loggerService;
 
@@ -46,7 +44,7 @@ public class UserService implements UserDetailsService {
                 userDTO.getUsername(),
                 userDTO.getFirstname(),
                 userDTO.getLastname(),
-                passwordConfig.passwordEncoder().encode(userDTO.getPassword()),
+                encoder.encode(userDTO.getPassword()),
                 List.of(UserRole.ROLE_USER),
                 List.of()
         );
@@ -70,7 +68,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new LoginException("User " + username + " not found." ));
-        if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
+        if (!encoder.matches(password, user.getPassword())) {
             throw new LoginException("Password didn't match for username: " + username);
         }
 

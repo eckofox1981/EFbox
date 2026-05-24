@@ -1,6 +1,7 @@
 package eckofox.EFbox.user;
 
 import eckofox.EFbox.exception.IllegiblePasswordException;
+import eckofox.EFbox.exception.UnsafePasswordException;
 import eckofox.EFbox.exception.UserNotFoundException;
 import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
@@ -9,9 +10,12 @@ import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.security.argon2.Argon2PasswordEncoder;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.password.CompromisedPasswordDecision;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
@@ -25,6 +29,12 @@ public class UserService implements UserDetailsService {
     private final Argon2PasswordEncoder encoder;
     private final CookieMaker cookieMaker;
     private final LoggerService loggerService;
+    //https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/password/HaveIBeenPwnedRestApiPasswordChecker.html
+    //https://haveibeenpwned.com/API/v3#PwnedPasswords
+    @Bean
+    public HaveIBeenPwnedRestApiPasswordChecker passwordChecker() {
+        return new HaveIBeenPwnedRestApiPasswordChecker();
+    }
 
     /**
      * creates a user based on a UserDTO
@@ -37,6 +47,10 @@ public class UserService implements UserDetailsService {
     public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
             throw new IllegiblePasswordException("Password too weak.");
+        }
+
+        if (isPasswordCompromised(userDTO.getPassword())) {
+            throw new UnsafePasswordException("Weak password given during user creation. Rejected.");
         }
 
         User createdUser = new User(
@@ -113,6 +127,11 @@ public class UserService implements UserDetailsService {
      */
     private boolean passwordValidationIsOk(String password) {
         return (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$"));
+    }
+
+    private boolean isPasswordCompromised(String hash) {
+        CompromisedPasswordDecision isCompromised = passwordChecker().check(hash);
+        return isCompromised.isCompromised();
     }
 
     /**

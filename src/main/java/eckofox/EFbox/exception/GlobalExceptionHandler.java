@@ -137,6 +137,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errMsg.getCode()).body("Something went wrong during the request.");
     }
 
+    @ExceptionHandler(UnsafePasswordException.class)
+    public ResponseEntity<String> handleUnsafePasswordException(UnsafePasswordException exception) {
+        //NOTE: no recording since it doesn't affect the service
+        return ResponseEntity.status(406)
+                .body("This password is in the list of common passwords tested by hackers. Please choose another one.");
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public  ResponseEntity<String> handleUserNotFoundException(UserNotFoundException exception) {
         EFBoxErrorMessage errMsg = messageCreator(

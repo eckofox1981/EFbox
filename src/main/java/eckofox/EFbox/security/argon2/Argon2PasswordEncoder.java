@@ -2,7 +2,6 @@ package eckofox.EFbox.security.argon2;
 
 import de.mkammerer.argon2.Argon2;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

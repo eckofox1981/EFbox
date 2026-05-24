@@ -46,11 +46,11 @@ public class UserService implements UserDetailsService {
      */
     public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
-            throw new IllegiblePasswordException("Password too weak.");
+            throw new IllegiblePasswordException("Password too weak for password policy.");
         }
 
         if (isPasswordCompromised(userDTO.getPassword())) {
-            throw new UnsafePasswordException("Weak password given during user creation. Rejected.");
+            throw new UnsafePasswordException("Compromised password given during user creation. Rejected.");
         }
 
         User createdUser = new User(
@@ -120,13 +120,17 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * checks that password has 5 letters minimum, lower and uppercase characters and at least one digit.
+     * regex from https://regexbox.com/regex-templates/password
+     * checks that password has 8 letters minimum adn 64 maximum
+     * lower, uppercase characters, at least one digit and @$!%*?& characters
      *
      * @param password to be checked
      * @return true if password format is correct
      */
     private boolean passwordValidationIsOk(String password) {
-        return (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$"));
+        String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
+        //NIST standard: between 8 and 64 chars
+        return password.matches(PASSWORD_PATTERN);
     }
 
     private boolean isPasswordCompromised(String hash) {

@@ -81,12 +81,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegiblePasswordException.class)
     public ResponseEntity<String> handleIllegiblePasswordException(IllegiblePasswordException exception) {
-        EFBoxErrorMessage errMsg = messageCreator(
-                LogEventType.WARNING, ExceptionType.ILLEGIBLE_PASSWORD_EXCEPTION, 406, exception.getMessage());
-
+        //NOTE: exception not recorded.
         return ResponseEntity
-                .status(errMsg.getCode())
-                .body("Password not eligible. Requirements: 5 letters minimum, lower and uppercase characters and at least one digit.");
+                .status(406)
+                .body("Password not eligible. Requirements:\n"
+                        + "- 8 to 64 characters,\n- lower and uppercase characters,\n"
+                        + "- at least one special character (@, $, €, ¥, !, %, *, ?, &).");
     }
 
     @ExceptionHandler(IOException.class)
@@ -141,7 +141,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUnsafePasswordException(UnsafePasswordException exception) {
         //NOTE: no recording since it doesn't affect the service
         return ResponseEntity.status(406)
-                .body("This password is in the list of common passwords tested by hackers. Please choose another one.");
+                .body("This password is in the list of common passwords tested by hackers.\n"
+                        + "Your account would not be safe with this password." + "Please choose another one.");
     }
 
     @ExceptionHandler(UserNotFoundException.class)

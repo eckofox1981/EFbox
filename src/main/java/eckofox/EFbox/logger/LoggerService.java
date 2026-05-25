@@ -72,13 +72,15 @@ public class LoggerService {
         String msgColSpan = "5";
 
         if (log instanceof EFBoxErrorMessage errorMessage) {
-            statusCodeBox = "<td colspan=\"1\""
+            String exceptionType = errorMessage.getExceptionType() != null ?
+                    errorMessage.getExceptionType().getDescription() : "No Exception Description.";
+            statusCodeBox = "<td colspan=\"1\">"
                     + HttpStatusCode.valueOf(errorMessage.getCode())
-                    + "Type<br><i>Status-Code to user</i></td>";
+                    + "<br><i>Status-Code to user</i></td>";
             exceptionTypeBox =
                     "<td colspan=\"1\">"
-                            + errorMessage.getExceptionType().getDescription()
-                            + "Type<br><i>Type of exception</i></td>";
+                            + exceptionType
+                            + "<br><i>Type of exception</i></td>";
             msgColSpan = "3";
         }
 

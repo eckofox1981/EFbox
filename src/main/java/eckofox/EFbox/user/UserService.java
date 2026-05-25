@@ -1,19 +1,21 @@
 package eckofox.EFbox.user;
 
 import eckofox.EFbox.exception.IllegiblePasswordException;
+import eckofox.EFbox.exception.UnsafePasswordException;
 import eckofox.EFbox.exception.UserNotFoundException;
 import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
-import eckofox.EFbox.security.PasswordConfig;
+import eckofox.EFbox.security.argon2.Argon2PasswordEncoder;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.password.CompromisedPasswordDecision;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
@@ -24,9 +26,15 @@ import java.util.*;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
-    private final PasswordConfig passwordConfig;
+    private final Argon2PasswordEncoder encoder;
     private final CookieMaker cookieMaker;
     private final LoggerService loggerService;
+    //https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/password/HaveIBeenPwnedRestApiPasswordChecker.html
+    //https://haveibeenpwned.com/API/v3#PwnedPasswords
+    @Bean
+    public HaveIBeenPwnedRestApiPasswordChecker passwordChecker() {
+        return new HaveIBeenPwnedRestApiPasswordChecker();
+    }
 
     /**
      * creates a user based on a UserDTO
@@ -38,7 +46,11 @@ public class UserService implements UserDetailsService {
      */
     public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
         if (!passwordValidationIsOk(userDTO.getPassword())) {
-            throw new IllegiblePasswordException("Password too weak.");
+            throw new IllegiblePasswordException("Password too weak for password policy.");
+        }
+
+        if (isPasswordCompromised(userDTO.getPassword())) {
+            throw new UnsafePasswordException("Compromised password given during user creation. Rejected.");
         }
 
         User createdUser = new User(
@@ -46,7 +58,7 @@ public class UserService implements UserDetailsService {
                 userDTO.getUsername(),
                 userDTO.getFirstname(),
                 userDTO.getLastname(),
-                passwordConfig.passwordEncoder().encode(userDTO.getPassword()),
+                encoder.encode(userDTO.getPassword()),
                 List.of(UserRole.ROLE_USER),
                 List.of()
         );
@@ -70,7 +82,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new LoginException("User " + username + " not found." ));
-        if (!passwordConfig.passwordEncoder().matches(password, user.getPassword())) {
+        if (!encoder.matches(password, user.getPassword())) {
             throw new LoginException("Password didn't match for username: " + username);
         }
 
@@ -102,19 +114,31 @@ public class UserService implements UserDetailsService {
     public User deleteUser(User user) {
         userRepository.delete(user);
 
-        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User deleted account: " + user.getUsername() + ".", user);
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_USER,
+                "User deleted account: " + user.getUsername() + ".", user
+        );
 
         return user;
     }
 
     /**
-     * checks that password has 5 letters minimum, lower and uppercase characters and at least one digit.
+     * regex from https://regexbox.com/regex-templates/password
+     * checks that password has 8 letters minimum adn 64 maximum
+     * lower, uppercase characters, at least one digit and @$!%*?& characters
      *
      * @param password to be checked
      * @return true if password format is correct
      */
     private boolean passwordValidationIsOk(String password) {
-        return (password.length() > 5 && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z0-9]+$"));
+        String COMPLEXITY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
+        //NIST standard: between 8 and 64 chars
+        return password.matches(COMPLEXITY_REGEX);
+    }
+
+    private boolean isPasswordCompromised(String hash) {
+        CompromisedPasswordDecision isCompromised = passwordChecker().check(hash);
+        return isCompromised.isCompromised();
     }
 
     /**

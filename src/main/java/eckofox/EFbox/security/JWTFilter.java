@@ -1,5 +1,6 @@
 package eckofox.EFbox.security;
 
+import eckofox.EFbox.exception.NoTokenFoundException;
 import eckofox.EFbox.user.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,7 +27,12 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String authenticationToken = resolveToken(request);
+        String authenticationToken = null;
+        try {
+            authenticationToken = resolveToken(request);
+        } catch (NoTokenFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         if(!jwtRegexValidation(authenticationToken)) {
             System.out.println("EXCEPTION");
@@ -56,13 +62,13 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request) {
+    private String resolveToken(HttpServletRequest request) throws NoTokenFoundException {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
                     .filter(c -> "efbox-token".equals(c.getName()))
                     .findFirst()
                     .map(Cookie::getValue)
-                    .orElse(null);
+                    .orElseThrow(() -> new NoTokenFoundException("No token found in cookie."));
         }
 
         return null;

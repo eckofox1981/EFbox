@@ -54,6 +54,8 @@ public class UserAccessCodeService {
                     "User: " + user.getUsername() + " did not have the correct code. Purpose: " + purpose);
         }
 
+        accessCodeRepository.delete(existingRequest);
+
         return true;
     }
 

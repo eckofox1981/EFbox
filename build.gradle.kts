@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.bucket4j:bucket4j-core:8.10.1")
 	implementation("de.mkammerer:argon2-jvm:2.12")
+	implementation("org.springframework.boot:spring-boot-starter-mail")
 	implementation("com.auth0:java-jwt:4.4.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")

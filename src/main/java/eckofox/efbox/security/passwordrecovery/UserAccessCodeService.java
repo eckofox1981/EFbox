@@ -3,7 +3,8 @@ package eckofox.efbox.security.passwordrecovery;
 import eckofox.efbox.email.EmailType;
 import eckofox.efbox.exception.AccessCodeDoesNotExistsException;
 import eckofox.efbox.exception.AccessCodeDoesNotMatchException;
-import eckofox.efbox.security.argon2.Argon2PasswordEncoder;
+import eckofox.efbox.security.passwordandcode.Argon2PasswordEncoder;
+import eckofox.efbox.security.passwordandcode.SecureRandom;
 import eckofox.efbox.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,12 @@ import java.util.UUID;
 public class UserAccessCodeService {
     private final Argon2PasswordEncoder encoder;
     private final UserAccessCodeRepository accessCodeRepository;
+    private final SecureRandom secureRandom;
 
     public int generateAndSaveCode(EmailType purpose, User user) {
-        int code = (int) ((Math.random() * 9999) + 1000);
+        //OWASP
+        //https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#secure-random-number-generation
+        int code = secureRandom.secureRandom().nextInt(9999);
 
         ifRequestAlreadyExistingDelete(purpose, user);
 

@@ -8,7 +8,7 @@ import eckofox.efbox.logger.LogMessage;
 import eckofox.efbox.logger.LoggerService;
 import eckofox.efbox.security.CookieMaker;
 import eckofox.efbox.security.JWTService;
-import eckofox.efbox.security.argon2.Argon2PasswordEncoder;
+import eckofox.efbox.security.passwordandcode.Argon2PasswordEncoder;
 import eckofox.efbox.security.passwordrecovery.UserAccessCodeService;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;

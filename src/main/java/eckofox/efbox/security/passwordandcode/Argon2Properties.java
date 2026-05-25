@@ -1,4 +1,4 @@
-package eckofox.efbox.security.argon2;
+package eckofox.efbox.security.passwordandcode;
 
 import de.mkammerer.argon2.Argon2Factory;
 import lombok.Getter;

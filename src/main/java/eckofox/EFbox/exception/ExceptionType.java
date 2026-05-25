@@ -16,7 +16,8 @@ public enum ExceptionType {
     USER_NOT_FOUND_EXCEPTION("User Not Found Exception"),
     USERNAME_NOT_FOUND_EXCEPTION("Username Not Found Exception"),
     UNSAFE_PASSWORD_EXCEPTION("Unsafe Password Exception"),
-    NO_TOKEN_FOUND_EXCEPTION("No Token Found Exception");
+    NO_TOKEN_FOUND_EXCEPTION("No Token Found Exception"),
+    ILLEGIBLE_EMAIL_FORMAT_EXCEPTION("Illegible Email Format Exception");
 
 
     private final String description;

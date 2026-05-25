@@ -28,6 +28,8 @@ public class User implements UserDetails {
     @Column
     private final String lastName;
     @Column
+    private final String email;
+    @Column
     private final String password;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true) //makes sure no files are left if not owned (ex. user removal)
     private final List<EFBoxFolder> rootFolder;
@@ -41,6 +43,7 @@ public class User implements UserDetails {
             String username,
             String firstName,
             String lastName,
+            String email,
             String password,
             List<UserRole> roles,
             List<GrantedAuthorities> grantedAuthorities
@@ -49,6 +52,7 @@ public class User implements UserDetails {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
         this.password = password;
         this.rootFolder = new ArrayList<>();
         this.roles = roles;

@@ -1,5 +1,6 @@
 package eckofox.EFbox.user;
 
+import eckofox.EFbox.exception.IllegibleEmailFormatException;
 import eckofox.EFbox.exception.IllegiblePasswordException;
 import eckofox.EFbox.exception.UnsafePasswordException;
 import eckofox.EFbox.exception.UserNotFoundException;
@@ -45,6 +46,10 @@ public class UserService implements UserDetailsService {
      * @return NopasswordUserDTO
      */
     public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
+        if (!isEmailValid(userDTO.getEmail())) {
+            throw new IllegibleEmailFormatException("Email not valid [letters@domain.com].");
+        }
+
         if (!passwordValidationIsOk(userDTO.getPassword())) {
             throw new IllegiblePasswordException("Password too weak for password policy.");
         }
@@ -58,6 +63,7 @@ public class UserService implements UserDetailsService {
                 userDTO.getUsername(),
                 userDTO.getFirstname(),
                 userDTO.getLastname(),
+                userDTO.getEmail(),
                 encoder.encode(userDTO.getPassword()),
                 List.of(UserRole.ROLE_USER),
                 List.of()
@@ -139,6 +145,11 @@ public class UserService implements UserDetailsService {
     private boolean isPasswordCompromised(String hash) {
         CompromisedPasswordDecision isCompromised = passwordChecker().check(hash);
         return isCompromised.isCompromised();
+    }
+
+    private boolean isEmailValid(String email) {
+        String EMAIL_REGEX = "^[\\w.-]+@([\\w-]+\\.)+[\\w-]{2,}$";
+        return email.matches(EMAIL_REGEX);
     }
 
     /**

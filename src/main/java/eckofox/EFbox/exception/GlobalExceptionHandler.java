@@ -78,6 +78,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errMsg.getCode()).body("You have used forbidden characters (ex: <,>,:,?,=,...).");
     }
 
+    @ExceptionHandler(IllegibleEmailFormatException.class)
+    public ResponseEntity<String> handleIllegibleEmailFormatException(IllegibleEmailFormatException exception) {
+        //NOTE: not recorded
+        return ResponseEntity.status(406).body("Your email is not a valid email. Please check.");
+    }
+
     @ExceptionHandler(IllegiblePasswordException.class)
     public ResponseEntity<String> handleIllegiblePasswordException(IllegiblePasswordException exception) {
         //NOTE: exception not recorded.
@@ -179,6 +185,7 @@ public class GlobalExceptionHandler {
         User user = new User(
                 null,
                 "AnonymousUser",
+                "-",
                 "-",
                 "-",
                 "-",

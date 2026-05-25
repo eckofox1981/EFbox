@@ -108,6 +108,7 @@ public class UserController {
         private String username;
         private String firstname;
         private String lastname;
+        private String email;
         private List<UserRole> roles;
         private List<GrantedAuthorities> grantedAuthorities;
         private List<String> efFolderNames;
@@ -133,6 +134,7 @@ public class UserController {
                     user.getUsername(),
                     user.getFirstName(),
                     user.getLastName(),
+                    user.getEmail(),
                     user.getRoles(),
                     user.getGrantedAuthorities(),
                     folderNames
@@ -152,6 +154,7 @@ class UserDTO {
     private String username;
     private String firstname;
     private String lastname;
+    private String email;
     private String password;
 
     UserDTO(String username, String password) {

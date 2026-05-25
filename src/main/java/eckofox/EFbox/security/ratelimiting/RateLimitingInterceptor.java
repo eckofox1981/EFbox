@@ -70,6 +70,7 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
                 "-",
                 "-",
                 "-",
+                "-",
                 List.of(UserRole.ROLE_ANONYMOUS),
                 List.of()
         );

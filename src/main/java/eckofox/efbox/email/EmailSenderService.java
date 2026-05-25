@@ -35,7 +35,7 @@ public class EmailSenderService {
         message.append("Hello ");
         message.append(user.getUsername());
         message.append(",\n");
-        message.append("You have requested a code to renew your passowrd.\n");
+        message.append("You have requested a code to renew your password.\n");
         message.append("Enter the code: " + code + " with your new password to renew it.");
         message.append("\n\nCordially,\n\nThe EFBox team");
 

@@ -12,8 +12,8 @@ public enum EmailType {
     SYSTEM_WARNING("System Warning", "Warning from EFBox API");
 
 
-    private String type;
-    private String subject;
+    private final String type;
+    private final String subject;
 
     private EmailType(String type, String subject) {
         this.subject = subject;

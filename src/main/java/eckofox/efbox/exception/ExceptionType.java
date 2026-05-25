@@ -19,7 +19,7 @@ public enum ExceptionType {
     NO_TOKEN_FOUND_EXCEPTION("No Token Found Exception"),
     ILLEGIBLE_EMAIL_FORMAT_EXCEPTION("Illegible Email Format Exception"),
     ACCESS_CODE_DOES_NOT_MATCH("Access Code Does Not match Exception"),
-    ACCESS_CODE_DOES_NOT_EXIST_EXCEPTION("Acces Code Does Not Exists Exception"),
+    ACCESS_CODE_DOES_NOT_EXIST_EXCEPTION("Access Code Does Not Exists Exception"),
     EMAIL_NOT_SENT_EXCEPTION("Email Not Sent Exception");
 
 

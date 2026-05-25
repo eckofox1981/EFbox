@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessCodeDoesNotMatchException.class)
-    public ResponseEntity<String> handleAccessCodeDoesNotMatchException(AccessCodeDoesNotExistsException exception) {
+    public ResponseEntity<String> handleAccessCodeDoesNotMatchException(AccessCodeDoesNotMatchException exception) {
         EFBoxErrorMessage errMsg =
                 messageCreator(
                         LogEventType.WARNING,

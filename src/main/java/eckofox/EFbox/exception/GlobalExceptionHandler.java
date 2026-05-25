@@ -2,7 +2,6 @@ package eckofox.EFbox.exception;
 
 import eckofox.EFbox.logger.LogEventType;
 import eckofox.EFbox.logger.LoggerService;
-import eckofox.EFbox.user.GrantedAuthorities;
 import eckofox.EFbox.user.User;
 import eckofox.EFbox.user.UserRepository;
 import eckofox.EFbox.user.UserRole;
@@ -84,9 +83,12 @@ public class GlobalExceptionHandler {
         //NOTE: exception not recorded.
         return ResponseEntity
                 .status(406)
-                .body("Password not eligible. Requirements:\n"
-                        + "- 8 to 64 characters,\n- lower and uppercase characters,\n"
-                        + "- at least one special character (@, $, €, ¥, !, %, *, ?, &).");
+                .body("""
+                        Password not eligible. Requirements:
+                        - 8 to 64 characters,
+                        - lower and uppercase characters,
+                        - at least one special character (@, $, €, ¥, !, %, *, ?, &).
+                        """);
     }
 
     @ExceptionHandler(IOException.class)

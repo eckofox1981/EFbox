@@ -1,6 +1,7 @@
 package eckofox.EFbox.fileobjects.efboxfolder;
 
 
+import eckofox.EFbox.exception.NoTokenFoundException;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.user.User;
@@ -34,7 +35,7 @@ public class EFBoxFolderController {
             @RequestParam String parentFolderID,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws AccessException, NoSuchElementException  {
+    ) throws AccessException, NoSuchElementException, NoTokenFoundException {
         EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.createFolder(folderName, user, parentFolderID));
 
         response.addCookie(cookieMaker
@@ -49,7 +50,7 @@ public class EFBoxFolderController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws AccessException, NoSuchElementException  {
+    ) throws AccessException, NoSuchElementException, NoTokenFoundException {
         EFBoxFolderDTO efBoxFolderDTO = EFBoxFolderDTO.fromEFBoxFolder(folderService.seeFolderContent(folderID, user));
 
         response.addCookie(cookieMaker
@@ -71,7 +72,7 @@ public class EFBoxFolderController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response,
             HttpServletRequest request
-    ) {
+    ) throws NoTokenFoundException {
         response.addCookie(cookieMaker
                 .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok(folderService.searchInAllFolders(query, user));
@@ -83,7 +84,7 @@ public class EFBoxFolderController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws AccessException, NoSuchElementException  {
+    ) throws AccessException, NoSuchElementException, NoTokenFoundException {
         EFBoxFolder folder = folderService.deleteFolder(folderID, user);
 
         response.addCookie(cookieMaker
@@ -98,7 +99,7 @@ public class EFBoxFolderController {
             @RequestParam String newName,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws NoSuchElementException, AccessException {
+    ) throws NoSuchElementException, AccessException, NoTokenFoundException {
         response.addCookie(cookieMaker
                 .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
         return ResponseEntity.ok(EFBoxFolderDTO.fromEFBoxFolder(folderService.changeFolderName(folderID, newName, user)));

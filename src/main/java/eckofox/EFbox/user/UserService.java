@@ -114,7 +114,10 @@ public class UserService implements UserDetailsService {
     public User deleteUser(User user) {
         userRepository.delete(user);
 
-        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User deleted account: " + user.getUsername() + ".", user);
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_USER,
+                "User deleted account: " + user.getUsername() + ".", user
+        );
 
         return user;
     }
@@ -128,9 +131,9 @@ public class UserService implements UserDetailsService {
      * @return true if password format is correct
      */
     private boolean passwordValidationIsOk(String password) {
-        String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
+        String COMPLEXITY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
         //NIST standard: between 8 and 64 chars
-        return password.matches(PASSWORD_PATTERN);
+        return password.matches(COMPLEXITY_REGEX);
     }
 
     private boolean isPasswordCompromised(String hash) {

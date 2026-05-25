@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import eckofox.EFbox.exception.NoTokenFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
@@ -48,7 +49,7 @@ public class JWTService {
         return UUID.fromString(idString);
     }
 
-    public String tokenRefreshIfThreeMinutesLeft(HttpServletRequest request, UUID userID) {
+    public String tokenRefreshIfThreeMinutesLeft(HttpServletRequest request, UUID userID) throws NoTokenFoundException {
         String token = resolveToken(request);
 
         long now = System.currentTimeMillis();
@@ -66,11 +67,11 @@ public class JWTService {
         return generateToken(userID);
     }
 
-    private String resolveToken(HttpServletRequest request) {
+    private String resolveToken(HttpServletRequest request) throws NoTokenFoundException {
             return Arrays.stream(request.getCookies())
                     .filter(c -> "efbox-token".equals(c.getName()))
                     .findFirst()
                     .map(Cookie::getValue)
-                    .orElse(null);
+                    .orElseThrow(() -> new NoTokenFoundException("No token found in cookie."));
     }
 }

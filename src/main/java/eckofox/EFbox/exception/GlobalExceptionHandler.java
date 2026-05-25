@@ -131,6 +131,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errMsg.getCode()).body("Error accessing database.");
     }
 
+    @ExceptionHandler(NoTokenFoundException.class)
+    public  ResponseEntity<String> handleNoTokenFoundExceptionException(NoTokenFoundException exception) {
+        EFBoxErrorMessage errMsg = messageCreator(
+                LogEventType.ERROR, ExceptionType.NO_TOKEN_FOUND_EXCEPTION, 416, exception.getMessage());
+
+        return ResponseEntity.status(errMsg.getCode()).body("Error accessing database.");
+    }
+
     @ExceptionHandler(Exception.class)
     public  ResponseEntity<String> handleUndefinedException(Exception exception) {
         EFBoxErrorMessage errMsg = messageCreator(

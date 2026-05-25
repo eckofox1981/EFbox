@@ -1,5 +1,6 @@
 package eckofox.EFbox.fileobjects.efboxfile;
 
+import eckofox.EFbox.exception.NoTokenFoundException;
 import eckofox.EFbox.security.CookieMaker;
 import eckofox.EFbox.security.JWTService;
 import eckofox.EFbox.user.User;
@@ -41,7 +42,7 @@ public class EFBoxFileController {
             @RequestParam String parentID,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws AccessException, NoSuchElementException, IOException {
+    ) throws AccessException, NoSuchElementException, IOException, NoTokenFoundException {
         EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
 
         response.addCookie(cookieMaker
@@ -62,7 +63,7 @@ public class EFBoxFileController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response,
             HttpServletRequest request
-    )throws AccessException, NoSuchElementException {
+    ) throws AccessException, NoSuchElementException, NoTokenFoundException {
         EFBoxFile efBoxFile = fileService.getFile(fileID, user);
         byte[] fileContent = efBoxFile.getContent();
 
@@ -87,7 +88,7 @@ public class EFBoxFileController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws NoSuchElementException, AccessException {
+    ) throws NoSuchElementException, AccessException, NoTokenFoundException {
 
         response.addCookie(cookieMaker
                 .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
@@ -109,7 +110,7 @@ public class EFBoxFileController {
             @RequestParam String newName,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws AccessException, NoSuchElementException {
+    ) throws AccessException, NoSuchElementException, NoTokenFoundException {
 
         response.addCookie(cookieMaker
                 .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));

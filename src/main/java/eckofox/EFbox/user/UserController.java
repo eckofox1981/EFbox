@@ -2,6 +2,7 @@ package eckofox.EFbox.user;
 
 import eckofox.EFbox.exception.GlobalExceptionHandler;
 import eckofox.EFbox.exception.IllegiblePasswordException;
+import eckofox.EFbox.exception.NoTokenFoundException;
 import eckofox.EFbox.exception.UserNotFoundException;
 import eckofox.EFbox.fileobjects.efboxfolder.EFBoxFolder;
 import eckofox.EFbox.security.CookieMaker;
@@ -72,7 +73,7 @@ public class UserController {
             @AuthenticationPrincipal User user,
             HttpServletResponse response,
             HttpServletRequest request
-    ) throws UserNotFoundException {
+    ) throws UserNotFoundException, NoTokenFoundException {
             User userForInfo = userservice.seeUserInfo(user);
 
             response.addCookie(cookieMaker

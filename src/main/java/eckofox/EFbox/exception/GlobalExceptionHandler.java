@@ -142,7 +142,7 @@ public class GlobalExceptionHandler {
         //NOTE: no recording since it doesn't affect the service
         return ResponseEntity.status(406)
                 .body("This password is in the list of common passwords tested by hackers.\n"
-                        + "Your account would not be safe with this password." + "Please choose another one.");
+                        + "Your account would not be safe with this password. Please choose another one.");
     }
 
     @ExceptionHandler(UserNotFoundException.class)

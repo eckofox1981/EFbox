@@ -52,8 +52,12 @@ public class UserController {
      * @return token-cookie or error (badRequest purposefully vague)
      */
     @PutMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) throws LoginException {
-            response.addCookie(userservice.login(userDTO.getUsername(), userDTO.getPassword()));
+    public ResponseEntity<?> login(
+            @RequestBody UserDTO userDTO,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws LoginException, EmailNotSentException {
+            response.addCookie(userservice.login(userDTO.getUsername(), userDTO.getPassword(), request));
 
             return ResponseEntity.ok("Login successful. Welcome to EFBox!");
     }

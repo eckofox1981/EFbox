@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -41,12 +42,12 @@ public class EmailSenderService {
 
     public String sendPasswordRecoveryEmail(EmailType type, User user, int code) throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
-        message.append(hello);
-        message.append(user.getUsername());
-        message.append(",\n");
-        message.append("You have requested a code to renew your password.\n");
-        message.append("Enter the code: " + code + " with your new password to renew it.");
-        message.append(signature);
+        message.append(hello)
+                .append(user.getUsername())
+                .append(",\n")
+                .append("You have requested a code to renew your password.\n")
+                .append("Enter the code: ").append(code).append(" with your new password to renew it.")
+                .append(signature);
 
         try {
             sendEmail(user.getEmail(), type.getSubject(), message.toString());
@@ -60,23 +61,28 @@ public class EmailSenderService {
             ));
             return "Email sent to your inbox.";
         } catch (Exception e) {
+            String details = e.getMessage() == null
+                    ? "No message."
+                    : e.getMessage();
             throw new EmailNotSentException(
                     "Email not sent to "
-                    + user.getUsername()
-                    + ".\n Details:\n"
-                    + e.getMessage());
+                            + user.getUsername()
+                            + ".\n Details:\n"
+                            + details
+            );
         }
     }
 
     public void sendRepetitiveLoginAttemptsEMail(EmailType type, User user, LocalDateTime now, String ip)
             throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
-        message.append(hello);
-        message.append(user.getUsername());
-        message.append(",\n");
-        message.append("Multiple unsuccessful attempts to login in your account have been recorded.\n");
-        message.append("If you didn't try to log in at " + now.toLocalDate() + ", we advise you to change password.");
-        message.append(signature);
+        message.append(hello)
+                .append(user.getUsername())
+                .append(",\n")
+                .append("Multiple unsuccessful attempts to login into your account have been recorded.\n")
+                .append("If you didn't try to log in at " + now.toLocalTime()  + " on " + now.toLocalDate())
+                .append(", we advise you to consider changing password.")
+                .append(signature);
 
         try {
             sendEmail(user.getEmail(), type.getSubject(), message.toString());
@@ -89,11 +95,15 @@ public class EmailSenderService {
                     user
             ));
         } catch (Exception e) {
+            String details = e.getMessage() == null
+                    ? "No message."
+                    : e.getMessage();
             throw new EmailNotSentException(
                     "Email not sent to "
                             + user.getUsername()
                             + ".\n Details:\n"
-                            + e.getMessage());
+                            + details
+            );
         }
 
         warningEmailToAdmins(user, now, ip);
@@ -101,20 +111,25 @@ public class EmailSenderService {
 
     public void warningEmailToAdmins(User user, LocalDateTime now, String ip) throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
-        message.append(hello);
-        message.append(user.getUsername());
-        message.append(",\n");
-        message.append("Multiple unsuccessful attempts to login into "+ user.getUsername());
-        message.append("'s account at " + now.toLocalTime() + "from IP: " + ip + ".\n Please check the system logs.");
-        message.append("\n\nEFBOX SYSTEM");
+        message.append(hello)
+                .append(user.getUsername())
+                .append(",\n")
+                .append("Multiple unsuccessful attempts to login into ")
+                .append(user.getUsername())
+                .append("'s account at " + now.toLocalTime() + " from IP: " + ip + ".\nPlease check the system logs.")
+                .append("\n\nEFBOX SYSTEM");
 
-        List<User> admins = userRepository.findByRole(UserRole.ROLE_ADMIN).orElse(Collections.emptyList());
+        //better to use findByRole with @Query in repository (out of scope), but this works for demonstration purposes
+        List<User> admins =
+                userRepository.findAll().stream().filter(a -> a.getRoles().contains(UserRole.ROLE_ADMIN)).toList();
 
         if (admins.isEmpty()) {
+            System.out.println("empty list");
             throw new EmailNotSentException("List of admins was empty.");
         }
 
         for (User admin : admins) {
+            System.out.println(admin.getUsername());
             try {
                 sendEmail(admin.getEmail(), EmailType.SYSTEM_WARNING.getSubject(), message.toString());
                 loggerService.saveInfoLogg(new LogMessage(
@@ -125,11 +140,16 @@ public class EmailSenderService {
                         user
                 ));
             } catch (Exception e) {
+                e.printStackTrace();
+                String details = e.getMessage() == null
+                        ? "No message."
+                        : e.getMessage();
                 throw new EmailNotSentException(
                         "Email not sent to "
                                 + admin.getUsername()
                                 + ".\n Details:\n"
-                                + e.getMessage());
+                                + details
+                );
             }
         }
     }

@@ -96,7 +96,7 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    private String getClientIP(HttpServletRequest request) {
+    public static String getClientIP(HttpServletRequest request) {
         // Check for X-Forwarded-For header (when behind a proxy)
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isEmpty()) {

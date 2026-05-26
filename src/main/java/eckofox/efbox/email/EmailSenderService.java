@@ -26,6 +26,7 @@ public class EmailSenderService {
 
     private final String hello = "Hello,";
     private final String signature = "\n\nCordially,\n\nThe EFBox team";
+    private final String noMessage = "No message.";
 
     public String sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -61,7 +62,7 @@ public class EmailSenderService {
             return "Email sent to your inbox.";
         } catch (Exception e) {
             String details = e.getMessage() == null
-                    ? "No message."
+                    ? noMessage
                     : e.getMessage();
             throw new EmailNotSentException(
                     "Email not sent to "
@@ -95,7 +96,7 @@ public class EmailSenderService {
             ));
         } catch (Exception e) {
             String details = e.getMessage() == null
-                    ? "No message."
+                    ? noMessage
                     : e.getMessage();
             throw new EmailNotSentException(
                     "Email not sent to "
@@ -139,7 +140,7 @@ public class EmailSenderService {
                 ));
             } catch (Exception e) {
                 String details = e.getMessage() == null
-                        ? "No message."
+                        ? noMessage
                         : e.getMessage();
                 throw new EmailNotSentException(
                         "Email not sent to "
@@ -181,7 +182,7 @@ public class EmailSenderService {
                 ));
             } catch (Exception e) {
                 String details = e.getMessage() == null
-                        ? "No message."
+                        ? noMessage
                         : e.getMessage();
                 throw new EmailNotSentException(
                         "Email not sent to "

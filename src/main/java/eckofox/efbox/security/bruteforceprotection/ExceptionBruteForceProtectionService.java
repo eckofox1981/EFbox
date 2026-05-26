@@ -43,7 +43,7 @@ public class ExceptionBruteForceProtectionService {
             firstEventTimeCache.remove(exceptionType);
         }
 
-        boolean isEmailSent = isEmailSentCache.get(exceptionType) == null ? false : isEmailSentCache.get(exceptionType);
+        boolean isEmailSent = isEmailSentCache.get(exceptionType) != null && isEmailSentCache.get(exceptionType);
 
         if (eventNbr >=MAX_NBR_OF_EXC && !isEmailSent) {
             sendEmailToAdmin(exceptionType, eventNbr);

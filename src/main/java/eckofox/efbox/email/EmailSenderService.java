@@ -24,8 +24,8 @@ public class EmailSenderService {
     private final LoggerService loggerService;
     private final UserRepository userRepository;
 
-    private String hello = "Hello,";
-    private String signature = "\n\nCordially,\n\nThe EFBox team";
+    private final String hello = "Hello,";
+    private final String signature = "\n\nCordially,\n\nThe EFBox team";
 
     public String sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -68,7 +68,7 @@ public class EmailSenderService {
         }
     }
 
-    public void sendRepetitiveLoginAttemptsMail(EmailType type, User user, LocalDateTime now) throws EmailNotSentException {
+    public void sendRepetitiveLoginAttemptsEMail(EmailType type, User user, LocalDateTime now) throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello);
         message.append(user.getUsername());
@@ -78,15 +78,15 @@ public class EmailSenderService {
         message.append(signature);
 
         try {
-        sendEmail(user.getEmail(), type.getSubject(), message.toString());
+            sendEmail(user.getEmail(), type.getSubject(), message.toString());
 
-        loggerService.saveInfoLogg(new LogMessage(
-                UUID.randomUUID(),
-                LogEventType.INFO_USER,
-                LocalDateTime.now(),
-                "Repetitive login info sent to:" + user.getUsername() + ".",
-                user
-        ));
+            loggerService.saveInfoLogg(new LogMessage(
+                    UUID.randomUUID(),
+                    LogEventType.INFO_USER,
+                    LocalDateTime.now(),
+                    "Repetitive login info sent to:" + user.getUsername() + ".",
+                    user
+            ));
         } catch (Exception e) {
             throw new EmailNotSentException(
                     "Email not sent to "
@@ -95,10 +95,10 @@ public class EmailSenderService {
                             + e.getMessage());
         }
 
-        warningEmailToAdmin(user, now);
+        warningEmailToAdmins(user, now);
     }
 
-    public void warningEmailToAdmin(User user, LocalDateTime now) throws EmailNotSentException {
+    public void warningEmailToAdmins(User user, LocalDateTime now) throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello);
         message.append(user.getUsername());

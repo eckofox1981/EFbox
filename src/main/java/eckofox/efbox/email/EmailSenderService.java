@@ -138,7 +138,6 @@ public class EmailSenderService {
                         user
                 ));
             } catch (Exception e) {
-                e.printStackTrace();
                 String details = e.getMessage() == null
                         ? "No message."
                         : e.getMessage();
@@ -181,7 +180,6 @@ public class EmailSenderService {
                         admin
                 ));
             } catch (Exception e) {
-                e.printStackTrace();
                 String details = e.getMessage() == null
                         ? "No message."
                         : e.getMessage();

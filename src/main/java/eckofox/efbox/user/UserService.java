@@ -12,6 +12,8 @@ import eckofox.efbox.security.bruteforceprotection.LoginBruteForceProtectionServ
 import eckofox.efbox.security.passwordandcode.Argon2PasswordEncoder;
 import eckofox.efbox.security.passwordrecovery.UserAccessCodeService;
 import eckofox.efbox.security.ratelimiting.RateLimitingInterceptor;
+import eckofox.efbox.security.validation.InputValidationService;
+import eckofox.efbox.security.validation.Validation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class UserService implements UserDetailsService {
     private final EmailSenderService emailSenderService;
     private final UserAccessCodeService accessCodeService;
     private final LoginBruteForceProtectionService loginBruteForceProtectionService;
+    private final InputValidationService inputValidationService;
     //https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/password/HaveIBeenPwnedRestApiPasswordChecker.html
     //https://haveibeenpwned.com/API/v3#PwnedPasswords
     @Bean
@@ -57,6 +60,9 @@ public class UserService implements UserDetailsService {
         if (!isUsernameValid(userDTO.getUsername())) {
             throw new IllegalRegexException("Username format not valid.");
         }
+
+        validateUserInput(userDTO.getFirstname());
+        validateUserInput(userDTO.getLastname());
 
         if (!isEmailValid(userDTO.getEmail())) {
             throw new IllegibleEmailFormatException("Email not valid [letters@domain.com].");
@@ -224,6 +230,16 @@ public class UserService implements UserDetailsService {
     private boolean isUsernameValid(String username) {
         String PASSWORD_REGEX = "^[a-zA-Z0-9]{5,20}$";
         return username.matches(PASSWORD_REGEX);
+    }
+
+    private void validateUserInput(String input) {
+        Validation validation = inputValidationService.isUserInputValidated(input);
+        switch (validation) {
+            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED
+                    -> throw new IllegalRegexException(validation + ": " + input);
+            case Validation.NOT_AUTHORIZED ->
+                    throw new IllegalRegexException(validation + ": not shared for user privacy");
+        }
     }
 
     private User authenticateUponLogin(String username, String password, HttpServletRequest request)

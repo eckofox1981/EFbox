@@ -123,6 +123,7 @@ public class GlobalExceptionHandler {
                 - only standard letters a-z (including in file names)
                 - minimum 1 character, maximum 20 characters
                 - may include '.', '-' and '_'
+                If your name contains non-standard character (Å, Ä, Ñ...), please use an equivalent character (A, N...)
                 Please try again
                 """);
     }

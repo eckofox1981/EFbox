@@ -1,10 +1,13 @@
 package eckofox.efbox.fileobjects.efboxfile;
 
+import eckofox.efbox.exception.IllegalRegexException;
 import eckofox.efbox.fileobjects.efboxfolder.EFBoxFolder;
 import eckofox.efbox.fileobjects.efboxfolder.EFBoxFolderRepository;
 import eckofox.efbox.fileobjects.efboxfolder.EFBoxFolderService;
 import eckofox.efbox.logger.LogEventType;
 import eckofox.efbox.logger.LoggerService;
+import eckofox.efbox.security.validation.InputValidationService;
+import eckofox.efbox.security.validation.Validation;
 import eckofox.efbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -24,6 +27,7 @@ public class EFBoxFileService {
     private final EFBoxFolderRepository folderRepository;
     private final EFBoxFolderService folderService;
     private final LoggerService loggerService;
+    private final InputValidationService inputValidationService;
 
     /**
      * first the method checks if the user is the parent folder's owner.
@@ -37,6 +41,8 @@ public class EFBoxFileService {
      */
     public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID)
             throws NoSuchElementException, IOException {
+        validateUserInput(file.getOriginalFilename());
+
         EFBoxFolder parentFolder = folderRepository
                 .findById(UUID.fromString(parentFolderID))
                 .orElseThrow(() -> new NoSuchElementException("Parent folder not found."));
@@ -128,6 +134,8 @@ public class EFBoxFileService {
      */
     public EFBoxFile changeFileName(String fileID, String newName, User user)
             throws NoSuchElementException, AccessException {
+        validateUserInput(newName);
+
         EFBoxFile efBoxFile = fileRepository
                 .findById(UUID.fromString(fileID))
                 .orElseThrow(() -> new NoSuchElementException("File not found."));
@@ -148,5 +156,15 @@ public class EFBoxFileService {
         loggerService.saveInfoLogg(LogEventType.INFO_FILE, "File named changed. \n" + efBoxFile.getFileID(), user);
 
         return fileWithNewName;
+    }
+
+    private void validateUserInput(String input) {
+        Validation validation = inputValidationService.isUserInputValidated(toString());
+        switch (validation) {
+            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED
+                    -> throw new IllegalRegexException(validation + ": " + input);
+            case Validation.NOT_AUTHORIZED ->
+                    throw new IllegalRegexException(validation + ": not shared for user privacy");
+        }
     }
 }

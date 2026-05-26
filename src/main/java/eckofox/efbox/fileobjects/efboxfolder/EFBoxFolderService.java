@@ -1,10 +1,13 @@
 package eckofox.efbox.fileobjects.efboxfolder;
 
+import eckofox.efbox.exception.IllegalRegexException;
 import eckofox.efbox.fileobjects.efboxfile.EFBoxFile;
 import eckofox.efbox.fileobjects.efboxfile.EFBoxFileDTO;
 import eckofox.efbox.fileobjects.efboxfile.EFBoxFileRepository;
 import eckofox.efbox.logger.LogEventType;
 import eckofox.efbox.logger.LoggerService;
+import eckofox.efbox.security.validation.InputValidationService;
+import eckofox.efbox.security.validation.Validation;
 import eckofox.efbox.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ public class EFBoxFolderService {
     private final EFBoxFolderRepository folderRespository;
     private final EFBoxFileRepository fileRepository;
     private final LoggerService loggerService;
+    private final InputValidationService inputValidationService;
 
     /**
      * creates EFBoxFolder, if in "root folder" (User.EFBoxFolder.rootfolder) the parentID is set to "0" and the folder is
@@ -29,11 +33,11 @@ public class EFBoxFolderService {
      * @param user           if root folder -> to add the folder to User.EFBoxFolder.rootfolder else -> check for access rights
      * @param parentFolderID -> to set parent folder (set to 0 if root, the list is initialized during user account creation)
      * @return created folder
-     * @throws AccessException
-     * @throws NoSuchElementException
      */
     public EFBoxFolder createFolder(String folderName, User user, String parentFolderID)
             throws NoSuchElementException, AccessException {
+        validateUserInput(folderName);
+
         if (parentFolderID.equals("0")) {
             EFBoxFolder folder = new EFBoxFolder(UUID.randomUUID(), folderName, user);
             return folderRespository.save(folder);
@@ -65,7 +69,6 @@ public class EFBoxFolderService {
      * @param folderID of folder to be shown
      * @param user     to check access rights
      * @return folder dto
-     * @throws AccessException
      */
     public EFBoxFolder seeFolderContent(String folderID, User user)
             throws AccessException, NoSuchElementException {
@@ -95,6 +98,8 @@ public class EFBoxFolderService {
      * @return searchresponseDTO (list of folder and list of files)
      */
     public SearchResponseDTO searchInAllFolders(String query, User user) {
+        validateUserInput(query);
+
         Collection<EFBoxFolder> folders = folderRespository
                 .findByNameContainingIgnoreCaseWithUserID(query, user.getUserID())
                 .orElse(new ArrayList<>());
@@ -124,7 +129,6 @@ public class EFBoxFolderService {
      * @param folderID of folder to be deleted
      * @param user     to check access rights
      * @return message
-     * @throws AccessException
      */
     public EFBoxFolder deleteFolder(String folderID, User user)
             throws AccessException, NoSuchElementException {
@@ -157,10 +161,11 @@ public class EFBoxFolderService {
      * @param newName  self-explanatory
      * @param user     to check for access-right
      * @return updated folder dto
-     * @throws Exception
      */
     public EFBoxFolder changeFolderName(String folderID, String newName, User user)
             throws NoSuchElementException, AccessException {
+        validateUserInput(newName);
+
         EFBoxFolder folder = folderRespository
                 .findById(UUID.fromString(folderID))
                 .orElseThrow(() -> new NoSuchElementException("File not found."));
@@ -213,5 +218,15 @@ public class EFBoxFolderService {
 
         folder.getFiles().forEach(fileRepository::delete);
         folderRespository.customFolderDeletion(folder.getFolderID(), user.getUserID());
+    }
+
+    private void validateUserInput(String input) {
+        Validation validation = inputValidationService.isUserInputValidated(input);
+        switch (validation) {
+            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED
+                    -> throw new IllegalRegexException(validation + ": " + input);
+            case Validation.NOT_AUTHORIZED ->
+                    throw new IllegalRegexException(validation + ": not shared for user privacy");
+        }
     }
 }

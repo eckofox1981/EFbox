@@ -212,7 +212,7 @@ public class UserService implements UserDetailsService {
      * @return true if password format is correct
      */
     private boolean passwordValidationIsOk(String password) {
-        String COMPLEXITY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
+        final String COMPLEXITY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
         //NIST standard: between 8 and 64 chars
         return password.matches(COMPLEXITY_REGEX);
     }

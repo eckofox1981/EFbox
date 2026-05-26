@@ -68,7 +68,8 @@ public class EmailSenderService {
         }
     }
 
-    public void sendRepetitiveLoginAttemptsEMail(EmailType type, User user, LocalDateTime now) throws EmailNotSentException {
+    public void sendRepetitiveLoginAttemptsEMail(EmailType type, User user, LocalDateTime now, String ip)
+            throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello);
         message.append(user.getUsername());
@@ -95,16 +96,16 @@ public class EmailSenderService {
                             + e.getMessage());
         }
 
-        warningEmailToAdmins(user, now);
+        warningEmailToAdmins(user, now, ip);
     }
 
-    public void warningEmailToAdmins(User user, LocalDateTime now) throws EmailNotSentException {
+    public void warningEmailToAdmins(User user, LocalDateTime now, String ip) throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello);
         message.append(user.getUsername());
         message.append(",\n");
         message.append("Multiple unsuccessful attempts to login into "+ user.getUsername());
-        message.append("'s account at " + now.toLocalTime() + ". Please check the system logs.");
+        message.append("'s account at " + now.toLocalTime() + "from IP: " + ip + ".\n Please check the system logs.");
         message.append("\n\nEFBOX SYSTEM");
 
         List<User> admins = userRepository.findByRole(UserRole.ROLE_ADMIN).orElse(Collections.emptyList());

@@ -1,5 +1,6 @@
 package eckofox.efbox.logger;
 
+import eckofox.efbox.security.bruteforceprotection.ExceptionBruteForceProtectionService;
 import eckofox.efbox.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @RequestMapping("/bossmang") //this to avoid classic admin-path
 public class LoggerController {
     private final LoggerService loggerService;
+    private final ExceptionBruteForceProtectionService bruteForceProtectionService;
 
     /** https://www.baeldung.com/spring-mvc-return-html
      *
@@ -25,6 +27,11 @@ public class LoggerController {
      */
     @GetMapping(value="/fetch-all-logs", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<?> getAllLogs(@AuthenticationPrincipal User user) throws IOException {
-        return ResponseEntity.status(201).body(loggerService.retriveAllLogs(user));
+
+        String allLogs = loggerService.retriveAllLogs(user);
+
+        bruteForceProtectionService.logAccessedExceptionCacheReset();
+
+        return ResponseEntity.status(201).body(allLogs);
     }
 }

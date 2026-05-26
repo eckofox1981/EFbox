@@ -1,6 +1,7 @@
 package eckofox.efbox.logger;
 
 import eckofox.efbox.exception.EFBoxErrorMessage;
+import eckofox.efbox.security.bruteforceprotection.ExceptionBruteForceProtectionService;
 import eckofox.efbox.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
@@ -34,6 +35,8 @@ public class LoggerService {
     }
 
     public String retriveAllLogs(User user) throws IOException {
+        saveInfoLogg(LogEventType.INFO_ADMIN, "Exception cache erased for upon log being accessed.", user);
+
         LogMessage logMessage = new LogMessage(
                 UUID.randomUUID(),
                 LogEventType.INFO,

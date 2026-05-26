@@ -8,7 +8,7 @@ import eckofox.efbox.logger.LogMessage;
 import eckofox.efbox.logger.LoggerService;
 import eckofox.efbox.security.CookieMaker;
 import eckofox.efbox.security.JWTService;
-import eckofox.efbox.security.bruteforceprotection.BruteForceProtectionService;
+import eckofox.efbox.security.bruteforceprotection.LoginBruteForceProtectionService;
 import eckofox.efbox.security.passwordandcode.Argon2PasswordEncoder;
 import eckofox.efbox.security.passwordrecovery.UserAccessCodeService;
 import eckofox.efbox.security.ratelimiting.RateLimitingInterceptor;
@@ -37,7 +37,7 @@ public class UserService implements UserDetailsService {
     private final LoggerService loggerService;
     private final EmailSenderService emailSenderService;
     private final UserAccessCodeService accessCodeService;
-    private final BruteForceProtectionService bruteForceProtectionService;
+    private final LoginBruteForceProtectionService loginBruteForceProtectionService;
     //https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/password/HaveIBeenPwnedRestApiPasswordChecker.html
     //https://haveibeenpwned.com/API/v3#PwnedPasswords
     @Bean
@@ -223,9 +223,9 @@ public class UserService implements UserDetailsService {
                 .findByUsername(username)
                 .orElseThrow(() -> new LoginException("User " + username + " not found." ));
 
-        if (bruteForceProtectionService.isBlocked(user.getUsername())) {
+        if (loginBruteForceProtectionService.isBlocked(user.getUsername())) {
             String clientIp = RateLimitingInterceptor.getClientIP(request);
-            emailSenderService.sendRepetitiveLoginAttemptsEMail(
+            emailSenderService.sendRepetitiveLoginAttemptsEMailToUser(
                     EmailType.SYSTEM_WARNING, user, LocalDateTime.now(), clientIp);
             throw new RepetitiveLoginAttemptsException(
                     "IP: " + clientIp + " made multiple login attempts on " + user.getUsername() + "'s account."
@@ -233,11 +233,11 @@ public class UserService implements UserDetailsService {
         }
 
         if (!encoder.matches(password, user.getPassword())) {
-            bruteForceProtectionService.loginFailed(user.getUsername());
+            loginBruteForceProtectionService.loginFailed(user.getUsername());
             throw new LoginException("Password didn't match for username: " + user.getUsername());
         }
 
-        bruteForceProtectionService.loginSucceeded(user.getUsername());
+        loginBruteForceProtectionService.loginSucceeded(user.getUsername());
 
         return user;
     }

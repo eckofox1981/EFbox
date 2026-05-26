@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 //https://www.geeksforgeeks.org/advance-java/prevent-brute-force-authentication-attempts-with-spring-security/
 @Service
 @RequiredArgsConstructor
-public class BruteForceProtectionService {
+public class LoginBruteForceProtectionService {
     private static final int MAX_ATTEMPT = 5;
     private static final long LOCK_TIME = TimeUnit.MINUTES.toMillis(15);
 

@@ -1,6 +1,7 @@
 package eckofox.efbox.email;
 
 import eckofox.efbox.exception.EmailNotSentException;
+import eckofox.efbox.exception.ExceptionType;
 import eckofox.efbox.logger.LogEventType;
 import eckofox.efbox.logger.LogMessage;
 import eckofox.efbox.logger.LoggerService;
@@ -13,8 +14,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,7 +72,7 @@ public class EmailSenderService {
         }
     }
 
-    public void sendRepetitiveLoginAttemptsEMail(EmailType type, User user, LocalDateTime now, String ip)
+    public void sendRepetitiveLoginAttemptsEMailToUser(EmailType type, User user, LocalDateTime now, String ip)
             throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello)
@@ -106,13 +105,14 @@ public class EmailSenderService {
             );
         }
 
-        warningEmailToAdmins(user, now, ip);
+        sendRepetitiveLoginAttemptsEMailToAdmins(user, now, ip);
     }
 
-    public void warningEmailToAdmins(User user, LocalDateTime now, String ip) throws EmailNotSentException {
+    public void sendRepetitiveLoginAttemptsEMailToAdmins(User user, LocalDateTime now, String ip)
+            throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello)
-                .append(user.getUsername())
+                .append("Dear administrator of the EFBox API")
                 .append(",\n")
                 .append("Multiple unsuccessful attempts to login into ")
                 .append(user.getUsername())
@@ -124,12 +124,10 @@ public class EmailSenderService {
                 userRepository.findAll().stream().filter(a -> a.getRoles().contains(UserRole.ROLE_ADMIN)).toList();
 
         if (admins.isEmpty()) {
-            System.out.println("empty list");
             throw new EmailNotSentException("List of admins was empty.");
         }
 
         for (User admin : admins) {
-            System.out.println(admin.getUsername());
             try {
                 sendEmail(admin.getEmail(), EmailType.SYSTEM_WARNING.getSubject(), message.toString());
                 loggerService.saveInfoLogg(new LogMessage(
@@ -154,6 +152,48 @@ public class EmailSenderService {
         }
     }
 
+    public void sendRepetitiveExceptionWarningToAdmins(ExceptionType exceptionType, int eventNbr) throws EmailNotSentException {
+        StringBuilder message = new StringBuilder();
+        message.append(hello)
+                .append("Dear administrator of the EFBox API,\n")
+                .append("repetitive " + exceptionType.toString() + " have been recorded (" + eventNbr + " times).")
+                .append("\n\n")
+                .append("Please promptly check the logs to confirm non brute force attack is ongoing.")
+                .append("\n\nEFBOX SYSTEM");
+
+        //better to use findByRole with @Query in repository (out of scope), but this works for demonstration purposes
+        List<User> admins =
+                userRepository.findAll().stream().filter(a -> a.getRoles().contains(UserRole.ROLE_ADMIN)).toList();
+
+        if (admins.isEmpty()) {
+            throw new EmailNotSentException("List of admins was empty.");
+        }
+
+        for (User admin : admins) {
+            try {
+                sendEmail(admin.getEmail(), EmailType.SYSTEM_WARNING.getSubject(), message.toString());
+                loggerService.saveInfoLogg(new LogMessage(
+                        UUID.randomUUID(),
+                        LogEventType.INFO_ADMIN,
+                        LocalDateTime.now(),
+                        "Warning email reguarding repetitive exception sent to info sent to:"
+                                + admin.getUsername() + ".",
+                        admin
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+                String details = e.getMessage() == null
+                        ? "No message."
+                        : e.getMessage();
+                throw new EmailNotSentException(
+                        "Email not sent to "
+                                + admin.getUsername()
+                                + ".\n Details:\n"
+                                + details
+                );
+            }
+        }
+    }
 
 
 

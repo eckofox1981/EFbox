@@ -154,6 +154,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errMsg.getCode()).body("Not found.");
     }
 
+    @ExceptionHandler(RepetitiveLoginAttemptsException.class)
+    public  ResponseEntity<String> handleRepetitiveLoginAttemptsException(RepetitiveLoginAttemptsException exception) {
+        EFBoxErrorMessage errMsg = messageCreator(
+                LogEventType.WARNING,
+                ExceptionType.REPETITIVE_LOGIN_ATTEMPTS_EXCEPTION,
+                423,
+                exception.getMessage()
+        );
+
+        return ResponseEntity.status(errMsg.getCode())
+                .body("You are temporarily locked out of your account. Email sent to account owner.");
+    }
+
     @ExceptionHandler(ServletException.class)
     public  ResponseEntity<String> handleServletException(ServletException exception) {
         EFBoxErrorMessage errMsg = messageCreator(

@@ -20,7 +20,8 @@ public enum ExceptionType {
     ILLEGIBLE_EMAIL_FORMAT_EXCEPTION("Illegible Email Format Exception"),
     ACCESS_CODE_DOES_NOT_MATCH("Access Code Does Not match Exception"),
     ACCESS_CODE_DOES_NOT_EXIST_EXCEPTION("Access Code Does Not Exists Exception"),
-    EMAIL_NOT_SENT_EXCEPTION("Email Not Sent Exception");
+    EMAIL_NOT_SENT_EXCEPTION("Email Not Sent Exception"),
+    REPETITIVE_LOGIN_ATTEMPTS_EXCEPTION("Repetitive Login Attempts Exception");
 
 
 

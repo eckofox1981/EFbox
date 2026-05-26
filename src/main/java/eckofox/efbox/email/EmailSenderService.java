@@ -24,9 +24,9 @@ public class EmailSenderService {
     private final LoggerService loggerService;
     private final UserRepository userRepository;
 
-    private final String hello = "Hello,";
-    private final String signature = "\n\nCordially,\n\nThe EFBox team";
-    private final String noMessage = "No message.";
+    private static final String hello = "Hello,";
+    private static final String signature = "\n\nCordially,\n\nThe EFBox team";
+    private static final String noMessage = "No message.";
 
     public String sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -46,7 +46,9 @@ public class EmailSenderService {
                 .append(user.getUsername())
                 .append(",\n")
                 .append("You have requested a code to renew your password.\n")
-                .append("Enter the code: ").append(code).append(" with your new password to renew it.")
+                .append("Enter the code: ")
+                .append(code)
+                .append(" with your new password to renew it.")
                 .append(signature);
 
         try {
@@ -77,10 +79,13 @@ public class EmailSenderService {
             throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello)
-                .append(user.getUsername())
+                .append("Dear administrator of the EFBox API")
                 .append(",\n")
                 .append("Multiple unsuccessful attempts to login into your account have been recorded.\n")
-                .append("If you didn't try to log in at " + now.toLocalTime()  + " on " + now.toLocalDate())
+                .append("If you didn't try to log in at ")
+                .append(now.toLocalTime())
+                .append(" on ")
+                .append(now.toLocalDate())
                 .append(", we advise you to consider changing password.")
                 .append(signature);
 
@@ -104,9 +109,11 @@ public class EmailSenderService {
                             + ".\n Details:\n"
                             + details
             );
+        } finally {
+            sendRepetitiveLoginAttemptsEMailToAdmins(user, now, ip);
         }
 
-        sendRepetitiveLoginAttemptsEMailToAdmins(user, now, ip);
+
     }
 
     public void sendRepetitiveLoginAttemptsEMailToAdmins(User user, LocalDateTime now, String ip)
@@ -117,7 +124,11 @@ public class EmailSenderService {
                 .append(",\n")
                 .append("Multiple unsuccessful attempts to login into ")
                 .append(user.getUsername())
-                .append("'s account at " + now.toLocalTime() + " from IP: " + ip + ".\nPlease check the system logs.")
+                .append("'s account at ")
+                .append(now.toLocalTime())
+                .append(" from IP: ")
+                .append(ip)
+                .append(".\nPlease check the system logs.")
                 .append("\n\nEFBOX SYSTEM");
 
         //better to use findByRole with @Query in repository (out of scope), but this works for demonstration purposes
@@ -135,7 +146,7 @@ public class EmailSenderService {
                         UUID.randomUUID(),
                         LogEventType.INFO_ADMIN,
                         LocalDateTime.now(),
-                        "Warning email, brute force login attempts sent to info sent to:" + user.getUsername() + ".",
+                        "Warning email, brute force login attempts sent to:" + user.getUsername() + ".",
                         user
                 ));
             } catch (Exception e) {
@@ -152,11 +163,16 @@ public class EmailSenderService {
         }
     }
 
-    public void sendRepetitiveExceptionWarningToAdmins(ExceptionType exceptionType, int eventNbr) throws EmailNotSentException {
+    public void sendRepetitiveExceptionWarningToAdmins(ExceptionType exceptionType, int eventNbr)
+            throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello)
                 .append("Dear administrator of the EFBox API,\n")
-                .append("repetitive " + exceptionType.toString() + " have been recorded (" + eventNbr + " times).")
+                .append("repetitive ")
+                .append(exceptionType.toString())
+                .append(" have been recorded (")
+                .append(eventNbr)
+                .append(" times) under a 5 minutes period.")
                 .append("\n\n")
                 .append("Please promptly check the logs to confirm non brute force attack is ongoing.")
                 .append("\n\nEFBOX SYSTEM");

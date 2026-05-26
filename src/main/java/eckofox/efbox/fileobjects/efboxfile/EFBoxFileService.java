@@ -159,12 +159,18 @@ public class EFBoxFileService {
     }
 
     private void validateUserInput(String input) {
-        Validation validation = inputValidationService.isUserInputValidated(toString());
+        Validation validation = inputValidationService.isUserInputValidated(input);
         switch (validation) {
-            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED
-                    -> throw new IllegalRegexException(validation + ": " + input);
-            case Validation.NOT_AUTHORIZED ->
-                    throw new IllegalRegexException(validation + ": not shared for user privacy");
+            case Validation.OK:
+                break;
+            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED:
+                throw new IllegalRegexException(validation + ": " + input);
+            case Validation.NOT_AUTHORIZED:
+                throw new IllegalRegexException(validation + ": not shared for user privacy");
+            default:
+                throw new IllegalArgumentException(
+                        "Could not validate user. \"" + input + "\n returned: " + validation
+                );
         }
     }
 }

@@ -235,10 +235,16 @@ public class UserService implements UserDetailsService {
     private void validateUserInput(String input) {
         Validation validation = inputValidationService.isUserInputValidated(input);
         switch (validation) {
-            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED
-                    -> throw new IllegalRegexException(validation + ": " + input);
-            case Validation.NOT_AUTHORIZED ->
+            case Validation.OK:
+                break;
+            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED:
+                    throw new IllegalRegexException(validation + ": " + input);
+            case Validation.NOT_AUTHORIZED:
                     throw new IllegalRegexException(validation + ": not shared for user privacy");
+            default:
+                throw new IllegalArgumentException(
+                        "Could not validate user. \"" + input + "\n returned: " + validation
+                );
         }
     }
 

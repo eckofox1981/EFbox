@@ -19,7 +19,7 @@ public class AdminService implements UserDetailsService {
     private final LoggerService loggerService;
 
     public String requestAdminStatus(User user, String secret) throws IllegalAccessException {
-        //secret hardcoded in .env, a production server would have a more advanced admin status policy
+        //TODO: implement UserAccessCode
         if (!secret.equals(System.getenv("SECRET_STRING_ADMIN"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
         }
@@ -40,7 +40,7 @@ public class AdminService implements UserDetailsService {
     }
 
     public String requestLogAccess(User user, String secret) throws IllegalAccessException {
-        //secret hardcoded in .env, a production server would have a more advanced admin status policy
+        //TODO: implement UserAccessCode
         if (!secret.equals(System.getenv("SECRET_STRING_LOG_ACCESS"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
         }

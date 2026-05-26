@@ -8,9 +8,12 @@ import eckofox.efbox.logger.LogMessage;
 import eckofox.efbox.logger.LoggerService;
 import eckofox.efbox.security.CookieMaker;
 import eckofox.efbox.security.JWTService;
+import eckofox.efbox.security.bruteforceprotection.LoginBruteForceProtectionService;
 import eckofox.efbox.security.passwordandcode.Argon2PasswordEncoder;
 import eckofox.efbox.security.passwordrecovery.UserAccessCodeService;
+import eckofox.efbox.security.ratelimiting.RateLimitingInterceptor;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.password.CompromisedPasswordDecision;
@@ -34,6 +37,7 @@ public class UserService implements UserDetailsService {
     private final LoggerService loggerService;
     private final EmailSenderService emailSenderService;
     private final UserAccessCodeService accessCodeService;
+    private final LoginBruteForceProtectionService loginBruteForceProtectionService;
     //https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/password/HaveIBeenPwnedRestApiPasswordChecker.html
     //https://haveibeenpwned.com/API/v3#PwnedPasswords
     @Bean
@@ -88,17 +92,12 @@ public class UserService implements UserDetailsService {
      * @return cookie
      * @throws LoginException purposefully vague for security
      */
-    public Cookie login(String username, String password) throws LoginException {
-        User user = userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new LoginException("User " + username + " not found." ));
-        if (!encoder.matches(password, user.getPassword())) {
-            throw new LoginException("Password didn't match for username: " + username);
-        }
-
+    public Cookie login(String username, String password, HttpServletRequest request)
+            throws LoginException, EmailNotSentException {
+        User user = authenticateUponLogin(username, password, request);
         String token = jwtService.generateToken(user.getUserID());
 
-        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User logged in: " + user.getUsername() + ".", user);
+        loggerService.saveInfoLogg(LogEventType.INFO_USER, "User logged in: " + username + ".", user);
 
         return cookieMaker.cookieBaker(token);
     }
@@ -216,6 +215,31 @@ public class UserService implements UserDetailsService {
     private boolean isEmailValid(String email) {
         String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*+\\.[A-Za-z]{2,}$";
         return email.matches(EMAIL_REGEX);
+    }
+
+    private User authenticateUponLogin(String username, String password, HttpServletRequest request)
+            throws LoginException, EmailNotSentException {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new LoginException("User " + username + " not found." ));
+
+        if (loginBruteForceProtectionService.isBlocked(user.getUsername())) {
+            String clientIp = RateLimitingInterceptor.getClientIP(request);
+            emailSenderService.sendRepetitiveLoginAttemptsEMailToUser(
+                    EmailType.SYSTEM_WARNING, user, LocalDateTime.now(), clientIp);
+            throw new RepetitiveLoginAttemptsException(
+                    "IP: " + clientIp + " made multiple login attempts on " + user.getUsername() + "'s account."
+            );
+        }
+
+        if (!encoder.matches(password, user.getPassword())) {
+            loginBruteForceProtectionService.loginFailed(user.getUsername());
+            throw new LoginException("Password didn't match for username: " + user.getUsername());
+        }
+
+        loginBruteForceProtectionService.loginSucceeded(user.getUsername());
+
+        return user;
     }
 
     /**

@@ -44,11 +44,6 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (authenticationToken.isBlank()) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         userService.verifyAuthentication(authenticationToken).ifPresent(user -> {
             var authentication = new UsernamePasswordAuthenticationToken(
                     user,

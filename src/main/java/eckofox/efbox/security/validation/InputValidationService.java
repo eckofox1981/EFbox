@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class InputValidationService {
-    private static final String AUTHORIZED_CHARS_FOR_USER_INPUT = "^[a-zA-Z0-9 _.-]+$";
+    private static final String AUTHORIZED_CHARS_FOR_USER_INPUT =  "^[a-zA-Z0-9 _.-]{1,20}$";
     private static final List<String> POSSIBLE_SQL_INJECTION_CHAR = new ArrayList<>() {{
         add("' OR '1'='1");
         add("\" OR \"1\"=\"1");

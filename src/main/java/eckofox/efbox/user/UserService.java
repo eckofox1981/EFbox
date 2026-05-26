@@ -54,6 +54,10 @@ public class UserService implements UserDetailsService {
      * @return NopasswordUserDTO
      */
     public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
+        if (!isUsernameValid(userDTO.getUsername())) {
+            throw new IllegalRegexException("Username format not valid.");
+        }
+
         if (!isEmailValid(userDTO.getEmail())) {
             throw new IllegibleEmailFormatException("Email not valid [letters@domain.com].");
         }
@@ -215,6 +219,11 @@ public class UserService implements UserDetailsService {
     private boolean isEmailValid(String email) {
         String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*+\\.[A-Za-z]{2,}$";
         return email.matches(EMAIL_REGEX);
+    }
+
+    private boolean isUsernameValid(String username) {
+        String PASSWORD_REGEX = "^[a-zA-Z0-9]{5,20}$";
+        return username.matches(PASSWORD_REGEX);
     }
 
     private User authenticateUponLogin(String username, String password, HttpServletRequest request)

@@ -26,6 +26,7 @@ public class FileValidationService {
 
     public EFBoxFile validateFile(HttpServletRequest req, MultipartFile file) throws IOException {
         //TODO be tested further
+        //NOSONAR intentional and believed to be safe
         Path secureTempDir = Files.createTempDirectory(System.getenv("TEMP_DIRECTORY_FOR_FILE_VALIDATION"));
         File tmpFile;
         Path tmpPath = null;

@@ -3,7 +3,7 @@ package eckofox.efbox.security.validation.filevalidation;
 import eckofox.efbox.exception.FileValidationException;
 import eckofox.efbox.fileobjects.efboxfile.EFBoxFile;
 import eckofox.efbox.security.validation.filevalidation.detector.*;
-import eckofox.efbox.security.validation.filevalidation.sanitizer.ImageDocumentSanitizer;
+import eckofox.efbox.security.validation.filevalidation.sanitizer.ImageSanitizerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 /**
- * adapted from the https://github.com/righettod/document-upload-protection (example given by OWASP),
+ * adapted from the https://github.com/righettod/document-upload-protection,
  * trnasformed into a Service, the validateFile method checks the request file and fileType content
  * then detects what kind of file (WORD, EXCEL, PDF, POWERPOINT or IMAGE), the detectors check if the file is safe
- * and if safe the EFBoxFile is created and returned to EFBoxFileService.
+ * and if safe the EFBoxFile is created and returned.
  */
 @Service
 public class FileValidationService {
@@ -30,6 +30,7 @@ public class FileValidationService {
     public EFBoxFile validateFile(HttpServletRequest req, MultipartFile file) throws IOException {
         File tmpFile;
         Path tmpPath = null;
+        boolean isSafe = false;
         EFBoxFile fileToSave = new EFBoxFile();
         try {
             /* Step 1: Retrieve upload information (file type + file content) */
@@ -51,7 +52,13 @@ public class FileValidationService {
             controlBytesCount(filePart, tmpPath);
 
             /* Step 2: Initialize a detector/sanitizer for the target file type and perform validation */
-            boolean isSafe = detectSanitizedIsSafe(fileType, tmpFile);
+            if (fileType.equals("IMAGE")) {
+                ImageSanitizerService imageSanitizerService = new ImageSanitizerService();
+                file = imageSanitizerService.sanitize(tmpFile);
+                isSafe = file == null ? false : true;
+            } else {
+                isSafe = detectSanitizedIsSafe(fileType, tmpFile);
+            }
 
             /* Step 3 : Take decision based on sfa status detected */
             // Take action is the file is not safe
@@ -62,7 +69,7 @@ public class FileValidationService {
             } else {
                 fileToSave.setFileID(UUID.randomUUID());
                 fileToSave.setFilename(file.getOriginalFilename());
-                fileToSave.setParentFolder(null);                   //For clarity, set in EFBoxFileService
+                fileToSave.setParentFolder(null);
                 fileToSave.setContent(file.getBytes());
                 fileToSave.setType(file.getContentType());
             }
@@ -94,7 +101,6 @@ public class FileValidationService {
     private boolean detectSanitizedIsSafe(String fileType, File tmpFile) {
         boolean isSafe;
         DocumentDetector documentDetector;
-        ImageDocumentSanitizer imageDocumentSanitizer;
         switch (fileType) {
             case "PDF":
                 documentDetector = new PdfDocumentDetector();
@@ -111,10 +117,6 @@ public class FileValidationService {
             case "POWERPOINT":
                 documentDetector = new PowerpointDocumentDetectorImpl();
                 isSafe = documentDetector.isSafe(tmpFile);
-                break;
-            case "IMAGE":
-                imageDocumentSanitizer = new ImageDocumentSanitizer();
-                isSafe = imageDocumentSanitizer.madeSafe(tmpFile);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown file type specified.");

@@ -1,5 +1,7 @@
 package eckofox.efbox.security.validation.filevalidation.sanitizer;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 
 public interface DocumentSanitizer {
@@ -11,5 +13,5 @@ public interface DocumentSanitizer {
      *
      * @return TRUE only if the specified file has been successfully made safe.
      */
-    boolean madeSafe(File f);
+    MultipartFile sanitize(File f);
 }

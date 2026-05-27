@@ -54,6 +54,7 @@ dependencies {
 	implementation("org.bouncycastle:bcpkix-jdk15on:1.68")
 	implementation("com.aspose:aspose-slides:26.5:jdk16")
 	implementation("com.aspose:aspose-slides:26.5:javadoc")
+	implementation("org.springframework:spring-test:7.0.7")
 
 	testImplementation("com.drewnoakes:metadata-extractor:2.20.0")
 }

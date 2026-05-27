@@ -13,6 +13,10 @@ import com.aspose.cells.Workbook;
 import com.aspose.cells.Worksheet;
 import eckofox.efbox.exception.FileValidationException;
 
+/**
+ *  from the https://github.com/righettod/document-upload-protection
+ *  checks the document using the aspose.com API for 'cells'
+ */
 public class ExcelDocumentDetector implements DocumentDetector {
     /**
      * List of allowed Excel format<br>
@@ -25,49 +29,62 @@ public class ExcelDocumentDetector implements DocumentDetector {
     @Override
     public boolean isSafe(File f) {
         boolean safeState = false;
-        //TODO: remove nested if and if and if
         try {
-            if ((f != null) && f.exists() && f.canRead()) {
-                // Perform a first check on Excel document format
-                FileFormatInfo formatInfo = FileFormatUtil.detectFileFormat(f.getAbsolutePath());
-                String formatExtension = FileFormatUtil.loadFormatToExtension(formatInfo.getLoadFormat());
+            if ((f == null) && !f.exists() && !f.canRead()) {
+                return false;
+            }
+            // Perform a first check on Excel document format
+            FileFormatInfo formatInfo = FileFormatUtil.detectFileFormat(f.getAbsolutePath());
+            String formatExtension = FileFormatUtil.loadFormatToExtension(formatInfo.getLoadFormat());
 
-                if ((formatExtension != null)
-                        && ALLOWED_FORMAT
-                        .contains(formatExtension.toLowerCase(Locale.US).replaceAll("\\.", ""))) {
-                    // Load the file into the Excel document parser
-                    Workbook book = new Workbook(f.getAbsolutePath());
-                    // Get safe state from Macro presence
-                    safeState = !book.hasMacro();
+            if ((formatExtension == null)
+                    && !ALLOWED_FORMAT
+                    .contains(formatExtension.toLowerCase(Locale.US).replaceAll("\\.", ""))) {
+                return false;
+            }
+            // Load the file into the Excel document parser
+            Workbook book = new Workbook(f.getAbsolutePath());
 
-                    // If document is safe then we pass to OLE objects analysis
-                    if (safeState) {
-                        // Search OLE objects in all workbook sheets
-                        Worksheet sheet = null;
-                        OleObject oleObject = null;
-                        int totalOLEObjectCount = 0;
-                        for (int i = 0; i < book.getWorksheets().getCount(); i++) {
-                            sheet = book.getWorksheets().get(i);
-                            for (int j = 0; j < sheet.getOleObjects().getCount(); j++) {
-                                oleObject = sheet.getOleObjects().get(j);
-                                if (oleObject.getMsoDrawingType() == MsoDrawingType.OLE_OBJECT) {
-                                    totalOLEObjectCount++;
-                                }
-                            }
-                        }
+            // Get safe state from Macro presence
+            safeState = !book.hasMacro();
 
-                        // Update safe status flag according to number of OLE object found
-                        if (totalOLEObjectCount != 0) {
-                            safeState = false;
-                        }
-                    }
-                }
+            // If document is safe then we pass to OLE (Object Linking and Embedding) objects analysis
+            if (safeState) {
+                return oleCheck(book);
             }
         }
         catch (Exception e) {
-            safeState = false;
-            throw new FileValidationException("\"Error during Word file analysis: " + e.getMessage());
+            throw new FileValidationException("\"Error during Excel-file analysis: " + e.getMessage());
         }
+
         return safeState;
+    }
+
+    /**
+     * check the workbook's worksheets for OLE-objects using the aspose API.
+     * if none are found returns true else false
+     * @param workbook
+     * @return
+     */
+    private boolean oleCheck(Workbook workbook) {
+        // Search OLE objects in all workbook sheets
+        Worksheet sheet = null;
+        OleObject oleObject = null;
+        int totalOLEObjectCount = 0;
+
+        for (int i = 0; i < workbook.getWorksheets().getCount(); i++) {
+            sheet = workbook.getWorksheets().get(i);
+
+            for (int j = 0; j < sheet.getOleObjects().getCount(); j++) {
+                oleObject = sheet.getOleObjects().get(j);
+
+                if (oleObject.getMsoDrawingType() == MsoDrawingType.OLE_OBJECT) {
+                    totalOLEObjectCount++;
+                }
+            }
+        }
+
+        // Update safe status flag according to number of OLE object found
+        return totalOLEObjectCount == 0;
     }
 }

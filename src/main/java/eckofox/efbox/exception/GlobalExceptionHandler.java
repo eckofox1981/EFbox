@@ -136,7 +136,7 @@ public class GlobalExceptionHandler {
                 Username can only contain:
                 - letters a-z (case insensitive)
                 - numbers
-                - minimum 5 to maximum 50 cahracters
+                - minimum 5 to maximum 50 characters
                 """);
     }
 

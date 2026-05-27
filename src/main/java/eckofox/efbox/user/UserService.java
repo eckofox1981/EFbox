@@ -238,12 +238,12 @@ public class UserService implements UserDetailsService {
             case Validation.OK:
                 break;
             case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED:
-                    throw new IllegalRegexException(validation + ": " + input);
+                throw new IllegalRegexException(validation + ": [redacted, length=" + input.length() + "]");
             case Validation.NOT_AUTHORIZED:
-                    throw new IllegalRegexException(validation + ": not shared for user privacy");
+                throw new IllegalRegexException(validation + ": not shared for user privacy");
             default:
                 throw new IllegalArgumentException(
-                        "Could not validate user. \"" + input + "\n returned: " + validation
+                        "Could not validate user. [redacted, length=" + input.length() + "] returned: " + validation
                 );
         }
     }

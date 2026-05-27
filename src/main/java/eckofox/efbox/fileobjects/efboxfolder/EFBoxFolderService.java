@@ -168,7 +168,7 @@ public class EFBoxFolderService {
 
         EFBoxFolder folder = folderRespository
                 .findById(UUID.fromString(folderID))
-                .orElseThrow(() -> new NoSuchElementException("File not found."));
+                .orElseThrow(() -> new NoSuchElementException("Folder not found."));
 
         if (userIsNotFolderOwner(folder, user)) {
             throw new AccessException(
@@ -226,12 +226,12 @@ public class EFBoxFolderService {
             case Validation.OK:
                 break;
             case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED:
-                throw new IllegalRegexException(validation + ": " + input);
+                throw new IllegalRegexException(validation + ": [redacted, length=" + input.length() + "]");
             case Validation.NOT_AUTHORIZED:
                 throw new IllegalRegexException(validation + ": not shared for user privacy");
             default:
                 throw new IllegalArgumentException(
-                        "Could not validate user. \"" + input + "\n returned: " + validation
+                        "Could not validate user. [redacted, length=" + input.length() + "] returned: " + validation
                 );
         }
     }

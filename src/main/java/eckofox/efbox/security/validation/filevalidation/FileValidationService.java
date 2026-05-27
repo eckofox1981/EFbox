@@ -5,7 +5,6 @@ import eckofox.efbox.fileobjects.efboxfile.EFBoxFile;
 import eckofox.efbox.security.validation.filevalidation.detector.*;
 import eckofox.efbox.security.validation.filevalidation.sanitizer.ImageDocumentSanitizer;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +18,12 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
+/**
+ * adapted from the https://github.com/righettod/document-upload-protection,
+ * trnasformed into a Service, the validateFile method checks the request file and fileType content
+ * then detects what kind of file (WORD, EXCEL, PDF, POWERPOINT or IMAGE), the detectors check if the file is safe
+ * and if safe the EFBoxFile is created and returned to EFBoxFileService.
+ */
 @Service
 public class FileValidationService {
 
@@ -43,44 +48,10 @@ public class FileValidationService {
             // Write a temporary file with uploaded file
             tmpFile = File.createTempFile("uploaded-", null);
             tmpPath = tmpFile.toPath();
-            long copiedBytesCount = Files.copy(filePart.getInputStream(), tmpPath, StandardCopyOption.REPLACE_EXISTING);
-            if (copiedBytesCount != filePart.getSize()) {
-                throw new IOException(
-                        String.format("Error during stream copy to temporary disk (copied: %s / expected: %s !",
-                                copiedBytesCount, filePart.getSize()));
-            }
+            controlBytesCount(filePart, tmpPath);
 
             /* Step 2: Initialize a detector/sanitizer for the target file type and perform validation */
-            boolean isSafe;
-
-            // Instantiate the dedicated detector/sanitizer implementation and apply detection/sanitizing
-            DocumentDetector documentDetector;
-            ImageDocumentSanitizer imageDocumentSanitizer;
-            switch (fileType) {
-                case "PDF":
-                    documentDetector = new PdfDocumentDetector();
-                    isSafe = documentDetector.isSafe(tmpFile);
-                    break;
-                case "WORD":
-                    documentDetector = new WordDocumentDetector();
-                    isSafe = documentDetector.isSafe(tmpFile);
-                    break;
-                case "EXCEL":
-                    documentDetector = new ExcelDocumentDetector();
-                    isSafe = documentDetector.isSafe(tmpFile);
-                    break;
-                case "POWERPOINT":
-                    documentDetector = new PowerpointDocumentDetectorImpl();
-                    isSafe = documentDetector.isSafe(tmpFile);
-                    break;
-                case "IMAGE":
-                    imageDocumentSanitizer = new ImageDocumentSanitizer();
-                    isSafe = imageDocumentSanitizer.madeSafe(tmpFile);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown file type specified.");
-            }
-
+            boolean isSafe = detectSanitizedIsSafe(fileType, tmpFile);
 
             /* Step 3 : Take decision based on sfa status detected */
             // Take action is the file is not safe
@@ -91,7 +62,7 @@ public class FileValidationService {
             } else {
                 fileToSave.setFileID(UUID.randomUUID());
                 fileToSave.setFilename(file.getOriginalFilename());
-                fileToSave.setParentFolder(null);
+                fileToSave.setParentFolder(null);                   //For clarity, set in EFBoxFileService
                 fileToSave.setContent(file.getBytes());
                 fileToSave.setType(file.getContentType());
             }
@@ -104,7 +75,52 @@ public class FileValidationService {
         }
 
         return fileToSave;
+    }
 
+    private void controlBytesCount(Part filePart, Path tmpPath) throws IOException {
+        long copiedBytesCount = Files.copy(filePart.getInputStream(), tmpPath, StandardCopyOption.REPLACE_EXISTING);
+        if (copiedBytesCount != filePart.getSize()) {
+            throw new IOException(
+                    String.format(
+                            "Error during stream copy to temporary disk (copied: %s / expected: %s !",
+                            copiedBytesCount,
+                            filePart.getSize()
+                    )
+            );
+        }
+    }
+
+    // Instantiate the dedicated detector/sanitizer implementation and apply detection/sanitizing
+    private boolean detectSanitizedIsSafe(String fileType, File tmpFile) {
+        boolean isSafe;
+        DocumentDetector documentDetector;
+        ImageDocumentSanitizer imageDocumentSanitizer;
+        switch (fileType) {
+            case "PDF":
+                documentDetector = new PdfDocumentDetector();
+                isSafe = documentDetector.isSafe(tmpFile);
+                break;
+            case "WORD":
+                documentDetector = new WordDocumentDetector();
+                isSafe = documentDetector.isSafe(tmpFile);
+                break;
+            case "EXCEL":
+                documentDetector = new ExcelDocumentDetector();
+                isSafe = documentDetector.isSafe(tmpFile);
+                break;
+            case "POWERPOINT":
+                documentDetector = new PowerpointDocumentDetectorImpl();
+                isSafe = documentDetector.isSafe(tmpFile);
+                break;
+            case "IMAGE":
+                imageDocumentSanitizer = new ImageDocumentSanitizer();
+                isSafe = imageDocumentSanitizer.madeSafe(tmpFile);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown file type specified.");
+        }
+
+        return isSafe;
     }
 
     /**
@@ -125,4 +141,6 @@ public class FileValidationService {
             throw new IOException("Could not safely overwrite file content for " + p.toString());
         }
     }
+
+
 }

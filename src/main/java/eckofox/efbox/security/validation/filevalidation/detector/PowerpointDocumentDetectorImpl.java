@@ -11,7 +11,7 @@ import java.io.File;
 
 /**
  *  from the https://github.com/righettod/document-upload-protection
- *  checks the document using the aspose.com API for 'cells'
+ *  checks the document using the aspose.com API for 'presentation'
  */
 public class PowerpointDocumentDetectorImpl implements DocumentDetector {
     @SuppressWarnings("rawtypes")

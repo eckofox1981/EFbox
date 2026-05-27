@@ -15,7 +15,7 @@ import eckofox.efbox.exception.FileValidationException;
 
 /**
  *  from the https://github.com/righettod/document-upload-protection
- *  checks the document using the aspose.com API for 'cells'
+ *  checks the document using the aspose.com API for 'words'
  */
 public class ExcelDocumentDetector implements DocumentDetector {
     /**

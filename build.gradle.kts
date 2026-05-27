@@ -2,6 +2,8 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.4.1"
 	id("io.spring.dependency-management") version "1.1.7"
+	war
+	id("com.bmuschko.tomcat") version "2.7.0"
 }
 
 group = "eckofox"
@@ -21,6 +23,9 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url = uri("https://repository.aspose.com/repo/")
+	}
 }
 
 dependencies {
@@ -37,6 +42,14 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// file validation
+	implementation("org.apache.commons:commons-imaging:1.0.0-alpha6")
+	implementation("com.itextpdf:itextpdf:5.5.13.5")
+	implementation("aspose.com:aspose-cells:8.7.0")
+	implementation("aspose.com:aspose-words:16.1.0")
+	implementation("aspose.com:aspose-slides:18.4.0")
+	testImplementation("com.drewnoakes:metadata-extractor:2.20.0")
 }
 
 tasks.withType<Test> {

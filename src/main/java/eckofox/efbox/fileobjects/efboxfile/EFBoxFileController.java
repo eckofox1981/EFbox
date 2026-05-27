@@ -43,7 +43,7 @@ public class EFBoxFileController {
             HttpServletResponse response,
             HttpServletRequest request
     ) throws AccessException, NoSuchElementException, IOException, NoTokenFoundException {
-        EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID);
+        EFBoxFile efBoxfile = fileService.uploadFile(file, user, parentID, request);
 
         response.addCookie(cookieMaker
                 .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));

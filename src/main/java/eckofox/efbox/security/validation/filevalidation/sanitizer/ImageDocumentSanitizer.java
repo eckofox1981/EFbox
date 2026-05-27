@@ -6,15 +6,21 @@ import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.ImagingParameters;
 import org.apache.commons.imaging.formats.bmp.BmpImageParser;
+import org.apache.commons.imaging.formats.bmp.BmpImagingParameters;
 import org.apache.commons.imaging.formats.dcx.DcxImageParser;
 import org.apache.commons.imaging.formats.gif.GifImageParser;
+import org.apache.commons.imaging.formats.gif.GifImagingParameters;
 import org.apache.commons.imaging.formats.pcx.PcxImageParser;
+import org.apache.commons.imaging.formats.pcx.PcxImagingParameters;
 import org.apache.commons.imaging.formats.png.PngImageParser;
+import org.apache.commons.imaging.formats.png.PngImagingParameters;
 import org.apache.commons.imaging.formats.tiff.TiffImageParser;
+import org.apache.commons.imaging.formats.tiff.TiffImagingParameters;
 import org.apache.commons.imaging.formats.wbmp.WbmpImageParser;
+import org.apache.commons.imaging.formats.wbmp.WbmpImagingParameters;
 import org.apache.commons.imaging.formats.xbm.XbmImageParser;
+import org.apache.commons.imaging.formats.xbm.XbmImagingParameters;
 import org.apache.commons.imaging.formats.xpm.XpmImageParser;
-import org.apache.commons.imaging.internal.ImageParserFactory;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -26,7 +32,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class ImageDocumentSanitizer implements DocumentSanitizer{
@@ -48,7 +53,7 @@ public class ImageDocumentSanitizer implements DocumentSanitizer{
                             formatName = imageInfo.getFormat().getName();
                             fallbackOnApacheCommonsImaging = true;
                         } else {
-                            throw new IOException("Format of the original image is not supported for read operation !");
+                            throw new IOException("Format of the original image is not supported for read operation.");
                         }
                     } else {
                         ImageReader reader = imageReaderIterator.next();
@@ -67,7 +72,7 @@ public class ImageDocumentSanitizer implements DocumentSanitizer{
 
                 // Check that image has been successfully loaded
                 if (originalImage == null) {
-                    throw new IOException("Cannot load the original image !");
+                    throw new IOException("Cannot load the original image.");
                 }
 
                 // Get current Width and Height of the image
@@ -90,52 +95,65 @@ public class ImageDocumentSanitizer implements DocumentSanitizer{
                     if (!fallbackOnApacheCommonsImaging) {
                         ImageIO.write(sanitizedImage, formatName, fos);
                     } else {
-                        AbstractImageParser imageParser;
+                        AbstractImageParser<?> imageParser;
+                        ImagingParameters<?> params;
                         //Handle only formats for which Apache Commons Imaging can successfully write (YES in Write column of the reference link) the image format
                         //See reference link in the class header
                         switch (formatName) {
                             case "TIFF": {
                                 imageParser = new TiffImageParser();
+                                params = new TiffImagingParameters();
                                 break;
                             }
                             case "PCX": {
                                 imageParser = new PcxImageParser();
+                                params = new PcxImagingParameters();
                                 break;
                             }
                             case "DCX": {
                                 imageParser = new DcxImageParser();
+                                params = new ImagingParameters<>();
                                 break;
                             }
                             case "BMP": {
                                 imageParser = new BmpImageParser();
+                                params = new BmpImagingParameters();
                                 break;
                             }
                             case "GIF": {
                                 imageParser = new GifImageParser();
+                                params = new GifImagingParameters();
                                 break;
                             }
                             case "PNG": {
                                 imageParser = new PngImageParser();
+                                params = new PngImagingParameters();
                                 break;
                             }
                             case "WBMP": {
                                 imageParser = new WbmpImageParser();
+                                params = new WbmpImagingParameters();
                                 break;
                             }
                             case "XBM": {
                                 imageParser = new XbmImageParser();
+                                params = new WbmpImagingParameters();
                                 break;
                             }
                             case "XPM": {
                                 imageParser = new XpmImageParser();
+                                params = new XbmImagingParameters();
                                 break;
                             }
                             default: {
-                                throw new IOException("Format of the original image is not supported for write operation !");
+                                throw new IOException(
+                                        "Format of the original image is not supported for write operation."
+                                );
                             }
 
                         }
-                        imageParser.writeImage(sanitizedImage, fos, new ImagingParameters());
+
+                        writeImage(imageParser, sanitizedImage, fos, params);
                     }
 
                 }
@@ -149,5 +167,14 @@ public class ImageDocumentSanitizer implements DocumentSanitizer{
         }
 
         return safeState;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends ImagingParameters<T>> void writeImage(
+            AbstractImageParser<T> parser,
+            BufferedImage image,
+            OutputStream out,
+            ImagingParameters<?> params) throws IOException {
+        parser.writeImage(image, out, (T) params);
     }
 }

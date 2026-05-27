@@ -8,7 +8,9 @@ import eckofox.efbox.logger.LogEventType;
 import eckofox.efbox.logger.LoggerService;
 import eckofox.efbox.security.validation.InputValidationService;
 import eckofox.efbox.security.validation.Validation;
+import eckofox.efbox.security.validation.filevalidation.FileValidationService;
 import eckofox.efbox.user.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class EFBoxFileService {
     private final EFBoxFolderService folderService;
     private final LoggerService loggerService;
     private final InputValidationService inputValidationService;
+    private final FileValidationService fileValidationService;
 
     /**
      * first the method checks if the user is the parent folder's owner.
@@ -39,9 +42,10 @@ public class EFBoxFileService {
      * @return EFBoxFile
      * @throws NoSuchElementException, AccessException(through IOException), IOException
      */
-    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID)
+    public EFBoxFile uploadFile(MultipartFile file, User user, String parentFolderID, HttpServletRequest request)
             throws NoSuchElementException, IOException {
         validateUserInput(file.getOriginalFilename());
+        EFBoxFile efBoxFile = fileValidationService.validateFile(request, file);
 
         EFBoxFolder parentFolder = folderRepository
                 .findById(UUID.fromString(parentFolderID))
@@ -56,11 +60,13 @@ public class EFBoxFileService {
                             + parentFolder.getFolderID());
         }
 
-
-        EFBoxFile efBoxFile = new EFBoxFile(UUID.randomUUID(), file.getOriginalFilename(), file.getBytes(), file.getContentType(), parentFolder);
+        efBoxFile.setParentFolder(parentFolder);
         fileRepository.save(efBoxFile);
 
-        loggerService.saveInfoLogg(LogEventType.INFO_FILE, "File uploaded. \n" + efBoxFile.getFileID(), user);
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_FILE,
+                request.getParameter("fileType") + "File uploaded. \n" + efBoxFile.getFileID(), user
+        );
 
         return efBoxFile;
 

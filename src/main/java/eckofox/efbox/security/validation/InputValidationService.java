@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class InputValidationService {
-    private static final String AUTHORIZED_CHARS_FOR_USER_INPUT =  "^[a-zA-Z0-9 _.-]{1,20}$";
+    private static final String AUTHORIZED_CHARS_FOR_USER_INPUT =  "^[\\p{L}0-9 .()_-]{1,100}$";
     private static final List<String> POSSIBLE_SQL_INJECTION_CHAR = List.of(
             "' OR '1'='1",
             "\" OR \"1\"=\"1",

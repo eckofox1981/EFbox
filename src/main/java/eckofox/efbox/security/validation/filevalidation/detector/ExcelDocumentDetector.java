@@ -23,14 +23,13 @@ public class ExcelDocumentDetector implements DocumentDetector {
      * Allow also XLSM/XSLB because both can exist without macro inside.<br>
      * Allow also XLT/XLTM because both can exist without macro inside.<br>
      */
-    private static final List<String> ALLOWED_FORMAT =
-            Arrays.asList(new String[] { "xls", "xlsx", "xlsm", "xlsb", "xlt", "xltm" });
+    private static final List<String> ALLOWED_FORMAT = List.of("xls", "xlsx", "xlsm", "xlsb", "xlt", "xltm");
 
     @Override
     public boolean isSafe(File f) {
         boolean safeState = false;
         try {
-            if ((f == null) && !f.exists() && !f.canRead()) {
+            if ((f == null) || !f.exists() || !f.canRead()) {
                 return false;
             }
             // Perform a first check on Excel document format

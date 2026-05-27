@@ -26,8 +26,7 @@ public class FileValidationService {
 
     public EFBoxFile validateFile(HttpServletRequest req, MultipartFile file) throws IOException {
         //TODO be tested further
-        //NOSONAR intentional and believed to be safe
-        Path secureTempDir = Files.createTempDirectory(System.getenv("TEMP_DIRECTORY_FOR_FILE_VALIDATION"));
+        Path secureTempDir = Files.createTempDirectory(System.getenv("TEMP_DIRECTORY_FOR_FILE_VALIDATION"));  //NOSONAR intentional and believed to be safe
         File tmpFile;
         Path tmpPath = null;
         boolean isSafe;
@@ -154,7 +153,7 @@ public class FileValidationService {
                 Files.write(p, "-".getBytes("utf8"), StandardOpenOption.CREATE);
             }
         } catch (Exception e) {
-            throw new IOException("Could not safely overwrite file content for " + p.toString());
+            throw new IOException("Could not safely overwrite file content for " + p + "Message:" + e.getMessage());
         }
     }
 

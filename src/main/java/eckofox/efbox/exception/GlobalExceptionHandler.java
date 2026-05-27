@@ -118,7 +118,26 @@ public class GlobalExceptionHandler {
                 LogEventType.WARNING, ExceptionType.ILLEGAL_REGEX_EXCEPTION, 422, exception.getMessage());
 
         recordToExceptionCache(errMsg.getExceptionType());
-        return ResponseEntity.status(errMsg.getCode()).body("You have used forbidden characters (ex: <,>,:,?,=,...).");
+        return ResponseEntity.status(errMsg.getCode()).body("""
+                You have used forbidden characters (ex: <,>,:,?,=,...).
+                - only standard letters a-z (including in file names)
+                - minimum 1 character, maximum 20 characters
+                - may include '.', '-' and '_'
+                If your name contains non-standard character (Å, Ä, Ñ...), please use an equivalent character (A, N...)
+                Please try again
+                """);
+    }
+
+    @ExceptionHandler(IllegalUsernameException.class)
+    public ResponseEntity<String> handleIllegalUsernameException(IllegalUsernameException exception) throws EmailNotSentException {
+        recordToExceptionCache(ExceptionType.ILLEGAL_USERNAME_EXCEPTION);
+        //NOTE: not recorded
+        return ResponseEntity.status(406).body("""
+                Username can only contain:
+                - letters a-z (case insensitive)
+                - numbers
+                - minimum 5 to maximum 50 characters
+                """);
     }
 
     @ExceptionHandler(IllegibleEmailFormatException.class)

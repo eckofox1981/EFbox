@@ -12,6 +12,8 @@ import eckofox.efbox.security.bruteforceprotection.LoginBruteForceProtectionServ
 import eckofox.efbox.security.passwordandcode.Argon2PasswordEncoder;
 import eckofox.efbox.security.passwordrecovery.UserAccessCodeService;
 import eckofox.efbox.security.ratelimiting.RateLimitingInterceptor;
+import eckofox.efbox.security.validation.InputValidationService;
+import eckofox.efbox.security.validation.Validation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class UserService implements UserDetailsService {
     private final EmailSenderService emailSenderService;
     private final UserAccessCodeService accessCodeService;
     private final LoginBruteForceProtectionService loginBruteForceProtectionService;
+    private final InputValidationService inputValidationService;
     //https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/web/authentication/password/HaveIBeenPwnedRestApiPasswordChecker.html
     //https://haveibeenpwned.com/API/v3#PwnedPasswords
     @Bean
@@ -54,6 +57,13 @@ public class UserService implements UserDetailsService {
      * @return NopasswordUserDTO
      */
     public User createUser(UserDTO userDTO) throws IllegiblePasswordException {
+        if (!isUsernameValid(userDTO.getUsername())) {
+            throw new IllegalRegexException("Username format not valid.");
+        }
+
+        validateUserInput(userDTO.getFirstname());
+        validateUserInput(userDTO.getLastname());
+
         if (!isEmailValid(userDTO.getEmail())) {
             throw new IllegibleEmailFormatException("Email not valid [letters@domain.com].");
         }
@@ -202,7 +212,7 @@ public class UserService implements UserDetailsService {
      * @return true if password format is correct
      */
     private boolean passwordValidationIsOk(String password) {
-        String COMPLEXITY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
+        final String COMPLEXITY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$€¥!%*?&])[A-Za-z\\d@$€¥!%*?&]{8,64}$";
         //NIST standard: between 8 and 64 chars
         return password.matches(COMPLEXITY_REGEX);
     }
@@ -213,8 +223,29 @@ public class UserService implements UserDetailsService {
     }
 
     private boolean isEmailValid(String email) {
-        String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*+\\.[A-Za-z]{2,}$";
+        final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*+\\.[A-Za-z]{2,}$";
         return email.matches(EMAIL_REGEX);
+    }
+
+    private boolean isUsernameValid(String username) {
+        final String PASSWORD_REGEX = "^[a-zA-Z0-9]{5,20}$";
+        return username.matches(PASSWORD_REGEX);
+    }
+
+    private void validateUserInput(String input) {
+        Validation validation = inputValidationService.isUserInputValidated(input);
+        switch (validation) {
+            case Validation.OK:
+                break;
+            case Validation.SQL_INJECTION_SUSPECTED, Validation.OTHER_INJECTION_SUSPECTED:
+                throw new IllegalRegexException(validation + ": [redacted, length=" + input.length() + "]");
+            case Validation.NOT_AUTHORIZED:
+                throw new IllegalRegexException(validation + ": not shared for user privacy");
+            default:
+                throw new IllegalArgumentException(
+                        "Could not validate user. [redacted, length=" + input.length() + "] returned: " + validation
+                );
+        }
     }
 
     private User authenticateUponLogin(String username, String password, HttpServletRequest request)

@@ -1,5 +1,8 @@
 package eckofox.efbox.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ExceptionType {
     ACCESS_EXCEPTION("Access Exception"),
     FILE_VALIDATION_EXCEPTION("File Validation Exception"),
@@ -21,17 +24,15 @@ public enum ExceptionType {
     ACCESS_CODE_DOES_NOT_MATCH("Access Code Does Not match Exception"),
     ACCESS_CODE_DOES_NOT_EXIST_EXCEPTION("Access Code Does Not Exists Exception"),
     EMAIL_NOT_SENT_EXCEPTION("Email Not Sent Exception"),
-    REPETITIVE_LOGIN_ATTEMPTS_EXCEPTION("Repetitive Login Attempts Exception");
+    REPETITIVE_LOGIN_ATTEMPTS_EXCEPTION("Repetitive Login Attempts Exception"),
+    ILLEGAL_USERNAME_EXCEPTION("Illegal Username Exception");
 
 
 
     private final String description;
 
-    private ExceptionType(String description) {
+    ExceptionType(String description) {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
 }

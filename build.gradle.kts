@@ -24,7 +24,7 @@ configurations {
 repositories {
 	mavenCentral()
 	maven {
-		url = uri("https://repository.aspose.com/repo/")
+		url = uri("https://releases.aspose.com/java/repo/")
 	}
 }
 
@@ -46,9 +46,15 @@ dependencies {
 	// file validation
 	implementation("org.apache.commons:commons-imaging:1.0.0-alpha6")
 	implementation("com.itextpdf:itextpdf:5.5.13.5")
-	implementation("aspose.com:aspose-cells:8.7.0")
-	implementation("aspose.com:aspose-words:16.1.0")
-	implementation("aspose.com:aspose-slides:18.4.0")
+	implementation("com.aspose:aspose-words:22.11:jdk17")
+	implementation("com.aspose:aspose-words:22.11:javadoc")
+	implementation("com.aspose:aspose-cells:26.5")
+	implementation("com.aspose:aspose-cells:26.5:javadoc")
+	implementation("org.bouncycastle:bcprov-jdk15on:1.68")
+	implementation("org.bouncycastle:bcpkix-jdk15on:1.68")
+	implementation("com.aspose:aspose-slides:26.5:jdk16")
+	implementation("com.aspose:aspose-slides:26.5:javadoc")
+
 	testImplementation("com.drewnoakes:metadata-extractor:2.20.0")
 }
 

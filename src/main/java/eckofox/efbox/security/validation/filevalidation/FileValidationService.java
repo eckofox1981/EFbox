@@ -66,7 +66,7 @@ public class FileValidationService {
             if (fileType.equals("IMAGE")) {
                 ImageSanitizerService imageSanitizerService = new ImageSanitizerService();
                 file = imageSanitizerService.sanitize(tmpFile);
-                isSafe = file == null ? false : true;
+                isSafe = file != null;
             } else {
                 isSafe = detectSanitizedIsSafe(fileType, tmpFile);
             }
@@ -148,12 +148,9 @@ public class FileValidationService {
      */
     private static void safelyRemoveFile(Path p) throws IOException {
         try {
-            if (p != null) {
-                // Remove temporary file
-                if (!Files.deleteIfExists(p)) {
-                    // If remove fail then overwrite content to sanitize it
-                    Files.write(p, "-".getBytes("utf8"), StandardOpenOption.CREATE);
-                }
+            if (p != null && !Files.deleteIfExists(p)) {
+                // If remove fail then overwrite content to sanitize it
+                Files.write(p, "-".getBytes("utf8"), StandardOpenOption.CREATE);
             }
         } catch (Exception e) {
             throw new IOException("Could not safely overwrite file content for " + p.toString());

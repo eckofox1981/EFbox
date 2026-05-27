@@ -19,7 +19,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 /**
- * adapted from the https://github.com/righettod/document-upload-protection,
+ * adapted from the https://github.com/righettod/document-upload-protection (example given by OWASP),
  * trnasformed into a Service, the validateFile method checks the request file and fileType content
  * then detects what kind of file (WORD, EXCEL, PDF, POWERPOINT or IMAGE), the detectors check if the file is safe
  * and if safe the EFBoxFile is created and returned to EFBoxFileService.

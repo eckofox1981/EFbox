@@ -57,6 +57,7 @@ public class WordDocumentDetector implements DocumentDetector {
             if (safeState) {
                 safeState = oleCheck(document);
             }
+
         } catch (Exception e) {
             throw new FileValidationException("\"Error during Word file analysis: " + e.getMessage());
         }
@@ -73,6 +74,7 @@ public class WordDocumentDetector implements DocumentDetector {
         // Get all shapes of the document
         NodeCollection shapes = document.getChildNodes(NodeType.SHAPE, true);
         Shape shape = null;
+
         // Search OLE objects in all shapes
         int totalOLEObjectCount = 0;
         for (int i = 0; i < shapes.getCount(); i++) {

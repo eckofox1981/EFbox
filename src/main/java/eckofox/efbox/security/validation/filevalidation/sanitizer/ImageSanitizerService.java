@@ -51,6 +51,7 @@ public class ImageSanitizerService implements DocumentSanitizer{
             if (f == null || !f.exists() || !f.canRead() || !f.canWrite()) {
                 return null;
             }
+
             //Get the image format
             ImageFormatInformation info = getImageFormat(f);
             String formatName = info.formatName();
@@ -85,6 +86,7 @@ public class ImageSanitizerService implements DocumentSanitizer{
             saveByOverWritingFile(initialSizedImage, fallbackOnApacheCommonsImaging, formatName, f);
 
             return convertFileToMultipartFile(f);
+
         } catch (Exception e) {
             throw new FileValidationException("Error during Image file processing: " + e);
         }
@@ -96,16 +98,19 @@ public class ImageSanitizerService implements DocumentSanitizer{
 
         try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(f)) {
             Iterator<ImageReader> imageReaderIterator = ImageIO.getImageReaders(imageInputStream);
+
             //If there not ImageReader instance found so it's means that the current format
             // is not supported by the Java built-in API
             if (!imageReaderIterator.hasNext()) {
                 ImageInfo imageInfo = Imaging.getImageInfo(f);
+
                 if (imageInfo != null && imageInfo.getFormat() != null && imageInfo.getFormat().getName() != null) {
                     formatName = imageInfo.getFormat().getName();
                     fallbackOnApacheCommonsImaging = true;
                 } else {
                     throw new IOException("Format of the original image is not supported for read operation.");
                 }
+
             } else {
                 ImageReader reader = imageReaderIterator.next();
                 formatName = reader.getFormatName();
@@ -141,6 +146,7 @@ public class ImageSanitizerService implements DocumentSanitizer{
             } else {
                 AbstractImageParser<?> imageParser;
                 ImagingParameters<?> params;
+
                 //Handle only formats for which Apache Commons Imaging can successfully write (YES in Write column of the reference link) the image format
                 //See reference link in the class header
                 switch (formatName) {
@@ -230,7 +236,6 @@ public class ImageSanitizerService implements DocumentSanitizer{
     }
 
     private String getMimeTypeFromFormat(File f) throws IOException {
-
         ImageInfo imageInfo = Imaging.getImageInfo(f);
 
         if (imageInfo == null || imageInfo.getFormat() == null) {
@@ -253,5 +258,5 @@ public class ImageSanitizerService implements DocumentSanitizer{
     private record ImageFormatInformation(
             String formatName,
             boolean fallbackOnApacheCommonsImaging
-    ) {}
+    ) {/*record only*/}
 }

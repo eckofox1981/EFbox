@@ -41,11 +41,13 @@ public class PdfDocumentDetector implements DocumentDetector {
                 PdfDictionary embeddedFiles = names.getAsDict(PdfName.EMBEDDEDFILES);
                 namesArray = embeddedFiles.getAsArray(PdfName.NAMES);
             }
+
             // Get safe state from number of embedded files
             safeState = ((namesArray == null) || namesArray.isEmpty());
         } catch (Exception e) {
             throw new FileValidationException("Error during Pdf file analysis:" + e);
         }
+
         return safeState;
     }
 }

@@ -12,10 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.UUID;
 
 /**
@@ -28,10 +25,13 @@ import java.util.UUID;
 public class FileValidationService {
 
     public EFBoxFile validateFile(HttpServletRequest req, MultipartFile file) throws IOException {
+        //TODO be tested further
+        Path secureTempDir = Files.createTempDirectory("efbox-temp-folder");
         File tmpFile;
         Path tmpPath = null;
-        boolean isSafe = false;
+        boolean isSafe;
         EFBoxFile fileToSave = new EFBoxFile();
+
         try {
             /* Step 1: Retrieve upload information (file type + file content) */
             // File type: Word / Excel / PDF
@@ -46,9 +46,20 @@ public class FileValidationService {
                 throw new FileValidationException("Unknown file content specified.");
             }
 
-            // Write a temporary file with uploaded file
-            tmpFile = File.createTempFile("uploaded-", null);
+            // Write a temporary file with uploaded file, SonarQube insists on defined directories for security
+            Files.createDirectories(secureTempDir);
+
+            tmpFile = File.createTempFile(
+                    "uploaded-",
+                    ".tmp",
+                    secureTempDir.toFile()
+            );
+
             tmpPath = tmpFile.toPath();
+
+            file.transferTo(tmpPath);
+            tmpFile = tmpPath.toFile();
+
             controlBytesCount(filePart, tmpPath);
 
             /* Step 2: Initialize a detector/sanitizer for the target file type and perform validation */
@@ -64,7 +75,6 @@ public class FileValidationService {
             // Take action is the file is not safe
             if (!isSafe) {
                 // Remove temporary file
-                safelyRemoveFile(tmpPath);
                 throw new FileValidationException("The file uploaded was not safe.");
             } else {
                 fileToSave.setFileID(UUID.randomUUID());
@@ -79,6 +89,12 @@ public class FileValidationService {
             safelyRemoveFile(tmpPath);
 
             throw new FileNotFoundException("Error during detection of file upload safe status: " + e);
+        } finally {
+            safelyRemoveFile(tmpPath);
+
+            if (secureTempDir != null) {
+                Files.deleteIfExists(secureTempDir);
+            }
         }
 
         return fileToSave;

@@ -38,3 +38,4 @@ out/
 
 ### environment variables
 .env
+/gradle.lockfile

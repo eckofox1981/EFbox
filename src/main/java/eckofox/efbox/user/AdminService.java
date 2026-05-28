@@ -96,7 +96,7 @@ public class AdminService implements UserDetailsService {
                 admin
         );
 
-        return user.getUsername() + " is now admin.";
+        return user.getUsername() + " is has access to the log.";
     }
 
     public String revokeAdminStatus(User user, UUID revokedId) {

@@ -223,7 +223,7 @@ public class UserService implements UserDetailsService {
     }
 
     private boolean isEmailValid(String email) {
-        final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*+\\.[A-Za-z]{2,}$";
+        final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$";
         return email.matches(EMAIL_REGEX);
     }
 

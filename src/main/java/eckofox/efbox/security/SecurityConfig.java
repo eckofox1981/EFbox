@@ -47,6 +47,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/password-recovery").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/change-password").permitAll()
+                                .requestMatchers(
+                                        HttpMethod.PUT, "/bossmang/grant-admin-status").hasRole("OWNER")
+                                .requestMatchers(HttpMethod.PUT, "/bossmang/grant-log-access").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod
                                         .PUT, "/bossmang/request-log-access").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod

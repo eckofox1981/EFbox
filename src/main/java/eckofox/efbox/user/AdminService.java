@@ -1,5 +1,7 @@
 package eckofox.efbox.user;
 
+import eckofox.efbox.email.EmailSenderService;
+import eckofox.efbox.exception.EmailNotSentException;
 import eckofox.efbox.exception.UserNotFoundException;
 import eckofox.efbox.logger.LogEventType;
 import eckofox.efbox.logger.LoggerService;
@@ -17,9 +19,9 @@ public class AdminService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final LoggerService loggerService;
+    private final EmailSenderService emailSenderService;
 
-    public String requestAdminStatus(User user, String secret) throws IllegalAccessException {
-        //TODO: implement UserAccessCode
+    public String requestAdminStatus(User user, String secret) throws IllegalAccessException, EmailNotSentException {
         if (!secret.equals(System.getenv("SECRET_STRING_ADMIN"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
         }
@@ -28,19 +30,16 @@ public class AdminService implements UserDetailsService {
             return "You are admin.";
         }
 
-        user.getRoles().add(UserRole.ROLE_ADMIN);
+        emailSenderService.sendAdminStatusRequest(user);
 
-        userRepository.save(user);
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_ADMIN, user.getUsername() + " requested ROLE_ADMIN. Email sent.", user
+        );
 
-        loggerService.saveInfoLogg(LogEventType.INFO_ADMIN, user.getUsername() + " granted ROLE_ADMIN", user);
-
-        //TODO: implement email sending to ROLE_OWNER and LOG IT.
-
-        return "You are now admin.";
+        return "You have requested admin status.";
     }
 
-    public String requestLogAccess(User user, String secret) throws IllegalAccessException {
-        //TODO: implement UserAccessCode
+    public String requestLogAccess(User user, String secret) throws IllegalAccessException, EmailNotSentException {
         if (!secret.equals(System.getenv("SECRET_STRING_LOG_ACCESS"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
         }
@@ -49,15 +48,55 @@ public class AdminService implements UserDetailsService {
             return "You have access to event-logs.";
         }
 
-        user.getGrantedAuthorities().add(GrantedAuthorities.LOG_ACCESS);
+        emailSenderService.sendLogAccessRequest(user);
 
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_ADMIN, user.getUsername() + " requested LOG_ACCESS. Email sent.", user
+        );
+
+        return "You have requested access to the event-logs now.";
+    }
+
+    public String grantAdminStatus(User owner, UUID userId) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Could not find " + userId));
+
+        if (user.getRoles().contains(UserRole.ROLE_ADMIN)) {
+            return user.getUsername() + "is already admin";
+        }
+
+        user.getRoles().add(UserRole.ROLE_ADMIN);
         userRepository.save(user);
 
-        loggerService.saveInfoLogg(LogEventType.INFO_ADMIN, user.getUsername() + " granted LOG_ACCESS.", user);
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_ADMIN,
+                user.getUsername() + " granted AdminStatus by " + owner.getUsername(),
+                        owner
+        );
 
-        //TODO: implement email sending to ROLE_OWNER and LOG IT.
+        return user.getUsername() + " is now admin.";
+    }
 
-        return "You have access to the event-logs now.";
+    public String grantLogAccess(User admin, UUID userId) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Could not find " + userId));
+
+        if (user.getGrantedAuthorities().contains(GrantedAuthorities.LOG_ACCESS)) {
+            return user.getUsername() + "has already LOG-ACCESS";
+        }
+
+        user.getGrantedAuthorities().add(GrantedAuthorities.LOG_ACCESS);
+        userRepository.save(user);
+
+        loggerService.saveInfoLogg(
+                LogEventType.INFO_ADMIN,
+                user.getUsername() + " granted log access by " + admin.getUsername(),
+                admin
+        );
+
+        return user.getUsername() + " is now admin.";
     }
 
     public String revokeAdminStatus(User user, UUID revokedId) {

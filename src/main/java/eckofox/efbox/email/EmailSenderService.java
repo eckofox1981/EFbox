@@ -210,6 +210,71 @@ public class EmailSenderService {
         }
     }
 
+    public void sendAdminStatusRequest(User user) throws EmailNotSentException {
+        //better with sql query but out of scope for project (quicker to write)
+        List<User> allUsers = userRepository.findAll();
+        List<User> allOwners = allUsers.stream().filter(a -> a.getRoles().contains(UserRole.ROLE_OWNER)).toList();
 
+        StringBuilder message = new StringBuilder();
+        message.append(hello)
+                .append("Dear owner of the EFBox API,\n")
+                .append("user ")
+                .append(user.getUsername())
+                .append(" with id:\n")
+                .append(user.getUserID())
+                .append("\n has request admin status.")
+                .append("\n\nEFBOX SYSTEM");
+
+        try {
+            allOwners
+                    .forEach(a ->
+                            sendEmail(a.getEmail(), EmailType.ADMIN_ACCESS_CODE_REQUEST.getSubject(), message.toString()
+                            ));
+        } catch (Exception e) {
+            String details = e.getMessage() == null
+                    ? noMessage
+                    : e.getMessage();
+            throw new EmailNotSentException(
+                    "Email not sent to "
+                            + user.getUsername()
+                            + ".\n Details:\n"
+                            + details
+            );
+        }
+    }
+
+    public void sendLogAccessRequest(User user) throws EmailNotSentException {
+        //better with sql query but out of scope for project (quicker to write)
+        List<User> allUsers = userRepository.findAll();
+        List<User> allAdmins = allUsers.stream().filter(a -> a.getRoles().contains(UserRole.ROLE_ADMIN)).toList();
+        System.out.println(allAdmins.getFirst().getEmail());
+
+        StringBuilder message = new StringBuilder();
+        message.append(hello)
+                .append("Dear owner of the EFBox API,\n")
+                .append("user ")
+                .append(user.getUsername())
+                .append(" with id:\n")
+                .append(user.getUserID())
+                .append("\n has request access to the logs.")
+                .append("\n\nEFBOX SYSTEM");
+
+        try {
+            allAdmins
+                    .forEach(a ->
+                            sendEmail(a.getEmail(), EmailType.ADMIN_ACCESS_CODE_REQUEST.getSubject(), message.toString()
+                            ));
+        } catch (Exception e) {
+            String details = e.getMessage() == null
+                    ? noMessage
+                    : e.getMessage();
+            throw new EmailNotSentException(
+                    "Email not sent to "
+                            + user.getUsername()
+                            + ".\n Details:\n"
+                            + details
+            );
+        }
+    }
 
 }

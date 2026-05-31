@@ -12,6 +12,7 @@ import java.util.UUID;
 
 /**
  * Log Error Message to be recorded
+ * Extends LogMessage
  */
 @Entity
 @Getter

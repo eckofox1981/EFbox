@@ -8,9 +8,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// https://www.baeldung.com/hibernate-inheritance
-//Mapped super class makes it possible to share a table between two entites where one extends from the other
+
+
+/**
+ * Object used to log various events on the server
+ * LogMessage inherited by EFBoxErrorMessage for Exception logging
+ * inspired by: https://www.baeldung.com/hibernate-inheritance
+ */
 @Entity(name = "event_logging")
+//Mapped super class makes it possible to share a table between two entites where one extends from the other
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor

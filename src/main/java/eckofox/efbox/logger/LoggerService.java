@@ -1,7 +1,6 @@
 package eckofox.efbox.logger;
 
 import eckofox.efbox.exception.EFBoxErrorMessage;
-import eckofox.efbox.security.bruteforceprotection.ExceptionBruteForceProtectionService;
 import eckofox.efbox.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
@@ -18,10 +17,21 @@ import java.util.UUID;
 public class LoggerService {
     private final LoggerRepository loggerRepository;
 
+    /**
+     * saves LogMessage and EFBoxErrorMessage
+     * @param logMessage LogMessage or EFBoxErrorMessage
+     */
     public void saveInfoLogg(LogMessage logMessage) {
         loggerRepository.save(logMessage);
     }
 
+
+    /**
+     * creates and saves LogMessage
+     * @param type LogEventType
+     * @param message content of message
+     * @param user User - concerned
+     */
     public void saveInfoLogg(LogEventType type, String message, User user)  {
         LogMessage logMessage = new LogMessage(
                 UUID.randomUUID(),
@@ -34,7 +44,13 @@ public class LoggerService {
         saveInfoLogg(logMessage);
     }
 
-    public String retriveAllLogs(User user) throws IOException {
+    /**
+     * fetches all logs without descrimination
+     * @param user User making the request
+     * @return HTML in String
+     * @throws IOException
+     */
+    public String retrieveAllLogs(User user) throws IOException {
         saveInfoLogg(LogEventType.INFO_ADMIN, "Exception cache erased for upon log being accessed.", user);
 
         LogMessage logMessage = new LogMessage(
@@ -53,6 +69,12 @@ public class LoggerService {
         return logsToHTMLCodeConverter(allLogs, user);
     }
 
+    /**
+     * converts log data from database to readable HTML
+     * @param logs LogMessage & EFBoxErrorMessage
+     * @param user User making the request, will be displayed on top
+     * @return HTML in String
+     */
     private String logsToHTMLCodeConverter(List<LogMessage> logs, User user) {
         StringBuilder htmlCode = new StringBuilder();
         htmlCode.append("<html><h1>EFBox Event Logs</h1><h2><i>requested by: " + user.getUsername() + "</h2>");
@@ -69,6 +91,11 @@ public class LoggerService {
         return htmlCode.toString();
     }
 
+    /**
+     * creates the HTML table to display ergonomically the event-logs
+     * @param log LogMessage and/or EFBoxErrorMessage
+     * @return HTML-table in String
+     */
     private String logTableCreator(LogMessage log) {
         String statusCodeBox ="";
         String exceptionTypeBox ="";

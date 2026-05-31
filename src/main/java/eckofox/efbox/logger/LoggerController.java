@@ -19,8 +19,9 @@ public class LoggerController {
     private final LoggerService loggerService;
     private final ExceptionBruteForceProtectionService bruteForceProtectionService;
 
-    /** https://www.baeldung.com/spring-mvc-return-html
-     *
+    /**
+     * return the event-logs in HTML-format
+     * ref: https://www.baeldung.com/spring-mvc-return-html
      * @param user
      * @return
      * @throws IOException
@@ -28,7 +29,7 @@ public class LoggerController {
     @GetMapping(value="/fetch-all-logs", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<?> getAllLogs(@AuthenticationPrincipal User user) throws IOException {
 
-        String allLogs = loggerService.retriveAllLogs(user);
+        String allLogs = loggerService.retrieveAllLogs(user);
 
         bruteForceProtectionService.logAccessedExceptionCacheReset();
 

@@ -2,6 +2,9 @@ package eckofox.efbox.logger;
 
 import lombok.Getter;
 
+/**
+ * Description and color code for the different event-types to be logged
+ */
 @Getter
 public enum LogEventType {
     ERROR("ERROR","#B600E8"),

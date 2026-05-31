@@ -9,7 +9,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import eckofox.efbox.exception.FileValidationException;
 
 /**
- *  from the https://github.com/righettod/document-upload-protection
+ *  based on the OWASP example, Dominique Righetod's https://github.com/righettod/document-upload-protection
  *  checks the document using the itextpdf-library API for 'PDF'
  */
 public class PdfDocumentDetector implements DocumentDetector {

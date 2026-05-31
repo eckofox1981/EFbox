@@ -152,8 +152,14 @@ public class InputValidationService {
     );
 
 
-    //NOTE: OWASP recommends an allow-list rather than a forbid-list, any Validation other than Validation.OK
-    //is to inform admins of potential threats to the system.
+    /**
+     * checks if a String is allowed by the server. If not, it checks for potential injection attempt and record them
+     *
+     * NOTE: OWASP recommends an allow-list rather than a forbid-list, any Validation other than Validation.OK
+     * is to inform admins of potential threats to the system.
+     * @param string
+     * @return
+     */
     public Validation isUserInputValidated(String string) {
         if (Pattern.matches(AUTHORIZED_CHARS_FOR_USER_INPUT, string)) {
             return Validation.OK;
@@ -162,6 +168,11 @@ public class InputValidationService {
         return isInjectionSuspected(string);
     }
 
+    /**
+     * checks if injection is attempted
+     * @param string
+     * @return
+     */
     private Validation isInjectionSuspected(String string) {
         for (String sqlCandidate : POSSIBLE_SQL_INJECTION_CHAR) {
             if (string.toLowerCase().contains(sqlCandidate.toLowerCase())) {

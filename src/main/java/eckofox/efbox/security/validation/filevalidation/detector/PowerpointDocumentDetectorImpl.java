@@ -10,8 +10,8 @@ import eckofox.efbox.exception.FileValidationException;
 import java.io.File;
 
 /**
- *  from the https://github.com/righettod/document-upload-protection
- *  checks the document using the aspose.com API for 'presentation'
+ * checks the document using the aspose.com API for 'powerpoints'
+ * based the OWASP example, Dominique Righetod's https://github.com/righettod/document-upload-protection
  */
 public class PowerpointDocumentDetectorImpl implements DocumentDetector {
     @SuppressWarnings("rawtypes")

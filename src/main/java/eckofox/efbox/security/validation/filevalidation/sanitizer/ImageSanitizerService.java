@@ -39,8 +39,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 
 /**
- *  from the https://github.com/righettod/document-upload-protection
  *  sanitize picture by overwriting (OWASP recommandation) using Java built-in API
+ *  adapted from the OWASP example, Dominique Righetod's https://github.com/righettod/document-upload-protection
  */
 @Service
 public class ImageSanitizerService implements DocumentSanitizer{

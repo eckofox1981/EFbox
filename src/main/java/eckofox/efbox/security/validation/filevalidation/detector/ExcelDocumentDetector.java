@@ -14,8 +14,8 @@ import com.aspose.cells.Worksheet;
 import eckofox.efbox.exception.FileValidationException;
 
 /**
- *  from the https://github.com/righettod/document-upload-protection
- *  checks the document using the aspose.com API for 'words'
+ * checks the document using the aspose.com API for 'excel'
+ * based on the OWASP example, Dominique Righetod's https://github.com/righettod/document-upload-protection
  */
 public class ExcelDocumentDetector implements DocumentDetector {
     /**

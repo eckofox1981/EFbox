@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- *  from the https://github.com/righettod/document-upload-protection
- *  checks the document using the aspose.com API for 'cells'
+ * checks the document using the aspose.com API for 'words'
+ * based the OWASP example, Dominique Righetod's https://github.com/righettod/document-upload-protection
  */
 public class WordDocumentDetector implements DocumentDetector {
     /**

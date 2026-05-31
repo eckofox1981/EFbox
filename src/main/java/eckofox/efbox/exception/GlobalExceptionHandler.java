@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-/** inspired by https://www.ignek.com/blog/centralized-exception-handling-in-spring-boot
+/**
+ * A RestControllerAdvice to intercept Exceptions during requests and to return general message
+ * Also use to log Exceptions in database
+ * inspired by https://www.ignek.com/blog/centralized-exception-handling-in-spring-boot
  * https://medium.com/@AlexanderObregon/spring-boot-global-exception-handling-with-restcontrolleradvice-676c5b0b74ea
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
  */
@@ -271,6 +274,14 @@ public class GlobalExceptionHandler {
         bruteForceProtectionService.exceptionTypeRecord(exceptionType);
     }
 
+    /**
+     * creates and EFBoxErrorMessage and logs it in the database
+     * @param eventType for color coding and information when displayed in HTML
+     * @param exceptionType for information
+     * @param code status code sent back to user
+     * @param message detail information from concerned exception
+     * @return EFBoxErrorMessage
+     */
     private EFBoxErrorMessage messageCreator(
             LogEventType eventType, ExceptionType exceptionType, int code, String message
     ) {

@@ -141,6 +141,13 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    /**
+     * creates and register an USerAccessCode for the intended action
+     * @param username of account making request
+     * @return respsonse in String
+     * @throws UsernameNotFoundException
+     * @throws EmailNotSentException
+     */
     public String passwordRecovery(String username) throws UsernameNotFoundException, EmailNotSentException {
         User user = userRepository
                 .findByUsername(username)
@@ -154,6 +161,15 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * controls code with username in database, and saves new password in DB
+     * @param username for account to be modified
+     * @param newPassword to be registered
+     * @param code to check in database
+     * @return repsonse in String
+     * @throws UsernameNotFoundException
+     * @throws AccessCodeDoesNotExistsException
+     */
     public String passwordChange(String username, String newPassword, int code)
             throws UsernameNotFoundException, AccessCodeDoesNotExistsException {
         if (!passwordValidationIsOk(newPassword)) {
@@ -204,9 +220,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * regex from https://regexbox.com/regex-templates/password
      * checks that password has 8 letters minimum adn 64 maximum
      * lower, uppercase characters, at least one digit and @$!%*?& characters
+     *
+     *  modified from Regex in from https://regexbox.com/regex-templates/password
      *
      * @param password to be checked
      * @return true if password format is correct
@@ -217,21 +234,40 @@ public class UserService implements UserDetailsService {
         return password.matches(COMPLEXITY_REGEX);
     }
 
-    private boolean isPasswordCompromised(String hash) {
-        CompromisedPasswordDecision isCompromised = passwordChecker().check(hash);
+    /**
+     * checks with the HaveIBeenPwned database if the password is among compromised password
+     * @param raw password to be checked
+     * @return
+     */
+    private boolean isPasswordCompromised(String raw) {
+        CompromisedPasswordDecision isCompromised = passwordChecker().check(raw);
         return isCompromised.isCompromised();
     }
 
+    /**
+     * checks email REGEX
+     * @param email
+     * @return
+     */
     private boolean isEmailValid(String email) {
         final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$";
         return email.matches(EMAIL_REGEX);
     }
 
+    /**
+     * checks if username has 5 to 20 chars and allowed cahracters
+     * @param username
+     * @return
+     */
     private boolean isUsernameValid(String username) {
         final String PASSWORD_REGEX = "^[a-zA-Z0-9]{5,20}$";
         return username.matches(PASSWORD_REGEX);
     }
 
+    /**
+     * verifies user-inputs are allowed
+     * @param input to be checked
+     */
     private void validateUserInput(String input) {
         Validation validation = inputValidationService.isUserInputValidated(input);
         switch (validation) {
@@ -248,6 +284,15 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * checks if account login has been blocked in LoginBruteForceProtectionService
+     * @param username
+     * @param password
+     * @param request
+     * @return
+     * @throws LoginException
+     * @throws EmailNotSentException
+     */
     private User authenticateUponLogin(String username, String password, HttpServletRequest request)
             throws LoginException, EmailNotSentException {
         User user = userRepository
@@ -288,8 +333,12 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    //adapted from https://www.javaguides.net/2024/04/spring-security-granted-authority.html
-    // and https://www.baeldung.com/role-and-privilege-for-spring-security-registration
+    /**
+     * self-explanatory
+     * @param username the username identifying the user whose data is required.
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
@@ -297,7 +346,7 @@ public class UserService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
-                user.getPassword(),
+                null,
                 user.isEnabled(),
                 true,
                 true,

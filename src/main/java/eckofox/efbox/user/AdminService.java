@@ -21,6 +21,14 @@ public class AdminService implements UserDetailsService {
     private final LoggerService loggerService;
     private final EmailSenderService emailSenderService;
 
+    /**
+     * sends a admin-status request to OWNER
+     * @param user making the request
+     * @param secret extra security, the user must know a secret string or number (here predefined as env-var)
+     * @return response in string
+     * @throws IllegalAccessException
+     * @throws EmailNotSentException
+     */
     public String requestAdminStatus(User user, String secret) throws IllegalAccessException, EmailNotSentException {
         if (!secret.equals(System.getenv("SECRET_STRING_ADMIN"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
@@ -39,6 +47,14 @@ public class AdminService implements UserDetailsService {
         return "You have requested admin status.";
     }
 
+    /**
+     * sends a admin-status request to ADMINs
+     * @param user making the request
+     * param secret extra security, the user must know a secret string or number (here predefined as env-var)
+     * @return response in string
+     * @throws IllegalAccessException
+     * @throws EmailNotSentException
+     */
     public String requestLogAccess(User user, String secret) throws IllegalAccessException, EmailNotSentException {
         if (!secret.equals(System.getenv("SECRET_STRING_LOG_ACCESS"))) {
             throw new IllegalAccessException("Admin accessed refused, invalid passkey.");
@@ -57,6 +73,12 @@ public class AdminService implements UserDetailsService {
         return "You have requested access to the event-logs now.";
     }
 
+    /**
+     * only available to OWNER (see SecurityConfig)
+     * @param owner granting the user admin status
+     * @param userId beeing granted the status
+     * @return response in String
+     */
     public String grantAdminStatus(User owner, UUID userId) {
         User user = userRepository
                 .findById(userId)
@@ -78,6 +100,12 @@ public class AdminService implements UserDetailsService {
         return user.getUsername() + " is now admin.";
     }
 
+    /**
+     * only available to ADMINs (see SecurirityConfig)
+     * @param admin granting log access
+     * @param userId being granted log access
+     * @return repsonse in String
+     */
     public String grantLogAccess(User admin, UUID userId) {
         User user = userRepository
                 .findById(userId)
@@ -99,6 +127,12 @@ public class AdminService implements UserDetailsService {
         return user.getUsername() + " is has access to the log.";
     }
 
+    /**
+     * self-explanatory
+     * @param user revoking
+     * @param revokedId of User being revoked admin status
+     * @return
+     */
     public String revokeAdminStatus(User user, UUID revokedId) {
         User revokedUser = userRepository.findById(revokedId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -122,6 +156,13 @@ public class AdminService implements UserDetailsService {
         return "You have revoked " + revokedUser.getUsername() + "'s admin status.";
     }
 
+
+    /**
+     * self-explanatory
+     * @param user revoking access
+     * @param revokedId
+     * @return
+     */
     public String revokeLogAccess(User user, UUID revokedId) {
         User revokedUser = userRepository.findById(revokedId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));

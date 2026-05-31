@@ -99,11 +99,24 @@ public class UserController {
         }
     }
 
+    /**
+     * initiates password recovery
+     * @param username for the account concerned
+     * @return repsonse in String
+     * @throws EmailNotSentException
+     */
     @PutMapping("/password-recovery")
     public ResponseEntity<?> passwordRecovery(@RequestBody String username) throws EmailNotSentException {
         return ResponseEntity.ok().body(userservice.passwordRecovery(username));
     }
 
+    /**
+     * performs password change
+     * @param dto PasswordRevoveryDTO
+     * @return repsonse String
+     * @throws UsernameNotFoundException
+     * @throws AccessCodeDoesNotExistsException
+     */
     @PutMapping("/change-password")
     public ResponseEntity<?> passwordChange(@RequestBody PasswordRecoveryDTO dto)
             throws UsernameNotFoundException, AccessCodeDoesNotExistsException {

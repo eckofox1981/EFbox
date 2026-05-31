@@ -49,6 +49,13 @@ public class JWTService {
         return UUID.fromString(idString);
     }
 
+    /**
+     * refreshes the token if only 3 minutes are left on the TTL
+     * @param request
+     * @param userID
+     * @return fresh JWT
+     * @throws NoTokenFoundException
+     */
     public String tokenRefreshIfThreeMinutesLeft(HttpServletRequest request, UUID userID) throws NoTokenFoundException {
         String token = resolveToken(request);
 

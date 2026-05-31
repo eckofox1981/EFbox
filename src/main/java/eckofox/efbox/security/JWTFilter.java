@@ -47,7 +47,7 @@ public class JWTFilter extends OncePerRequestFilter {
         userService.verifyAuthentication(authenticationToken).ifPresent(user -> {
             var authentication = new UsernamePasswordAuthenticationToken(
                     user,
-                    user.getPassword(),
+                    null,
                     user.getAuthorities()
             );
 

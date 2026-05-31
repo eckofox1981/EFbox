@@ -3,9 +3,11 @@ package eckofox.efbox.security;
 import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Configuration;
 
-//https://codingtechroom.com/question/insert-cookies-in-rest-response-spring
-//
-//+ information from Cookie class
+/**
+ * Cookie handling class'
+ * based on https://codingtechroom.com/question/insert-cookies-in-rest-response-spring
+ */
+
 @Configuration
 public class CookieMaker {
     public Cookie cookieBaker(String token) {

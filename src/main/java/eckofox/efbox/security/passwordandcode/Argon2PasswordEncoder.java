@@ -11,6 +11,11 @@ public class Argon2PasswordEncoder implements PasswordEncoder {
     private final Argon2 argon2;
     private final Argon2Properties argon2Properties;
 
+    /**
+     * encodes and hash password
+     * @param rawPassword
+     * @return hashed password in String
+     */
     @Override
     public String encode(CharSequence rawPassword) {
         char[] rawChars = rawPassword.toString().toCharArray();
@@ -25,6 +30,12 @@ public class Argon2PasswordEncoder implements PasswordEncoder {
         }
     }
 
+    /**
+     * checks if hashed input for user matches the stored hashed password
+     * @param rawPassword the raw password to encode and match
+     * @param encodedPassword the encoded password from storage to compare with
+     * @return boolean based on if hasehd input equals hashed stored value
+     */
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         char[] rawChars = rawPassword.toString().toCharArray();

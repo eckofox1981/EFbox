@@ -274,7 +274,6 @@ public class GlobalExceptionHandler {
     private EFBoxErrorMessage messageCreator(
             LogEventType eventType, ExceptionType exceptionType, int code, String message
     ) {
-        //TODO: regression testing remove at end of project
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = new User(
                 null,

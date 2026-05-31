@@ -24,6 +24,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * a HandlerInterceptor that checks the incomming requests, checks the userID, if not available checks the IP
+ * "fills the bucket" with requests, if bucket overflows, i.e too many requests for a set amount of time
+ * the following request are denied with a 429 status code
+ */
 @Component
 @RequiredArgsConstructor
 public class RateLimitingInterceptor implements HandlerInterceptor {
@@ -32,6 +37,14 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
     private final UserRepository userRepository;
     private final LoggerService loggerService;
 
+    /**
+     * receives the original httpRequest
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @param handler chosen handler to execute, for type and/or instance evaluation
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
@@ -96,6 +109,11 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    /**
+     * returns the IP in the request
+     * @param request
+     * @return
+     */
     public static String getClientIP(HttpServletRequest request) {
         // Check for X-Forwarded-For header (when behind a proxy)
         String forwarded = request.getHeader("X-Forwarded-For");
@@ -105,6 +123,11 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         return request.getRemoteAddr();
     }
 
+    /**
+     * checks the cookie for user token
+     * @param request
+     * @return
+     */
     private String resolveToken(HttpServletRequest request) {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())

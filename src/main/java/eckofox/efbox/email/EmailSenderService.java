@@ -28,6 +28,13 @@ public class EmailSenderService {
     private static final String signature = "\n\nCordially,\n\nThe EFBox team";
     private static final String noMessage = "No message.";
 
+    /**
+     * sends a simple email with subject and content
+     * @param toEmail email-address of receiver
+     * @param subject self-explanatory
+     * @param body content of email
+     * @return "Email sent"
+     */
     public String sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(System.getenv("EFBOX_MAIL_USERNAME"));
@@ -40,6 +47,14 @@ public class EmailSenderService {
         return "Email sent.";
     }
 
+    /**
+     * Sends a code to be used for changing password
+     * @param type EmailType (for subject)
+     * @param user to receive email
+     * @param code to be used for password change
+     * @return "Email sent to your inbox."
+     * @throws EmailNotSentException
+     */
     public String sendPasswordRecoveryEmail(EmailType type, User user, int code) throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
         message.append(hello)
@@ -75,6 +90,15 @@ public class EmailSenderService {
         }
     }
 
+    /**
+     * Warns user of excessive login attempts on account through email and finally calls
+     * sendRepetitiveLoginAttemptsEMailToAdmins()
+     * @param type EmailType (for subject)
+     * @param user to receive email
+     * @param now time of last attempt included in body
+     * @param ip to be included in sendRepetitiveLoginAttemptsEMailToAdmins()
+     * @throws EmailNotSentException
+     */
     public void sendRepetitiveLoginAttemptsEMailToUser(EmailType type, User user, LocalDateTime now, String ip)
             throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
@@ -116,6 +140,13 @@ public class EmailSenderService {
 
     }
 
+    /**
+     * warns ADMINS of excessive login attempts on account through email
+     * @param user of account concerned
+     * @param now time of last attempt included in body
+     * @param ip listed in the last request sent to login end point
+     * @throws EmailNotSentException
+     */
     public void sendRepetitiveLoginAttemptsEMailToAdmins(User user, LocalDateTime now, String ip)
             throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
@@ -163,6 +194,12 @@ public class EmailSenderService {
         }
     }
 
+    /**
+     * warns ADMINs of repetitive EXceptions of a specific type on Server
+     * @param exceptionType the type concerned
+     * @param eventNbr self-explanatory
+     * @throws EmailNotSentException
+     */
     public void sendRepetitiveExceptionWarningToAdmins(ExceptionType exceptionType, int eventNbr)
             throws EmailNotSentException {
         StringBuilder message = new StringBuilder();
@@ -210,6 +247,11 @@ public class EmailSenderService {
         }
     }
 
+    /**
+     * notifies OWNER of a request to become ADMIN
+     * @param user making the request
+     * @throws EmailNotSentException
+     */
     public void sendAdminStatusRequest(User user) throws EmailNotSentException {
         //better with sql query but out of scope for project (quicker to write)
         List<User> allUsers = userRepository.findAll();
@@ -243,6 +285,11 @@ public class EmailSenderService {
         }
     }
 
+    /**
+     * notifies admins of a request to access event-logs
+     * @param user making the request
+     * @throws EmailNotSentException
+     */
     public void sendLogAccessRequest(User user) throws EmailNotSentException {
         //better with sql query but out of scope for project (quicker to write)
         List<User> allUsers = userRepository.findAll();

@@ -10,8 +10,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-//based upon
-//https://www.geeksforgeeks.org/advance-java/prevent-brute-force-authentication-attempts-with-spring-security/
+/**
+ * Caches the number of Exception and after the defined number of events during the defined number fo minutes
+ * sends a warning email to the ADMINs
+ * stores if the warning email has been sent to avoid sending multiple emails
+ * NOTE: will reset with server restart
+ * based upon //https://www.geeksforgeeks.org/advance-java/prevent-brute-force-authentication-attempts-with-spring-security/
+ */
+
 @Service
 @RequiredArgsConstructor
 public class ExceptionBruteForceProtectionService {
@@ -24,11 +30,20 @@ public class ExceptionBruteForceProtectionService {
     private final Map<ExceptionType, Long> firstEventTimeCache = new ConcurrentHashMap<>();
     private final Map<ExceptionType, Boolean> isEmailSentCache = new ConcurrentHashMap<>();
 
+    /**
+     * resets the cached exception number and timer
+     */
     public void logAccessedExceptionCacheReset() {
         exceptionTypeCache.clear();
         isEmailSentCache.clear();
     }
 
+    /**
+     * records the number of exceptions and the time of first occurence
+     * checks if defined limts have been reached
+     * @param exceptionType
+     * @throws EmailNotSentException
+     */
     public void exceptionTypeRecord(ExceptionType exceptionType) throws EmailNotSentException {
         int eventNbr = exceptionTypeCache.getOrDefault(exceptionType, 0);
         eventNbr++;
@@ -50,6 +65,13 @@ public class ExceptionBruteForceProtectionService {
         }
     }
 
+
+    /**
+     * calls SendEmailService to send a warning email to ADMINs
+     * @param exceptionType that has repeated
+     * @param eventNbr number of event that occured
+     * @throws EmailNotSentException
+     */
     private void sendEmailToAdmin(ExceptionType exceptionType, int eventNbr) throws EmailNotSentException {
             emailSenderService.sendRepetitiveExceptionWarningToAdmins(exceptionType, eventNbr);
 

@@ -192,6 +192,7 @@ public class UserService implements UserDetailsService {
                     user.getLastName(),
                     user.getEmail(),
                     encoder.encode(newPassword),
+                    user.getRootFolder(),
                     user.getRoles(),
                     user.getGrantedAuthorities()
             );
@@ -260,8 +261,8 @@ public class UserService implements UserDetailsService {
      * @return
      */
     private boolean isUsernameValid(String username) {
-        final String PASSWORD_REGEX = "^[a-zA-Z0-9]{5,20}$";
-        return username.matches(PASSWORD_REGEX);
+        final String USERNAME_REGEX = "^[a-zA-Z0-9]{5,20}$";
+        return username.matches(USERNAME_REGEX);
     }
 
     /**

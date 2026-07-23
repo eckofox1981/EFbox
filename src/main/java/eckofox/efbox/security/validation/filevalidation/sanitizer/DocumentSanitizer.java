@@ -13,5 +13,5 @@ public interface DocumentSanitizer {
      *
      * @return TRUE only if the specified file has been successfully made safe.
      */
-    MultipartFile sanitize(File f);
+    MultipartFile sanitize(File f, String originalFilename);
 }

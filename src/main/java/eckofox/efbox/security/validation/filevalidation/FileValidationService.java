@@ -64,7 +64,7 @@ public class FileValidationService {
             /* Step 2: Initialize a detector/sanitizer for the target file type and perform validation */
             if (fileType.equals("IMAGE")) {
                 ImageSanitizerService imageSanitizerService = new ImageSanitizerService();
-                file = imageSanitizerService.sanitize(tmpFile);
+                file = imageSanitizerService.sanitize(tmpFile, file.getOriginalFilename());
                 isSafe = file != null;
             } else {
                 isSafe = detectSanitizedIsSafe(fileType, tmpFile);

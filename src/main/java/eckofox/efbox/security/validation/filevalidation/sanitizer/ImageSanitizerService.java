@@ -45,7 +45,7 @@ import java.util.Iterator;
 @Service
 public class ImageSanitizerService implements DocumentSanitizer{
     @Override
-    public MultipartFile sanitize(File f) {
+    public MultipartFile sanitize(File f, String originalFileName) {
         boolean fallbackOnApacheCommonsImaging;
         try {
             if (f == null || !f.exists() || !f.canRead() || !f.canWrite()) {
@@ -85,7 +85,7 @@ public class ImageSanitizerService implements DocumentSanitizer{
             // Save image by overwriting the provided source file content
             saveByOverWritingFile(initialSizedImage, fallbackOnApacheCommonsImaging, formatName, f);
 
-            return convertFileToMultipartFile(f);
+            return convertFileToMultipartFile(f, originalFileName);
 
         } catch (Exception e) {
             throw new FileValidationException("Error during Image file processing: " + e);
@@ -217,9 +217,8 @@ public class ImageSanitizerService implements DocumentSanitizer{
         parser.writeImage(image, out, (T) params);
     }
 
-    private MultipartFile convertFileToMultipartFile(File f) throws IOException {
+    private MultipartFile convertFileToMultipartFile(File f, String originalFileName) throws IOException {
         String mimeType = Files.probeContentType(f.toPath());
-
         if (mimeType == null) {
             mimeType = getMimeTypeFromFormat(f);
         }
@@ -227,8 +226,8 @@ public class ImageSanitizerService implements DocumentSanitizer{
         try (FileInputStream input = new FileInputStream(f)) {
 
             return new MockMultipartFile(
-                    f.getName(),
-                    f.getName(),
+                    originalFileName,
+                    originalFileName,
                     mimeType,
                     input
             );

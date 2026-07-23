@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 public class ExceptionBruteForceProtectionService {
     private final EmailSenderService emailSenderService;
 
-    private static final int MAX_NBR_OF_EXC = 5;
-    private static final long TIME_FROM_FIRST = TimeUnit.MINUTES.toMillis(5);
+    private static final int MAX_NBR_OF_EXC = 10;
+    private static final long TIME_FROM_FIRST = TimeUnit.MINUTES.toMillis(60);
 
     private final Map<ExceptionType, Integer> exceptionTypeCache = new ConcurrentHashMap<>();
     private final Map<ExceptionType, Long> firstEventTimeCache = new ConcurrentHashMap<>();

@@ -1,6 +1,7 @@
 package eckofox.efbox.security;
 
 import eckofox.efbox.user.GrantedAuthorities;
+import eckofox.efbox.user.UserRole;
 import eckofox.efbox.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -40,24 +41,31 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf((AbstractHttpConfigurer::disable))
+        httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf((AbstractHttpConfigurer::disable))
                 .authorizeHttpRequests
                         (auth -> auth
+                                .requestMatchers("/", "/index.html", "/assets/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/login").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/password-recovery").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/user/change-password").permitAll()
                                 .requestMatchers(
                                         HttpMethod.PUT, "/bossmang/grant-admin-status").hasRole("OWNER")
-                                .requestMatchers(HttpMethod.PUT, "/bossmang/grant-log-access").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/bossmang/grant-log-access").hasAuthority(GrantedAuthorities.GRANT_LOG_ACCESS.toString())
                                 .requestMatchers(HttpMethod
                                         .PUT, "/bossmang/request-log-access").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod
                                         .GET, "/bossmang/fetch-all-logs")
                                         .hasAuthority(GrantedAuthorities.LOG_ACCESS.toString())
+                                .requestMatchers(HttpMethod.GET, "bossmang/get-all-admins").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod
                                         .DELETE, "/bossmang/revoke-admin-status")
                                         .hasAuthority(GrantedAuthorities.REVOKE_ADMIN_ROLE.toString())
+                                .requestMatchers(HttpMethod.GET, "/bossmang/get-all-log-accessors")
+                                        .hasAuthority(GrantedAuthorities.REVOKE_LOG_ACCESS.toString())
                                 .requestMatchers(HttpMethod.DELETE, "/bossmang/revoke-log-access")
                                         .hasAuthority(GrantedAuthorities.REVOKE_LOG_ACCESS.toString())
                                 .anyRequest().authenticated()
@@ -85,11 +93,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList(
-                "http://localhost",
-                "http://127.0.0.1"
+                "https://localhost",
+                "https://127.0.0.1",
+                "https://localhost:5173"
         ));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Content-Type", "X-Requested-With", "Accept"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Content-Type", "X-Requested-With", "Accept", "credentials"));
         corsConfiguration.setExposedHeaders(List.of("Set-Cookie"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(60L);

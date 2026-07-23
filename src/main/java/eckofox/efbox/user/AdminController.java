@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -85,5 +86,25 @@ public class AdminController {
     @DeleteMapping("/revoke-log-access")
     public ResponseEntity<?> revokeLogAccess(@AuthenticationPrincipal User user, @RequestBody String revokedId) {
         return ResponseEntity.status(202).body(adminService.revokeLogAccess(user, UUID.fromString(revokedId)));
+    }
+
+    @GetMapping("/get-all-admins")
+    public ResponseEntity<?> getAllAdminUsers(@AuthenticationPrincipal User user) throws IllegalAccessException {
+        List<UserController.NoPasswordUserDTO> admins = adminService.getAllAdminUsers(user)
+                .stream()
+                .map(UserController.NoPasswordUserDTO::fromUser)
+                .toList();
+
+        return ResponseEntity.status(200).body(admins);
+    }
+
+    @GetMapping("/get-all-log-accessors")
+    public ResponseEntity<?> getAllLogAccessors(@AuthenticationPrincipal User user) throws IllegalAccessException {
+        List<UserController.NoPasswordUserDTO> logAccessors = adminService.getAllLogAccessors(user)
+                .stream()
+                .map(UserController.NoPasswordUserDTO::fromUser)
+                .toList();
+
+        return ResponseEntity.status(200).body(logAccessors);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -85,7 +86,7 @@ public class AdminService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("Could not find " + userId));
 
         if (user.getRoles().contains(UserRole.ROLE_ADMIN)) {
-            return user.getUsername() + "is already admin";
+            return user.getUsername() + " is already admin";
         }
 
         user.getRoles().add(UserRole.ROLE_ADMIN);
@@ -182,6 +183,29 @@ public class AdminService implements UserDetailsService {
         );
 
         return "You have revoked " + revokedUser.getUsername() + "'s log access.";
+    }
+
+    public List<User> getAllAdminUsers(User user) throws IllegalAccessException {
+        if (!user.getGrantedAuthorities().contains(GrantedAuthorities.REVOKE_ADMIN_ROLE)) {
+            throw new IllegalAccessException("You are not authorized to see the admin list");
+        }
+
+        return userRepository.findAll()
+                .stream()
+                .filter(u -> u.getRoles()
+                        .contains(UserRole.ROLE_ADMIN))
+                .toList();
+    }
+
+    public List<User> getAllLogAccessors(User user) throws IllegalAccessException {
+        if (!user.getGrantedAuthorities().contains(GrantedAuthorities.REVOKE_LOG_ACCESS)) {
+            throw new IllegalAccessException("You are not authorized to see this list of user.");
+        }
+
+        return userRepository.findAll()
+                .stream()
+                .filter(u -> u.getGrantedAuthorities().contains(GrantedAuthorities.LOG_ACCESS))
+                .toList();
     }
 
     @Override

@@ -137,7 +137,7 @@ public class UserController {
         private String email;
         private List<UserRole> roles;
         private List<GrantedAuthorities> grantedAuthorities;
-        private List<String> efFolderNames;
+        private List<UUID> rootFolderIDs;
 
         /**
          * converts user to user dto (no password)
@@ -146,15 +146,6 @@ public class UserController {
          * @return NopassWordUserDTO
          */
         public static NoPasswordUserDTO fromUser(User user) {
-            List<String> folderNames = new ArrayList<>();
-            if (user.getRootFolder() == null || user.getRootFolder().isEmpty()) {
-                folderNames.add("EMPTY");
-            } else {
-                folderNames = user.getRootFolder()
-                        .stream()
-                        .map(EFBoxFolder::getName)
-                        .toList();
-            }
             return new NoPasswordUserDTO(
                     user.getUserID(),
                     user.getUsername(),
@@ -163,7 +154,11 @@ public class UserController {
                     user.getEmail(),
                     user.getRoles(),
                     user.getGrantedAuthorities(),
-                    folderNames
+                    user.getRootFolder()
+                            .stream()
+                            .filter(f -> f.getParentFolder() == null)
+                            .map((EFBoxFolder::getFolderID))
+                            .toList()
             );
         }
     }

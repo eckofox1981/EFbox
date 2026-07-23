@@ -59,6 +59,28 @@ public class User implements UserDetails {
         this.grantedAuthorities = grantedAuthorities;
     }
 
+    public User(
+            UUID userID,
+            String username,
+            String firstName,
+            String lastName,
+            String email,
+            String password,
+            List<EFBoxFolder> rootFolder,
+            List<UserRole> roles,
+            List<GrantedAuthorities> grantedAuthorities
+    ) {
+        this.userID = userID;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.rootFolder = rootFolder;
+        this.roles = roles;
+        this.grantedAuthorities = grantedAuthorities;
+    }
+
     //adapted from https://www.javaguides.net/2024/04/spring-security-granted-authority.html
     // and https://www.baeldung.com/role-and-privilege-for-spring-security-registration
     @Override

@@ -50,6 +50,20 @@ public class EFBoxFileController {
         return ResponseEntity.ok(EFBoxFileDTO.fromEFBoxFile(efBoxfile));
     }
 
+    @GetMapping("/file-info")
+    public ResponseEntity<?> getFileInfo(
+            @RequestParam String fileId,
+            @AuthenticationPrincipal User user,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) throws AccessException, NoSuchElementException, NoTokenFoundException {
+        EFBoxFileDTO fileDTO = EFBoxFileDTO.fromEFBoxFile(fileService.getFile(fileId, user));
+
+        response.addCookie(cookieMaker
+                .cookieBaker(jwtService.tokenRefreshIfThreeMinutesLeft(request, user.getUserID())));
+        return ResponseEntity.ok(fileDTO);
+    }
+
     /**
      * receives the request and passes it to Service
      *

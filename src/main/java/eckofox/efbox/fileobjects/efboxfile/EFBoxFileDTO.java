@@ -10,7 +10,6 @@ import java.util.UUID;
 public class EFBoxFileDTO {
     private UUID fileID;
     private String filename;
-    private byte[] content;
     private String type;
     private String parentFolder;
 
@@ -24,7 +23,6 @@ public class EFBoxFileDTO {
         return new EFBoxFileDTO(
                 efBoxFile.getFileID(),
                 efBoxFile.getFileName(),
-                efBoxFile.getContent(),
                 efBoxFile.getType(),
                 efBoxFile.getParentFolder().getName()
         );

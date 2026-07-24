@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.Optional;
+
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,7 +18,9 @@ public interface EFBoxFileRepository extends JpaRepository<EFBoxFile, UUID> {
      * works but "RESULTS MAY VARY".
      */
     //NOTE: ILIKE is postgres specific in spring
-    @Query(value = "SELECT * FROM files JOIN folders ON files.parent_folder_folderid = folders.folderid " +
-            "WHERE files.filename ILIKE %?1% AND folders.user_userid = ?2", nativeQuery = true)
-    Optional<Collection<EFBoxFile>> findByFilenameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
+    @Query(value = "SELECT * FROM files f " +
+            "JOIN folders fo ON f.parent_folder_folderid = fo.folderid " +
+            "WHERE f.filename ILIKE CONCAT('%', ?1, '%') AND fo.user_userid = ?2",
+            nativeQuery = true)
+    List<EFBoxFile> findByFilenameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
 }

@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,7 +17,7 @@ public interface EFBoxFolderRepository extends JpaRepository<EFBoxFolder, UUID> 
      * user attached to (through user id)
      */
     @Query(value = "SELECT * FROM folders WHERE name ILIKE %?1% AND user_userid = ?2", nativeQuery = true)
-    Optional<Collection<EFBoxFolder>> findByNameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
+    List<EFBoxFolder> findByNameContainingIgnoreCaseWithUserID(String pattern, UUID userID);
 
     /**
      * for a reason I haven't been able to debug, hibernate stopped deleting folder and their descendants.

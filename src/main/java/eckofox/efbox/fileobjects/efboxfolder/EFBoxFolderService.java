@@ -101,11 +101,10 @@ public class EFBoxFolderService {
         validateUserInput(query);
 
         Collection<EFBoxFolder> folders = folderRespository
-                .findByNameContainingIgnoreCaseWithUserID(query, user.getUserID())
-                .orElse(new ArrayList<>());
+                .findByNameContainingIgnoreCaseWithUserID(query, user.getUserID());
+
         Collection<EFBoxFile> files = fileRepository
-                .findByFilenameContainingIgnoreCaseWithUserID(query, user.getUserID())
-                .orElse(new ArrayList<>());
+                .findByFilenameContainingIgnoreCaseWithUserID(query, user.getUserID());
 
         SearchResponseDTO responseDTO = new SearchResponseDTO();
         folders.stream()

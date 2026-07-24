@@ -15,7 +15,7 @@ For security purposes the API can only accept WORD, EXCEL, POWERPOINT, PDF docum
 
 Files and folders can be added, renamed, deleted but no "move" function has been implemented.
 
-The _webversion_ branch has a simple but functional frontend to play around with, I've shamelessly included the .pem files. The server side has also been modified to be functional as the original was more a proof of concept and not practically viable. 
+The _[webversion](https://github.com/eckofox1981/EFbox/tree/main)_ branch has a simple but functional frontend to play around with, I've shamelessly included the certificate files. The server side has also been modified to be functional as the original was more a proof of concept and not practically viable. 
 ___
 ## Features
 

@@ -11,7 +11,7 @@ public class EFBoxFileDTO {
     private UUID fileID;
     private String filename;
     private String type;
-    private String parentFolder;
+    private UUID parentFolder;
 
     /**
      * converts model to dto
@@ -24,7 +24,7 @@ public class EFBoxFileDTO {
                 efBoxFile.getFileID(),
                 efBoxFile.getFileName(),
                 efBoxFile.getType(),
-                efBoxFile.getParentFolder().getName()
+                efBoxFile.getParentFolder().getFolderID()
         );
     }
 }

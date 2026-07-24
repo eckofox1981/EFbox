@@ -20,4 +20,15 @@ public class CookieMaker {
 
         return cookie;
     }
+
+    public Cookie expiredCookie() {
+        Cookie cookie = new Cookie("efbox-token", "");
+        cookie.setPath("/");
+        //cookie.setDomain(System.getenv("DOMAIN_BASEURL")); removed for local development purposes
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(0);
+
+        return cookie;
+    }
 }

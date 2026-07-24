@@ -123,6 +123,12 @@ public class UserController {
         return ResponseEntity.ok(userservice.passwordChange(dto.getUsername(), dto.getNewPassword(), dto.getCode()));
     }
 
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> eraseCookie(HttpServletResponse response) {
+        response.addCookie(cookieMaker.expiredCookie());
+        return ResponseEntity.status(202).body("Logged Out");
+    }
+
     /**
      * NoPasswordDTO for user DTO not showing password hash and displaying user's folders' name only
      */

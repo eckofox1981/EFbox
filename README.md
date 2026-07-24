@@ -13,9 +13,9 @@ Since the purpose of the paper was to analyse difficulties (and honestly I was s
 
 For security purposes the API can only accept WORD, EXCEL, POWERPOINT, PDF documents and images. These are validated before being saved to the database.
 
-Files and folders can be added, renamed, deleted but no "move" function has been implemented
+Files and folders can be added, renamed, deleted but no "move" function has been implemented.
 
-The _webversion_ branch has a simple but functional frontend to play around with, I've shamelessly included the .pem files. 
+The _webversion_ branch has a simple but functional frontend to play around with, I've shamelessly included the .pem files. The server side has also been modified to be functional as the original was more a proof of concept and not practically viable. 
 ___
 ## Features
 
